@@ -868,7 +868,24 @@ function spU(){
     // Override colors to black/gray for status display as per request
     const statusTextColor = 'text-gray-900'; 
 
-    wtsd.innerHTML=cp.canWalk?`<span class="bilingual-en ${statusTextColor} font-bold">Can Walk → GREEN</span><span class="bilingual-zh block">✅ 能走動 → 綠色</span>`:`<span class="bilingual-en ${statusTextColor} font-bold">Cannot Walk → Proceed R-P-M</span><span class="bilingual-zh block">❌ 無法走動 → 繼續 R-P-M 檢查</span>`;
+    let canWalkTextEn = isMaster ? "Can Walk" : "Can Walk → GREEN";
+    let canWalkTextZh = isMaster ? "能走動" : "✅ 能走動 → 綠色";
+    
+    // New: Check for pro mode as well to remove "-> Green"
+    if (difficulty === 'pro') {
+        canWalkTextEn = "Can Walk";
+        canWalkTextZh = "能走動";
+    }
+    // New: Remove "-> Proceed R-P-M" in Pro/Master mode for "Cannot Walk"
+    let cannotWalkTextEn = "Cannot Walk → Proceed R-P-M";
+    let cannotWalkTextZh = "❌ 無法走動 → 繼續 R-P-M 檢查";
+
+    if (difficulty === 'pro' || difficulty === 'master') {
+        cannotWalkTextEn = "Cannot Walk";
+        cannotWalkTextZh = "無法走動";
+    }
+
+    wtsd.innerHTML=cp.canWalk?`<span class="bilingual-en ${statusTextColor} font-bold">${canWalkTextEn}</span><span class="bilingual-zh block">${canWalkTextZh}</span>`:`<span class="bilingual-en ${statusTextColor} font-bold">${cannotWalkTextEn}</span><span class="bilingual-zh block">${cannotWalkTextZh}</span>`;
     
     rrZN.textContent='';
     if(cp.respRate===0){rrD.textContent='Absent';rrZN.textContent='（無呼吸）';}else{rrD.textContent=cp.respRate;rrZN.textContent='';}
@@ -992,7 +1009,6 @@ function checkRespiration(uI, clickedButton) {
         const airwaySuccess = (cp.respRate === 0 && cp.airwayResponse);
 
         if (actuallyBreathing) {
-             // User thought absent, but patient was breathing
              if (isAdvanced) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Patient is breathing.</span>`;
@@ -1003,7 +1019,6 @@ function checkRespiration(uI, clickedButton) {
                 amz.innerHTML = `<span class="text-green-800">結果：傷患有呼吸 (紅色)。</span>`; 
              }
         } else if (airwaySuccess) {
-             // Effectively breathing after airway
              if (isAdvanced) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Breathing detected/started.</span>`;
@@ -1014,7 +1029,6 @@ function checkRespiration(uI, clickedButton) {
                 amz.innerHTML = `<span class="text-green-800">結果：開始呼吸/有呼吸 (紅色)。</span>`; 
              }
         } else {
-             // Still no breath
              if (isAdvanced) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Still no breathing.</span>`;
