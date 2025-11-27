@@ -278,7 +278,7 @@
                     <!-- 修正：改為灰色 (gray-600) -->
                     <button id="btn-bleed-tourniquet" onclick="checkBleeding(true, this)" class="action-button bg-gray-600 hover:bg-gray-700 text-white flex-1">
                         <span class="bilingual-en">Apply Tourniquet</span>
-                        <span class="bilingual-zh block">使用止血帶 → 紅色</span>
+                        <span class="bilingual-zh block">使用止血帶 → 繼續評估</span>
                     </button>
                     <!-- 修正：改為灰色 (gray-600) -->
                     <button id="btn-bleed-none" onclick="checkBleeding(false, this)" class="action-button bg-gray-600 hover:bg-gray-700 text-white flex-1">
@@ -518,11 +518,11 @@ let startTime = 0;
 let stepHistory = []; 
 let currentTourniquetDecision = false;
 
-const tg={RED:{en:"RED - Immediate",zh:"紅色 - 立即",class:"red-bg", color: 'red'},YELLOW:{en:"YELLOW - Delayed",zh:"黃色 - 延遲",class:"yellow-bg", color: 'yellow'},GREEN:{en:"GREEN - Minor",zh:"綠色 - 輕微",class:"green-bg", color: 'green'},BLACK:{en:"BLACK - Deceased / Expectant",zh:"黑色 - 死亡 / 預期 (P0)",class:"black-bg", color: 'black'}};
+const tg={RED:{en:"RED - Immediate",zh:"紅色 - 立即",class:"red-bg", color: 'red'},YELLOW:{en:"YELLOW - Delayed",zh:"黃色 - 延遲",class:"yellow-bg", color: 'yellow'},GREEN:{en:"GREEN - Minor",zh:"綠色 - 輕微",class:"green-bg", color: 'green'},BLACK:{en:"BLACK - Deceased / Expectant",zh:"黑色 - 死亡 / 預期",class:"black-bg", color: 'black'}};
 
 const buttonTextConfig = {
     "btn-bleed-tourniquet": {
-        full: { en: "Apply Tourniquet", zh: "使用止血帶 → 紅色" },
+        full: { en: "Apply Tourniquet", zh: "使用止血帶 → 繼續評估" },
         clean: { en: "Apply Tourniquet", zh: "使用止血帶" }
     },
     "btn-bleed-none": {
@@ -981,19 +981,19 @@ function checkRespiration(uI, clickedButton) {
     // NO ALERTS logic
     if (uI === 0) { 
         // User selected 'Open Airway' (Absent)
-        // Regardless of actual condition, proceed to show airway result and then Final Choice
         pushHistory('step-respiration');
         aa.classList.remove('hidden');
         aa.classList.remove('bg-red-100', 'text-red-700', 'border-red-500', 'bg-green-100', 'text-green-700', 'border-green-500', 'bg-gray-100', 'text-gray-800', 'border-gray-500');
 
-        const isMaster = (difficulty === 'master');
+        // 修正：增加 'pro' 模式到 isAdvanced 判斷中
+        const isAdvanced = (difficulty === 'master' || difficulty === 'pro');
         // Determine result based on actual condition (if actually no breath, check airway response; if breath present, say present)
         const actuallyBreathing = cp.respRate > 0;
         const airwaySuccess = (cp.respRate === 0 && cp.airwayResponse);
 
         if (actuallyBreathing) {
              // User thought absent, but patient was breathing
-             if (isMaster) {
+             if (isAdvanced) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Patient is breathing.</span>`;
                 amz.innerHTML = `<span class="text-gray-800">結果：傷患有呼吸。</span>`;
@@ -1004,7 +1004,7 @@ function checkRespiration(uI, clickedButton) {
              }
         } else if (airwaySuccess) {
              // Effectively breathing after airway
-             if (isMaster) {
+             if (isAdvanced) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Breathing detected/started.</span>`;
                 amz.innerHTML = `<span class="text-gray-800">結果：呼吸恢復/有呼吸。</span>`;
@@ -1015,7 +1015,7 @@ function checkRespiration(uI, clickedButton) {
              }
         } else {
              // Still no breath
-             if (isMaster) {
+             if (isAdvanced) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Still no breathing.</span>`;
                 amz.innerHTML = `<span class="text-gray-800">結果：仍無呼吸。</span>`;
