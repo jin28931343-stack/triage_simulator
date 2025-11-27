@@ -43,7 +43,23 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
+            border: 2px solid transparent;
         }
+        
+        /* 時間到的紅色警示樣式 */
+        .time-up-alarm {
+            box-shadow: 0 0 20px 5px rgba(239, 68, 68, 0.9) !important;
+            border-color: #ef4444 !important;
+            animation: pulse-red 1s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
         @media (min-width: 640px) {
             .triage-card {
                 padding: 1.5rem;
@@ -517,7 +533,7 @@ let timerInterval = null;
 let startTime = 0; 
 let stepHistory = []; 
 let currentTourniquetDecision = false;
-let timeLimit = 120000; // Default time limit per patient (2 mins)
+let timeLimit = 120000; 
 
 const tg={RED:{en:"RED - Immediate",zh:"紅色 - 立即",class:"red-bg", color: 'red'},YELLOW:{en:"YELLOW - Delayed",zh:"黃色 - 延遲",class:"yellow-bg", color: 'yellow'},GREEN:{en:"GREEN - Minor",zh:"綠色 - 輕微",class:"green-bg", color: 'green'},BLACK:{en:"BLACK - Deceased / Expectant",zh:"黑色 - 死亡 / 預期",class:"black-bg", color: 'black'}};
 
@@ -583,13 +599,13 @@ const pcE=document.getElementById('patient-card'),
       npb=document.getElementById('next-patient-btn'),
       fcd=document.getElementById('final-classification'),
       scoreSummaryEl = document.getElementById('score-summary'),
-      btnBack = document.getElementById('btn-back-step');
+      btnBack = document.getElementById('btn-back-step'),
+      triageCard = document.querySelector('.triage-card');
 
 const rc=document.getElementById('resp-container'),pC=document.getElementById('pulse-container'),mC=document.getElementById('mental-container');
 const timerDisplay = document.getElementById('triage-timer');
 const difficultyInfo = document.getElementById('difficulty-info');
 const newIncidentBtn = document.getElementById('new-incident-btn');
-const triageCard = document.querySelector('.triage-card');
 
 const st={
     bleeding:document.getElementById('step-bleeding'),
@@ -726,12 +742,24 @@ function si(){
 function startTimer() {
     stopTimer(); 
     startTime = performance.now(); 
-    timerDisplay.textContent = '00:00';
+    
+    timerDisplay.textContent = formatTime(timeLimit);
+    timerDisplay.classList.remove('text-red-800'); 
+    triageCard.classList.remove('time-up-alarm'); 
 
     timerInterval = setInterval(() => {
-        const elapsedTime = performance.now() - startTime;
-        timerDisplay.textContent = formatTime(elapsedTime);
-    }, 1000); 
+        const elapsed = performance.now() - startTime;
+        let remaining = timeLimit - elapsed;
+        
+        if (remaining < 0) remaining = 0;
+        
+        timerDisplay.textContent = formatTime(remaining);
+        
+        if (remaining === 0) {
+            timerDisplay.classList.add('text-red-800');
+            triageCard.classList.add('time-up-alarm'); 
+        }
+    }, 100); 
 }
 
 function stopTimer() {
@@ -817,7 +845,6 @@ function gp(){
         break;
     case 1:
         cW=false;rr=0;
-        // Fix: No pulse and Unconscious if No Breathing (scenario 1)
         pp=false; 
         cO=false; 
         if(aR){fc=tg.RED;}else{fc=tg.BLACK;}
@@ -854,7 +881,7 @@ function gp(){
     
     cp={id:pc,gender:g,age:a,canWalk:cW,respRate:rr,pulsePresent:pp,canObey:cO,airwayResponse:aR,correctTriage:fc, abnormalPulse: selectedAbnormal, massiveBleeding: bleeding, injury: injuryText, hasOpenedAirway: false};
     
-    currentTourniquetDecision = false; // Reset for new patient
+    currentTourniquetDecision = false; 
 }
 
 function spU(){
@@ -873,10 +900,8 @@ function spU(){
     const colorGreen = isMaster ? 'text-gray-900' : 'text-green-700';
     const colorRed = isMaster ? 'text-gray-900' : 'text-red-700';
 
-    // Override colors to black/gray for status display as per request
     const statusTextColor = 'text-gray-900'; 
 
-    // Updated logic for Status Box display: Simple text only
     let canWalkTextEn = "Can Walk";
     let canWalkTextZh = "能走動";
     let cannotWalkTextEn = "Cannot Walk";
@@ -905,7 +930,7 @@ function spU(){
     Object.values(st).forEach(s=>{s.querySelectorAll('button').forEach(btn=>{btn.disabled=false;});});
     st.ambulatory.classList.remove('hidden');
     
-    triageCard.classList.remove('time-up-alarm'); // Clear alarm on new patient
+    triageCard.classList.remove('time-up-alarm'); 
 
     stepHistory = [];
     updateBackBtn();
@@ -925,9 +950,6 @@ function ft(chosenCategory,clickedButton){
     let isCorrect = chosenCategory === cp.correctTriage;
     let customFailMsg = null;
 
-    // Critical Error Check: Patient has NO breathing AND user did NOT open airway
-    // NOTE: If airway response was successful, correctTriage is RED. If not successful, BLACK.
-    // But if user skipped "Open Airway", they likely guessed.
     if (cp.respRate === 0 && !cp.hasOpenedAirway) {
         isCorrect = false;
         customFailMsg = {
@@ -952,7 +974,7 @@ function ft(chosenCategory,clickedButton){
 
 function stR(category, isCorrect, elapsedTimeMs, customFailMsg = null){
     stopTimer(); 
-    triageCard.classList.remove('time-up-alarm'); // Clear alarm on result
+    triageCard.classList.remove('time-up-alarm'); 
     
     const displayTime = formatTime(elapsedTimeMs);
     
@@ -960,7 +982,6 @@ function stR(category, isCorrect, elapsedTimeMs, customFailMsg = null){
     let ft = '';
 
     if (customFailMsg) {
-        // Display custom failure message for critical procedural errors
         ft = `<span class="bilingual-en font-bold text-red-800">${customFailMsg.en} (Time: ${displayTime})</span>
               <span class="bilingual-zh block font-bold text-red-800">❌ ${customFailMsg.zh} (用時: ${displayTime})</span>`;
     } else if (isCorrect) {
@@ -1005,11 +1026,9 @@ function checkBleeding(isTourniquet, clickedButton) {
     
     currentTourniquetDecision = isTourniquet;
     
-    // Always proceed to Respiration, regardless of correctness (NO ALERTS)
     pushHistory('step-bleeding');
     st.bleeding.classList.add('hidden');
     
-    // Show Respiration Vitals and Step
     rc.classList.remove('hidden'); 
     st.respiration.classList.remove('hidden');
     st.respiration.scrollIntoView({behavior: 'smooth', block: 'start'});
@@ -1020,22 +1039,18 @@ function checkRespiration(uI, clickedButton) {
     const Rbs = st.respiration.querySelectorAll('.grid > button');
     Rbs.forEach(btn => btn.disabled = true);
 
-    // NO ALERTS logic
     if (uI === 0) { 
-        // User selected 'Open Airway' (Absent)
-        cp.hasOpenedAirway = true; // Mark airway as opened
+        cp.hasOpenedAirway = true; 
 
         pushHistory('step-respiration');
         aa.classList.remove('hidden');
         aa.classList.remove('bg-red-100', 'text-red-700', 'border-red-500', 'bg-green-100', 'text-green-700', 'border-green-500', 'bg-gray-100', 'text-gray-800', 'border-gray-500');
 
         const isAdvanced = (difficulty === 'master' || difficulty === 'pro');
-        // Determine result based on actual condition (if actually no breath, check airway response; if breath present, say present)
         const actuallyBreathing = cp.respRate > 0;
         const airwaySuccess = (cp.respRate === 0 && cp.airwayResponse);
 
         if (actuallyBreathing) {
-             // User thought absent, but patient was breathing
              if (isAdvanced) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Patient is breathing.</span>`;
@@ -1046,7 +1061,6 @@ function checkRespiration(uI, clickedButton) {
                 amz.innerHTML = `<span class="text-green-800">結果：傷患有呼吸 (紅色)。</span>`; 
              }
         } else if (airwaySuccess) {
-             // Effectively breathing after airway
              if (isAdvanced) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Breathing detected/started.</span>`;
@@ -1057,7 +1071,6 @@ function checkRespiration(uI, clickedButton) {
                 amz.innerHTML = `<span class="text-green-800">結果：開始呼吸/有呼吸 (紅色)。</span>`; 
              }
         } else {
-             // Still no breath
              if (isAdvanced) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Still no breathing.</span>`;
@@ -1068,18 +1081,14 @@ function checkRespiration(uI, clickedButton) {
                 amz.innerHTML = `<span class="text-red-800">結果：仍無呼吸 (黑色)。</span>`;
              }
         }
-        // Proceed to Final Choice
         st.finalChoice.classList.remove('hidden');
         st.finalChoice.scrollIntoView({behavior: 'smooth', block: 'start'});
 
     } else if (uI > 30) { 
-        // User selected Fast
         pushHistory('step-respiration');
-        // Proceed to Final Choice
         st.finalChoice.classList.remove('hidden');
         st.finalChoice.scrollIntoView({behavior: 'smooth', block: 'start'});
     } else { 
-        // User selected Normal
         pushHistory('step-respiration');
         st.respiration.classList.add('hidden');
         rc.classList.add('hidden');
@@ -1093,14 +1102,12 @@ function checkPerfusion(pAOCLR, clickedButton) {
     if(clickedButton) clickedButton.blur();
 
     if (pAOCLR) { 
-        // User selected Abnormal (Absent/Slow) -> Go to Final Choice
         pushHistory('step-perfusion');
         const Pbs = st.perfusion.querySelectorAll('button');
         Pbs.forEach(btn => btn.disabled = true);
         st.finalChoice.classList.remove('hidden');
         st.finalChoice.scrollIntoView({behavior: 'smooth', block: 'start'});
     } else { 
-        // User selected Normal -> Go to Mental
         pushHistory('step-perfusion');
         st.perfusion.classList.add('hidden');
         pC.classList.add('hidden');
