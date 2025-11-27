@@ -43,7 +43,23 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            transition: box-shadow 0.3s ease, border-color 0.3s ease; /* 平滑過渡效果 */
+            border: 2px solid transparent; /* 預留邊框位置 */
         }
+        
+        /* 新增：時間到的紅色警示樣式 */
+        .time-up-alarm {
+            box-shadow: 0 0 20px 5px rgba(239, 68, 68, 0.9) !important; /* 紅色發光陰影 */
+            border-color: #ef4444 !important; /* 紅色邊框 */
+            animation: pulse-red 1s infinite; /* 閃爍動畫 */
+        }
+
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
         @media (min-width: 640px) {
             .triage-card {
                 padding: 1.5rem;
@@ -517,6 +533,7 @@ let timerInterval = null;
 let startTime = 0; 
 let stepHistory = []; 
 let currentTourniquetDecision = false;
+let timeLimit = 120000; // Default time limit per patient (2 mins)
 
 const tg={RED:{en:"RED - Immediate",zh:"紅色 - 立即",class:"red-bg", color: 'red'},YELLOW:{en:"YELLOW - Delayed",zh:"黃色 - 延遲",class:"yellow-bg", color: 'yellow'},GREEN:{en:"GREEN - Minor",zh:"綠色 - 輕微",class:"green-bg", color: 'green'},BLACK:{en:"BLACK - Deceased / Expectant",zh:"黑色 - 死亡 / 預期",class:"black-bg", color: 'black'}};
 
@@ -588,6 +605,7 @@ const rc=document.getElementById('resp-container'),pC=document.getElementById('p
 const timerDisplay = document.getElementById('triage-timer');
 const difficultyInfo = document.getElementById('difficulty-info');
 const newIncidentBtn = document.getElementById('new-incident-btn');
+const triageCard = document.querySelector('.triage-card');
 
 const st={
     bleeding:document.getElementById('step-bleeding'),
@@ -600,7 +618,7 @@ const st={
 };
 
 function formatTime(ms) {
-    const totalSeconds = Math.floor(ms / 1000);
+    const totalSeconds = Math.max(0, Math.floor(ms / 1000));
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
@@ -618,11 +636,14 @@ function setDifficulty(level, clickedButton) {
     sc.classList.remove('hidden');
 
     if (level === 'beginner') {
-        difficultyInfo.innerHTML = '<span class="bilingual-en text-green-700 font-bold">Beginner Mode: Buttons are color-coded based on the expected triage result.</span><span class="bilingual-zh block mt-1 text-green-700">初學者模式：按鈕會顯示顏色提示，顏色即為預期的檢傷結果。</span>';
+        timeLimit = 120000; 
+        difficultyInfo.innerHTML = '<span class="bilingual-en text-green-700 font-bold">Beginner Mode: Buttons are color-coded based on the expected triage result. 2 mins per patient.</span><span class="bilingual-zh block mt-1 text-green-700">初學者模式：按鈕會顯示顏色提示，顏色即為預期的檢傷結果。每位傷患限時 2 分鐘。</span>';
     } else if (level === 'pro') {
-        difficultyInfo.innerHTML = '<span class="bilingual-en text-gray-700 font-bold">Professional Mode: Buttons are grayscale. Only the final choice buttons are colored.</span><span class="bilingual-zh block mt-1 text-gray-700">專業人員模式：步驟按鈕將取消顏色提示（灰階）。只有最終分類按鈕保留顏色。</span>';
+        timeLimit = 60000; 
+        difficultyInfo.innerHTML = '<span class="bilingual-en text-gray-700 font-bold">Professional Mode: Buttons are grayscale. Only the final choice buttons are colored. 1 min per patient.</span><span class="bilingual-zh block mt-1 text-gray-700">專業人員模式：步驟按鈕將取消顏色提示（灰階）。只有最終分類按鈕保留顏色。每位傷患限時 1 分鐘。</span>';
     } else if (level === 'master') {
-        difficultyInfo.innerHTML = '<span class="bilingual-en text-red-700 font-bold">Master Mode: Buttons are grayscale AND text hints/numbers are removed. Pure knowledge test.</span><span class="bilingual-zh block mt-1 text-red-700">大師級模式：按鈕無顏色且無數字/結果提示。純知識測試。</span>';
+        timeLimit = 30000; 
+        difficultyInfo.innerHTML = '<span class="bilingual-en text-red-700 font-bold">Master Mode: Buttons are grayscale AND text hints/numbers are removed. Pure knowledge test. 30 sec per patient.</span><span class="bilingual-zh block mt-1 text-red-700">大師級模式：按鈕無顏色且無數字/結果提示。純知識測試。每位傷患限時 30 秒。</span>';
     }
     
     applyDifficultyStyles(level);
@@ -721,12 +742,24 @@ function si(){
 function startTimer() {
     stopTimer(); 
     startTime = performance.now(); 
-    timerDisplay.textContent = '00:00';
+    
+    timerDisplay.textContent = formatTime(timeLimit);
+    timerDisplay.classList.remove('text-red-800'); 
+    triageCard.classList.remove('time-up-alarm'); // Clear previous alarm
 
     timerInterval = setInterval(() => {
-        const elapsedTime = performance.now() - startTime;
-        timerDisplay.textContent = formatTime(elapsedTime);
-    }, 1000); 
+        const elapsed = performance.now() - startTime;
+        let remaining = timeLimit - elapsed;
+        
+        if (remaining < 0) remaining = 0;
+        
+        timerDisplay.textContent = formatTime(remaining);
+        
+        if (remaining === 0) {
+            timerDisplay.classList.add('text-red-800');
+            triageCard.classList.add('time-up-alarm'); // Activate visual alarm
+        }
+    }, 100); 
 }
 
 function stopTimer() {
@@ -868,19 +901,9 @@ function spU(){
     // Override colors to black/gray for status display as per request
     const statusTextColor = 'text-gray-900'; 
 
-    // Updated logic for Status Box display
+    // Updated logic for Status Box display: Simple text only
     let canWalkTextEn = "Can Walk";
     let canWalkTextZh = "能走動";
-    
-    // Append hint if beginner
-    if (difficulty === 'beginner') {
-        // We don't change the base text, just append hint if needed, 
-        // but "GREEN" was removed from button, maybe keep it here or remove it here too?
-        // User only asked to change buttons. 
-        // But typically status box should reflect simple status. 
-        // I will stick to simple status to be safe.
-    }
-
     let cannotWalkTextEn = "Cannot Walk";
     let cannotWalkTextZh = "無法走動";
 
@@ -907,6 +930,8 @@ function spU(){
     Object.values(st).forEach(s=>{s.querySelectorAll('button').forEach(btn=>{btn.disabled=false;});});
     st.ambulatory.classList.remove('hidden');
     
+    triageCard.classList.remove('time-up-alarm'); // Clear alarm on new patient
+
     stepHistory = [];
     updateBackBtn();
     
@@ -939,7 +964,9 @@ function ft(chosenCategory,clickedButton){
 
 function stR(category,isCorrect, elapsedTimeMs){
     stopTimer(); 
+    triageCard.classList.remove('time-up-alarm'); // Clear alarm on result
     
+    // Note: We pass elapsedTimeMs (actual time spent) to be displayed in the result text
     const displayTime = formatTime(elapsedTimeMs);
     
     let fc=isCorrect?'bg-green-100 border-green-500 text-green-700':'bg-red-100 border-red-500 text-red-700';
@@ -1001,25 +1028,25 @@ function checkRespiration(uI, clickedButton) {
         aa.classList.remove('hidden');
         aa.classList.remove('bg-red-100', 'text-red-700', 'border-red-500', 'bg-green-100', 'text-green-700', 'border-green-500', 'bg-gray-100', 'text-gray-800', 'border-gray-500');
 
-        const isMaster = (difficulty === 'master');
+        const isAdvanced = (difficulty === 'master' || difficulty === 'pro');
         // Determine result based on actual condition (if actually no breath, check airway response; if breath present, say present)
         const actuallyBreathing = cp.respRate > 0;
         const airwaySuccess = (cp.respRate === 0 && cp.airwayResponse);
 
         if (actuallyBreathing) {
              // User thought absent, but patient was breathing
-             if (isMaster) {
+             if (isAdvanced) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Patient is breathing.</span>`;
                 amz.innerHTML = `<span class="text-gray-800">結果：傷患有呼吸。</span>`;
              } else {
                 aa.classList.add('bg-green-100', 'text-green-700', 'border-green-500');
                 ame.innerHTML = `<span class="text-green-800 font-bold">Result: Patient is breathing.</span>`;
-                amz.innerHTML = `<span class="text-green-800">結果：傷患有呼吸。</span>`; 
+                amz.innerHTML = `<span class="text-green-800">結果：傷患有呼吸 (紅色)。</span>`; 
              }
         } else if (airwaySuccess) {
              // Effectively breathing after airway
-             if (isMaster) {
+             if (isAdvanced) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Breathing detected/started.</span>`;
                 amz.innerHTML = `<span class="text-gray-800">結果：呼吸恢復/有呼吸。</span>`;
@@ -1030,7 +1057,7 @@ function checkRespiration(uI, clickedButton) {
              }
         } else {
              // Still no breath
-             if (isMaster) {
+             if (isAdvanced) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Still no breathing.</span>`;
                 amz.innerHTML = `<span class="text-gray-800">結果：仍無呼吸。</span>`;
@@ -1232,6 +1259,8 @@ function resetGame() {
     document.getElementById('difficulty-pro').classList.remove('ring-4', 'ring-blue-400');
     document.getElementById('difficulty-master').classList.remove('ring-4', 'ring-blue-400');
     difficultyInfo.innerHTML = '<span class="bilingual-en">Please select a difficulty level to start.</span><span class="bilingual-zh block">請選擇難度等級以開始。</span>';
+    
+    triageCard.classList.remove('time-up-alarm'); // Ensure alarm is off
 }
 
 window.addEventListener('load', () => {
