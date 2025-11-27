@@ -865,7 +865,10 @@ function spU(){
     const colorGreen = isMaster ? 'text-gray-900' : 'text-green-700';
     const colorRed = isMaster ? 'text-gray-900' : 'text-red-700';
 
-    wtsd.innerHTML=cp.canWalk?`<span class="bilingual-en ${colorGreen} font-bold">Can Walk → GREEN</span><span class="bilingual-zh block">✅ 能走動 → 綠色 (P3)</span>`:`<span class="bilingual-en ${colorRed} font-bold">Cannot Walk → Proceed R-P-M</span><span class="bilingual-zh block">❌ 無法走動 → 繼續 R-P-M 檢查</span>`;
+    // Override colors to black/gray for status display as per request
+    const statusTextColor = 'text-gray-900'; 
+
+    wtsd.innerHTML=cp.canWalk?`<span class="bilingual-en ${statusTextColor} font-bold">Can Walk → GREEN</span><span class="bilingual-zh block">✅ 能走動 → 綠色 (P3)</span>`:`<span class="bilingual-en ${statusTextColor} font-bold">Cannot Walk → Proceed R-P-M</span><span class="bilingual-zh block">❌ 無法走動 → 繼續 R-P-M 檢查</span>`;
     
     rrZN.textContent='';
     if(cp.respRate===0){rrD.textContent='Absent';rrZN.textContent='（無呼吸）';}else{rrD.textContent=cp.respRate;rrZN.textContent='';}
@@ -874,11 +877,12 @@ function spU(){
     const abnormalZh = cp.abnormalPulse ? `${cp.abnormalPulse.zh} / CRT > 2秒` : "橈動脈摸不到 / CRT > 2秒";
 
     document.getElementById('pulse-status').innerHTML=cp.pulsePresent?
-        `<span class="bilingual-en ${colorGreen} font-bold">Present / CRT ≤ 2s</span><span class="bilingual-zh block">有脈搏 / CRT ≤ 2秒</span>`:
-        `<span class="bilingual-en ${colorRed} font-bold">${abnormalEn}</span><span class="bilingual-zh block">${abnormalZh}</span>`;
+        `<span class="bilingual-en ${statusTextColor} font-bold">Present / CRT ≤ 2s</span><span class="bilingual-zh block">有脈搏 / CRT ≤ 2秒</span>`:
+        `<span class="bilingual-en ${statusTextColor} font-bold">${abnormalEn}</span><span class="bilingual-zh block">${abnormalZh}</span>`;
     
-    document.getElementById('mental-status-display').innerHTML=cp.canObey?`<span class="bilingual-en ${colorGreen} font-bold">Can Obey Commands (Alert/Verbal)</span><span class="bilingual-zh block">可遵從指令 (清醒/聲音)</span>`:`<span class="bilingual-en ${colorRed} font-bold">Cannot Obey Commands (Painful/Unresponsive)</span><span class="bilingual-zh block">無法遵從指令 (疼痛/無反應)</span>`;
+    document.getElementById('mental-status-display').innerHTML=cp.canObey?`<span class="bilingual-en ${statusTextColor} font-bold">Can Obey Commands (Alert/Verbal)</span><span class="bilingual-zh block">可遵從指令 (清醒/聲音)</span>`:`<span class="bilingual-en ${statusTextColor} font-bold">Cannot Obey Commands (Painful/Unresponsive)</span><span class="bilingual-zh block">無法遵從指令 (疼痛/無反應)</span>`;
     
+    // Always hide initially now (sequential reveal for all modes)
     rc.classList.add('hidden');
     pC.classList.add('hidden');
     mC.classList.add('hidden');
@@ -978,26 +982,30 @@ function checkRespiration(uI, clickedButton) {
     // NO ALERTS logic
     if (uI === 0) { 
         // User selected 'Open Airway' (Absent)
+        // Regardless of actual condition, proceed to show airway result and then Final Choice
         pushHistory('step-respiration');
         aa.classList.remove('hidden');
         aa.classList.remove('bg-red-100', 'text-red-700', 'border-red-500', 'bg-green-100', 'text-green-700', 'border-green-500', 'bg-gray-100', 'text-gray-800', 'border-gray-500');
 
-        const isAdvanced = (difficulty === 'master' || difficulty === 'pro');
+        const isMaster = (difficulty === 'master');
+        // Determine result based on actual condition (if actually no breath, check airway response; if breath present, say present)
         const actuallyBreathing = cp.respRate > 0;
         const airwaySuccess = (cp.respRate === 0 && cp.airwayResponse);
 
         if (actuallyBreathing) {
-             if (isAdvanced) {
+             // User thought absent, but patient was breathing
+             if (isMaster) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Patient is breathing.</span>`;
                 amz.innerHTML = `<span class="text-gray-800">結果：傷患有呼吸。</span>`;
              } else {
                 aa.classList.add('bg-green-100', 'text-green-700', 'border-green-500');
                 ame.innerHTML = `<span class="text-green-800 font-bold">Result: Patient is breathing.</span>`;
-                amz.innerHTML = `<span class="text-green-800">結果：傷患有呼吸 (紅色)。</span>`; 
+                amz.innerHTML = `<span class="text-green-800">結果：傷患有呼吸。</span>`; 
              }
         } else if (airwaySuccess) {
-             if (isAdvanced) {
+             // Effectively breathing after airway
+             if (isMaster) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Breathing detected/started.</span>`;
                 amz.innerHTML = `<span class="text-gray-800">結果：呼吸恢復/有呼吸。</span>`;
@@ -1007,7 +1015,8 @@ function checkRespiration(uI, clickedButton) {
                 amz.innerHTML = `<span class="text-green-800">結果：開始呼吸/有呼吸 (紅色)。</span>`; 
              }
         } else {
-             if (isAdvanced) {
+             // Still no breath
+             if (isMaster) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Still no breathing.</span>`;
                 amz.innerHTML = `<span class="text-gray-800">結果：仍無呼吸。</span>`;
