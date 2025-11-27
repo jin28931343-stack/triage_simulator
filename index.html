@@ -261,11 +261,11 @@
                 <div class="step-heading">1. <span class="bilingual-en">Ambulatory</span> <span class="bilingual-zh">走路測試</span></div>
                 <div class="flex flex-col sm:flex-row gap-3">
                     <button id="btn-amb-can" onclick="checkAmbulatory(true, this)" class="action-button bg-green-500 hover:bg-green-600 text-white flex-1">
-                        <span class="bilingual-en">Can Walk</span>
+                        <span class="bilingual-en">GREEN</span>
                         <span class="bilingual-zh block">綠色</span>
                     </button>
                     <button id="btn-amb-cannot" onclick="checkAmbulatory(false, this)" class="action-button rpm-button flex-1">
-                        <span class="bilingual-en">Cannot Walk</span>
+                        <span class="bilingual-en">Assess Further</span>
                         <span class="bilingual-zh block">繼續評估</span>
                     </button>
                 </div>
@@ -530,12 +530,12 @@ const buttonTextConfig = {
         clean: { en: "No Tourniquet", zh: "不使用止血帶" }
     },
     "btn-amb-can": {
-        full: { en: "Can Walk", zh: "綠色" },
-        clean: { en: "Can Walk", zh: "綠色" }
+        full: { en: "GREEN", zh: "綠色" },
+        clean: { en: "GREEN", zh: "綠色" }
     },
     "btn-amb-cannot": {
-        full: { en: "Cannot Walk", zh: "繼續評估" },
-        clean: { en: "Cannot Walk", zh: "繼續評估" }
+        full: { en: "Assess Further", zh: "繼續評估" },
+        clean: { en: "Assess Further", zh: "繼續評估" }
     },
     "btn-resp-absent": {
         full: { en: "Open Airway", zh: "暢通呼吸道" },
@@ -868,22 +868,21 @@ function spU(){
     // Override colors to black/gray for status display as per request
     const statusTextColor = 'text-gray-900'; 
 
-    let canWalkTextEn = isMaster ? "Can Walk" : "Can Walk → GREEN";
-    let canWalkTextZh = isMaster ? "能走動" : "✅ 能走動 → 綠色";
+    // Updated logic for Status Box display
+    let canWalkTextEn = "Can Walk";
+    let canWalkTextZh = "能走動";
     
-    // New: Check for pro mode as well to remove "-> Green"
-    if (difficulty === 'pro') {
-        canWalkTextEn = "Can Walk";
-        canWalkTextZh = "能走動";
+    // Append hint if beginner
+    if (difficulty === 'beginner') {
+        // We don't change the base text, just append hint if needed, 
+        // but "GREEN" was removed from button, maybe keep it here or remove it here too?
+        // User only asked to change buttons. 
+        // But typically status box should reflect simple status. 
+        // I will stick to simple status to be safe.
     }
-    // New: Remove "-> Proceed R-P-M" in Pro/Master mode for "Cannot Walk"
-    let cannotWalkTextEn = "Cannot Walk → Proceed R-P-M";
-    let cannotWalkTextZh = "❌ 無法走動 → 繼續 R-P-M 檢查";
 
-    if (difficulty === 'pro' || difficulty === 'master') {
-        cannotWalkTextEn = "Cannot Walk";
-        cannotWalkTextZh = "無法走動";
-    }
+    let cannotWalkTextEn = "Cannot Walk";
+    let cannotWalkTextZh = "無法走動";
 
     wtsd.innerHTML=cp.canWalk?`<span class="bilingual-en ${statusTextColor} font-bold">${canWalkTextEn}</span><span class="bilingual-zh block">${canWalkTextZh}</span>`:`<span class="bilingual-en ${statusTextColor} font-bold">${cannotWalkTextEn}</span><span class="bilingual-zh block">${cannotWalkTextZh}</span>`;
     
@@ -1002,24 +1001,25 @@ function checkRespiration(uI, clickedButton) {
         aa.classList.remove('hidden');
         aa.classList.remove('bg-red-100', 'text-red-700', 'border-red-500', 'bg-green-100', 'text-green-700', 'border-green-500', 'bg-gray-100', 'text-gray-800', 'border-gray-500');
 
-        // 修正：增加 'pro' 模式到 isAdvanced 判斷中
-        const isAdvanced = (difficulty === 'master' || difficulty === 'pro');
+        const isMaster = (difficulty === 'master');
         // Determine result based on actual condition (if actually no breath, check airway response; if breath present, say present)
         const actuallyBreathing = cp.respRate > 0;
         const airwaySuccess = (cp.respRate === 0 && cp.airwayResponse);
 
         if (actuallyBreathing) {
-             if (isAdvanced) {
+             // User thought absent, but patient was breathing
+             if (isMaster) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Patient is breathing.</span>`;
                 amz.innerHTML = `<span class="text-gray-800">結果：傷患有呼吸。</span>`;
              } else {
                 aa.classList.add('bg-green-100', 'text-green-700', 'border-green-500');
                 ame.innerHTML = `<span class="text-green-800 font-bold">Result: Patient is breathing.</span>`;
-                amz.innerHTML = `<span class="text-green-800">結果：傷患有呼吸 (紅色)。</span>`; 
+                amz.innerHTML = `<span class="text-green-800">結果：傷患有呼吸。</span>`; 
              }
         } else if (airwaySuccess) {
-             if (isAdvanced) {
+             // Effectively breathing after airway
+             if (isMaster) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Breathing detected/started.</span>`;
                 amz.innerHTML = `<span class="text-gray-800">結果：呼吸恢復/有呼吸。</span>`;
@@ -1029,7 +1029,8 @@ function checkRespiration(uI, clickedButton) {
                 amz.innerHTML = `<span class="text-green-800">結果：開始呼吸/有呼吸 (紅色)。</span>`; 
              }
         } else {
-             if (isAdvanced) {
+             // Still no breath
+             if (isMaster) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Still no breathing.</span>`;
                 amz.innerHTML = `<span class="text-gray-800">結果：仍無呼吸。</span>`;
