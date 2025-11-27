@@ -726,24 +726,12 @@ function si(){
 function startTimer() {
     stopTimer(); 
     startTime = performance.now(); 
-    
-    timerDisplay.textContent = formatTime(timeLimit);
-    timerDisplay.classList.remove('text-red-800'); 
-    triageCard.classList.remove('time-up-alarm'); // Clear previous alarm
+    timerDisplay.textContent = '00:00';
 
     timerInterval = setInterval(() => {
-        const elapsed = performance.now() - startTime;
-        let remaining = timeLimit - elapsed;
-        
-        if (remaining < 0) remaining = 0;
-        
-        timerDisplay.textContent = formatTime(remaining);
-        
-        if (remaining === 0) {
-            timerDisplay.classList.add('text-red-800');
-            triageCard.classList.add('time-up-alarm'); // Activate visual alarm
-        }
-    }, 100); 
+        const elapsedTime = performance.now() - startTime;
+        timerDisplay.textContent = formatTime(elapsedTime);
+    }, 1000); 
 }
 
 function stopTimer() {
@@ -829,6 +817,9 @@ function gp(){
         break;
     case 1:
         cW=false;rr=0;
+        // Fix: No pulse and Unconscious if No Breathing (scenario 1)
+        pp=false; 
+        cO=false; 
         if(aR){fc=tg.RED;}else{fc=tg.BLACK;}
         injuryText = {en: "Unconscious, head trauma", zh: "意識不清，頭部外傷"};
         break;
