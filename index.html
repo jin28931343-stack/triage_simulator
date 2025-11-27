@@ -882,7 +882,6 @@ function spU(){
     
     document.getElementById('mental-status-display').innerHTML=cp.canObey?`<span class="bilingual-en ${statusTextColor} font-bold">Can Obey Commands (Alert/Verbal)</span><span class="bilingual-zh block">可遵從指令 (清醒/聲音)</span>`:`<span class="bilingual-en ${statusTextColor} font-bold">Cannot Obey Commands (Painful/Unresponsive)</span><span class="bilingual-zh block">無法遵從指令 (疼痛/無反應)</span>`;
     
-    // Always hide initially now (sequential reveal for all modes)
     rc.classList.add('hidden');
     pC.classList.add('hidden');
     mC.classList.add('hidden');
@@ -987,14 +986,14 @@ function checkRespiration(uI, clickedButton) {
         aa.classList.remove('hidden');
         aa.classList.remove('bg-red-100', 'text-red-700', 'border-red-500', 'bg-green-100', 'text-green-700', 'border-green-500', 'bg-gray-100', 'text-gray-800', 'border-gray-500');
 
-        const isMaster = (difficulty === 'master');
+        const isAdvanced = (difficulty === 'master' || difficulty === 'pro');
         // Determine result based on actual condition (if actually no breath, check airway response; if breath present, say present)
         const actuallyBreathing = cp.respRate > 0;
         const airwaySuccess = (cp.respRate === 0 && cp.airwayResponse);
 
         if (actuallyBreathing) {
              // User thought absent, but patient was breathing
-             if (isMaster) {
+             if (isAdvanced) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Patient is breathing.</span>`;
                 amz.innerHTML = `<span class="text-gray-800">結果：傷患有呼吸。</span>`;
@@ -1005,7 +1004,7 @@ function checkRespiration(uI, clickedButton) {
              }
         } else if (airwaySuccess) {
              // Effectively breathing after airway
-             if (isMaster) {
+             if (isAdvanced) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Breathing detected/started.</span>`;
                 amz.innerHTML = `<span class="text-gray-800">結果：呼吸恢復/有呼吸。</span>`;
@@ -1016,7 +1015,7 @@ function checkRespiration(uI, clickedButton) {
              }
         } else {
              // Still no breath
-             if (isMaster) {
+             if (isAdvanced) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Still no breathing.</span>`;
                 amz.innerHTML = `<span class="text-gray-800">結果：仍無呼吸。</span>`;
