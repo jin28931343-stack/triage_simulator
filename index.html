@@ -7,6 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&family=Noto+Sans+TC:wght&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 新增: QR Code 生成庫 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
             --color-black: #1f2937;
@@ -175,6 +177,18 @@
             <span class="bilingual-en">Please select a difficulty level to start.</span>
             <span class="bilingual-zh block">請選擇難度等級以開始。</span>
         </p>
+
+        <!-- 新增: QR Code 按鈕與顯示區 -->
+        <div class="mt-2 pt-4 border-t border-gray-200 flex flex-col items-center">
+            <button onclick="toggleQRCode()" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-2 px-4 py-2 rounded hover:bg-blue-50 transition">
+                <i class="fa-solid fa-qrcode"></i>
+                <span class="bilingual-zh">顯示網頁 QR Code (分享)</span>
+            </button>
+            <div id="qrcode-display" class="hidden mt-4 p-4 bg-white shadow-lg border border-gray-200 rounded-lg flex-col items-center">
+                <div id="qrcode"></div>
+                <p class="text-xs text-gray-500 mt-2 text-center">Scan to open this simulator</p>
+            </div>
+        </div>
     </section>
 
     <!-- Game Status -->
@@ -261,11 +275,13 @@
             <div id="step-bleeding" class="hidden">
                 <div class="step-heading">2. <span class="bilingual-en">Massive Bleeding</span> <span class="bilingual-zh">大出血控制</span></div>
                 <div class="flex flex-col sm:flex-row gap-3">
-                    <button id="btn-bleed-tourniquet" onclick="checkBleeding(true, this)" class="action-button bg-red-500 hover:bg-red-600 text-white flex-1">
+                    <!-- 修正：改為灰色 (gray-600) -->
+                    <button id="btn-bleed-tourniquet" onclick="checkBleeding(true, this)" class="action-button bg-gray-600 hover:bg-gray-700 text-white flex-1">
                         <span class="bilingual-en">Apply Tourniquet</span>
                         <span class="bilingual-zh block">使用止血帶 → 紅色</span>
                     </button>
-                    <button id="btn-bleed-none" onclick="checkBleeding(false, this)" class="action-button bg-green-500 hover:bg-green-600 text-white flex-1">
+                    <!-- 修正：改為灰色 (gray-600) -->
+                    <button id="btn-bleed-none" onclick="checkBleeding(false, this)" class="action-button bg-gray-600 hover:bg-gray-700 text-white flex-1">
                         <span class="bilingual-en">No Tourniquet</span>
                         <span class="bilingual-zh block">不使用止血帶 → 繼續評估</span>
                     </button>
@@ -374,33 +390,6 @@
             <span class="bilingual-en">Incident Summary Report</span>
             <span class="bilingual-zh block mt-1">事件總結報告</span>
         </h2>
-        
-        <!-- Tourniquet Stats Section -->
-        <div class="mb-6 md:mb-8 p-3 md:p-4 bg-red-50 rounded-lg border border-red-200">
-            <h3 class="text-lg md:text-xl font-semibold text-red-700 mb-3 border-b border-red-200 pb-2">
-                <i class="fa-solid fa-heart-pulse"></i> <span class="bilingual-en">Tourniquet Statistics</span>
-                <span class="bilingual-zh">止血帶使用統計</span>
-            </h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-gray-700 text-center">
-                <div class="flex flex-col">
-                    <span class="text-xs md:text-sm font-medium"><span class="bilingual-en">Bleeding Cases</span><span class="bilingual-zh block">大出血總數</span></span>
-                    <span id="summary-bleeding-total" class="text-xl md:text-2xl font-extrabold text-gray-900">0</span>
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-xs md:text-sm font-medium text-green-700"><span class="bilingual-en">Correctly Applied</span><span class="bilingual-zh block">正確使用</span></span>
-                    <span id="summary-tq-correct" class="text-xl md:text-2xl font-extrabold text-green-700">0</span>
-                </div>
-                 <div class="flex flex-col">
-                    <span class="text-xs md:text-sm font-medium text-red-600"><span class="bilingual-en">Missed (Critical)</span><span class="bilingual-zh block">漏用 (嚴重錯誤)</span></span>
-                    <span id="summary-tq-missed" class="text-xl md:text-2xl font-extrabold text-red-600">0</span>
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-xs md:text-sm font-medium text-yellow-600"><span class="bilingual-en">Incorrectly Used</span><span class="bilingual-zh block">誤用 (不需要)</span></span>
-                    <span id="summary-tq-wrong" class="text-xl md:text-2xl font-extrabold text-yellow-600">0</span>
-                </div>
-            </div>
-        </div>
-
         <div class="mb-6 md:mb-8 p-3 md:p-4 bg-blue-50 rounded-lg border border-blue-200">
             <h3 class="text-lg md:text-xl font-semibold text-blue-700 mb-3 border-b border-blue-200 pb-2">
                 <i class="fa-solid fa-clock"></i> <span class="bilingual-en">Time Statistics</span>
@@ -433,6 +422,33 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Tourniquet Stats -->
+        <div class="mb-6 md:mb-8 p-3 md:p-4 bg-red-50 rounded-lg border border-red-200">
+            <h3 class="text-lg md:text-xl font-semibold text-red-700 mb-3 border-b border-red-200 pb-2">
+                <i class="fa-solid fa-heart-pulse"></i> <span class="bilingual-en">Tourniquet Statistics</span>
+                <span class="bilingual-zh">止血帶使用統計</span>
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-gray-700 text-center">
+                <div class="flex flex-col">
+                    <span class="text-xs md:text-sm font-medium"><span class="bilingual-en">Bleeding Cases</span><span class="bilingual-zh block">大出血總數</span></span>
+                    <span id="summary-bleeding-total" class="text-xl md:text-2xl font-extrabold text-gray-900">0</span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xs md:text-sm font-medium text-green-700"><span class="bilingual-en">Correctly Applied</span><span class="bilingual-zh block">正確使用</span></span>
+                    <span id="summary-tq-correct" class="text-xl md:text-2xl font-extrabold text-green-700">0</span>
+                </div>
+                 <div class="flex flex-col">
+                    <span class="text-xs md:text-sm font-medium text-red-600"><span class="bilingual-en">Missed (Critical)</span><span class="bilingual-zh block">漏用 (嚴重錯誤)</span></span>
+                    <span id="summary-tq-missed" class="text-xl md:text-2xl font-extrabold text-red-600">0</span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xs md:text-sm font-medium text-yellow-600"><span class="bilingual-en">Incorrectly Used</span><span class="bilingual-zh block">誤用 (不需要)</span></span>
+                    <span id="summary-tq-wrong" class="text-xl md:text-2xl font-extrabold text-yellow-600">0</span>
+                </div>
+            </div>
+        </div>
+        
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 rounded-lg shadow-sm">
                 <thead class="bg-gray-100">
@@ -461,7 +477,7 @@
                 <span class="bilingual-zh">重要備註：</span>
             </p>
             <p class="text-sm text-orange-700">
-                <span class="bilingual-en font-normal">Triage should be based on mass casualty principles, considering on-site rescue capacity and situational factors (e.g., pregnant women may be upgraded, Black-tagged patients not obviously deceased may be transported if resources permit, etc.).</span>
+                <span class="bilingual-en font-normal">Principle: Mass Casualty Triage. Preference: Based on on-site rescue capacity and conditions (e.g., pregnant women may be upgraded, Black-tagged patients not obviously deceased may be transported if resources permit, etc.).</span>
                 <span class="bilingual-zh block mt-1">
                     <span class="text-lg font-extrabold">原則:</span>大量傷病患檢傷法。
                     <span class="text-lg font-extrabold">偏好:</span>依現場救護能量及現場狀況(如孕婦可升一級,黑色如未明顯死亡救護能量充足也可後送...等)
@@ -475,9 +491,12 @@
             </button>
         </div>
         <footer class="mt-6 pt-3 border-t border-gray-200 text-xs text-right text-gray-500">
-            <p>
-                <span class="font-semibold text-gray-700">作者: 台南市政府消防局 莊進宏</span>
-            </p>
+            <div class="mb-2">
+                <div class="font-semibold text-gray-700">作者: 台南市政府消防局</div>
+                <div class="text-[10px] text-gray-500">Tainan City Fire Bureau</div>
+                <div class="font-semibold text-gray-700 mt-1">莊進宏</div>
+                <div class="text-[10px] text-gray-500">JHUANG JIN HONG</div>
+            </div>
             <p>
                 <span class="font-semibold text-gray-700">版本: Beta1141127</span>
             </p>
@@ -616,8 +635,8 @@ function applyDifficultyStyles(level) {
     ];
     
     const beginnerColorMap = [
-        { id: 'btn-bleed-tourniquet', classes: ['bg-red-500', 'hover:bg-red-600'] },
-        { id: 'btn-bleed-none', classes: ['bg-green-500', 'hover:bg-green-600'] },
+        { id: 'btn-bleed-tourniquet', classes: ['bg-gray-600', 'hover:bg-gray-700'] }, // 修正：初學者也保持灰色
+        { id: 'btn-bleed-none', classes: ['bg-gray-600', 'hover:bg-gray-700'] }, // 修正：初學者也保持灰色
         { id: 'btn-amb-can', classes: ['bg-green-500', 'hover:bg-green-600'] },
         { id: 'btn-amb-cannot', classes: [] }, 
         { id: 'btn-resp-absent', classes: ['bg-gray-400', 'hover:bg-gray-500'] },
@@ -920,145 +939,128 @@ function stR(category,isCorrect, elapsedTimeMs){
     fcd.scrollIntoView({behavior:'smooth',block:'center'});
 }
 
+function checkAmbulatory(cWR, clickedButton) {
+    if(clickedButton) clickedButton.blur();
+    st.ambulatory.classList.add('hidden');
+
+    if (cWR) { 
+        ft(tg.GREEN);
+        return;
+    } else { 
+        pushHistory('step-ambulatory');
+        rc.classList.add('hidden'); 
+        st.bleeding.classList.remove('hidden');
+        st.bleeding.scrollIntoView({behavior: 'smooth', block: 'start'});
+        return;
+    }
+}
+
 function checkBleeding(isTourniquet, clickedButton) {
     if(clickedButton) clickedButton.blur();
     
     currentTourniquetDecision = isTourniquet;
     
+    // Always proceed to Respiration, regardless of correctness (NO ALERTS)
     pushHistory('step-bleeding');
     st.bleeding.classList.add('hidden');
     
+    // Show Respiration Vitals and Step
     rc.classList.remove('hidden'); 
     st.respiration.classList.remove('hidden');
     st.respiration.scrollIntoView({behavior: 'smooth', block: 'start'});
 }
 
-function checkAmbulatory(cWR,clickedButton){
-    if(clickedButton)clickedButton.blur();
-    st.ambulatory.classList.add('hidden');
-    
-    if(cWR){
-        if(cp.canWalk){
-            ft(tg.GREEN);return;
-        }else{
-            alert("Incorrect! Patient cannot walk."); 
-            st.ambulatory.classList.remove('hidden');
-            return;
-        }
-    }
-    
-    if(cWR===false){
-        if(!cp.canWalk){
-            pushHistory('step-ambulatory');
-            
-            rc.classList.add('hidden'); 
-            
-            st.bleeding.classList.remove('hidden');
-            st.bleeding.scrollIntoView({behavior: 'smooth', block: 'start'});
-            return;
-        }else{
-            alert("觀察錯誤：傷患其實是可以走動的 (綠色)。\nObservation Error: Patient is able to walk.");
-            st.ambulatory.classList.remove('hidden');
-            return;
-        }
-    }
-}
+function checkRespiration(uI, clickedButton) {
+    if(clickedButton) clickedButton.blur();
+    const Rbs = st.respiration.querySelectorAll('.grid > button');
+    Rbs.forEach(btn => btn.disabled = true);
 
-function checkRespiration(uI,clickedButton){
-    if(clickedButton)clickedButton.blur();
-    const Rbs=st.respiration.querySelectorAll('.grid > button');
-    Rbs.forEach(btn=>btn.disabled=true);
-    
-    let cPT=false;
-    if(uI===0){
-    if(cp.respRate===0){
-        pushHistory('step-respiration'); 
-    
+    // NO ALERTS logic
+    if (uI === 0) { 
+        // User selected 'Open Airway' (Absent)
+        // Regardless of actual condition, proceed to show airway result and then Final Choice
+        pushHistory('step-respiration');
         aa.classList.remove('hidden');
         aa.classList.remove('bg-red-100', 'text-red-700', 'border-red-500', 'bg-green-100', 'text-green-700', 'border-green-500', 'bg-gray-100', 'text-gray-800', 'border-gray-500');
-        
+
         const isMaster = (difficulty === 'master');
-        const sB=cp.airwayResponse;
-        
-        if(sB){
-            if(isMaster) {
+        // Determine result based on actual condition (if actually no breath, check airway response; if breath present, say present)
+        const actuallyBreathing = cp.respRate > 0;
+        const airwaySuccess = (cp.respRate === 0 && cp.airwayResponse);
+
+        if (actuallyBreathing) {
+             // User thought absent, but patient was breathing
+             if (isMaster) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
-                ame.innerHTML=`<span class="text-gray-800 font-bold">Result: Breathing started after opening airway.</span>`;
-                amz.innerHTML=`<span class="text-gray-800">結果：暢通氣道後開始呼吸。</span>`;
-            } else {
+                ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Patient is breathing.</span>`;
+                amz.innerHTML = `<span class="text-gray-800">結果：傷患有呼吸。</span>`;
+             } else {
                 aa.classList.add('bg-green-100', 'text-green-700', 'border-green-500');
-                ame.innerHTML=`<span class="text-green-800 font-bold">Result: Breathing started after opening airway.</span>`;
-                amz.innerHTML=`<span class="text-green-800">結果：暢通氣道後開始呼吸。</span>`; 
-            }
-        }else{
-            if(isMaster) {
+                ame.innerHTML = `<span class="text-green-800 font-bold">Result: Patient is breathing.</span>`;
+                amz.innerHTML = `<span class="text-green-800">結果：傷患有呼吸。</span>`; 
+             }
+        } else if (airwaySuccess) {
+             // Effectively breathing after airway
+             if (isMaster) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
-                ame.innerHTML=`<span class="text-gray-800 font-bold">Result: Still no breathing after opening airway.</span>`;
-                amz.innerHTML=`<span class="text-gray-800">結果：暢通氣道後仍無呼吸。</span>`;
-            } else {
+                ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Breathing detected/started.</span>`;
+                amz.innerHTML = `<span class="text-gray-800">結果：呼吸恢復/有呼吸。</span>`;
+             } else {
+                aa.classList.add('bg-green-100', 'text-green-700', 'border-green-500');
+                ame.innerHTML = `<span class="text-green-800 font-bold">Result: Breathing started/present.</span>`;
+                amz.innerHTML = `<span class="text-green-800">結果：開始呼吸/有呼吸 (紅色)。</span>`; 
+             }
+        } else {
+             // Still no breath
+             if (isMaster) {
+                aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
+                ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Still no breathing.</span>`;
+                amz.innerHTML = `<span class="text-gray-800">結果：仍無呼吸。</span>`;
+             } else {
                 aa.classList.add('bg-red-100', 'text-red-700', 'border-red-500');
-                ame.innerHTML=`<span class="text-red-800 font-bold">Result: Still no breathing after opening airway.</span>`;
-                amz.innerHTML=`<span class="text-red-800">結果：暢通氣道後仍無呼吸。</span>`; 
-            }
+                ame.innerHTML = `<span class="text-red-800 font-bold">Result: Still no breathing.</span>`;
+                amz.innerHTML = `<span class="text-red-800">結果：仍無呼吸 (黑色)。</span>`;
+             }
         }
-        
-        st.finalChoice.classList.remove('hidden'); 
-        st.finalChoice.scrollIntoView({behavior: 'smooth', block: 'start'}); 
-        cPT=true;
-    }else{
-        alert("觀察錯誤：傷患有呼吸。\nObservation Error: Patient is breathing.");
-        Rbs.forEach(btn=>btn.disabled=false);
-        return;
-    }
-    }else if(uI>30){
-    if(cp.respRate>30){
-        pushHistory('step-respiration');
+        // Proceed to Final Choice
         st.finalChoice.classList.remove('hidden');
         st.finalChoice.scrollIntoView({behavior: 'smooth', block: 'start'});
-        cPT=true;
-    }else{
-        alert("觀察錯誤：呼吸速率並非 > 30。\nObservation Error: Respiration rate is not > 30.");
-        Rbs.forEach(btn=>btn.disabled=false);
-        return;
-    }
-    }else{
-    if(cp.respRate>=10&&cp.respRate<=30){
+
+    } else if (uI > 30) { 
+        // User selected Fast
+        pushHistory('step-respiration');
+        // Proceed to Final Choice
+        st.finalChoice.classList.remove('hidden');
+        st.finalChoice.scrollIntoView({behavior: 'smooth', block: 'start'});
+    } else { 
+        // User selected Normal
         pushHistory('step-respiration');
         st.respiration.classList.add('hidden');
-        rc.classList.add('hidden'); 
-        pC.classList.remove('hidden'); 
+        rc.classList.add('hidden');
+        pC.classList.remove('hidden');
         st.perfusion.classList.remove('hidden');
         st.perfusion.scrollIntoView({behavior: 'smooth', block: 'start'});
-        cPT=true;
-    }else{
-        alert("觀察錯誤：呼吸速率異常。\nObservation Error: Abnormal respiration rate.");
-        Rbs.forEach(btn=>btn.disabled=false);
-        return;
-    }
     }
 }
 
-function checkPerfusion(pAOCLR,clickedButton){
-    if(clickedButton)clickedButton.blur();
-    
-    if(cp.pulsePresent===!pAOCLR){
-        if(pAOCLR){
-            pushHistory('step-perfusion');
-            const Pbs = st.perfusion.querySelectorAll('button');
-            Pbs.forEach(btn=>btn.disabled=true);
+function checkPerfusion(pAOCLR, clickedButton) {
+    if(clickedButton) clickedButton.blur();
 
-            st.finalChoice.classList.remove('hidden');
-            st.finalChoice.scrollIntoView({behavior: 'smooth', block: 'start'});
-        }else{
-            pushHistory('step-perfusion');
-            st.perfusion.classList.add('hidden');
-            pC.classList.add('hidden'); 
-            mC.classList.remove('hidden'); 
-            st.mental.classList.remove('hidden');
-            st.mental.scrollIntoView({behavior: 'smooth', block: 'start'});
-        }
-    }else{
-        alert("觀察錯誤：灌流評估不正確。\nObservation Error: Incorrect perfusion assessment.");
+    if (pAOCLR) { 
+        // User selected Abnormal (Absent/Slow) -> Go to Final Choice
+        pushHistory('step-perfusion');
+        const Pbs = st.perfusion.querySelectorAll('button');
+        Pbs.forEach(btn => btn.disabled = true);
+        st.finalChoice.classList.remove('hidden');
+        st.finalChoice.scrollIntoView({behavior: 'smooth', block: 'start'});
+    } else { 
+        // User selected Normal -> Go to Mental
+        pushHistory('step-perfusion');
+        st.perfusion.classList.add('hidden');
+        pC.classList.add('hidden');
+        mC.classList.remove('hidden');
+        st.mental.classList.remove('hidden');
+        st.mental.scrollIntoView({behavior: 'smooth', block: 'start'});
     }
 }
 
@@ -1080,7 +1082,6 @@ function renderScoreSummary() {
     let totalTimeMs = 0;
     let correctCount = 0;
     
-    // Tourniquet stats
     let bleedingTotal = 0;
     let tqCorrect = 0;
     let tqMissed = 0;
@@ -1132,7 +1133,6 @@ function renderScoreSummary() {
     document.getElementById('summary-total-patients').textContent = totalPatients;
     document.getElementById('summary-overall-accuracy').textContent = `${overallAccuracy.toFixed(1)}%`;
     
-    // Fill Tourniquet Stats
     document.getElementById('summary-bleeding-total').textContent = bleedingTotal;
     document.getElementById('summary-tq-correct').textContent = tqCorrect;
     document.getElementById('summary-tq-missed').textContent = tqMissed;
@@ -1237,6 +1237,22 @@ window.checkMental = checkMental;
 window.finalizeTriage = ft;
 window.resetGame = resetGame; 
 window.goBack = goBack; 
+window.toggleQRCode = () => {
+    const qrContainer = document.getElementById('qrcode-display');
+    const qrDiv = document.getElementById('qrcode');
+    
+    if (qrContainer.classList.contains('hidden')) {
+        qrContainer.classList.remove('hidden');
+        qrDiv.innerHTML = "";
+        new QRCode(qrDiv, {
+            text: window.location.href,
+            width: 128,
+            height: 128
+        });
+    } else {
+        qrContainer.classList.add('hidden');
+    }
+};
 
 })();
 </script>
