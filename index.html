@@ -464,6 +464,32 @@
                 </div>
             </div>
         </div>
+
+        <!-- Airway Stats (Added) -->
+        <div class="mb-6 md:mb-8 p-3 md:p-4 bg-purple-50 rounded-lg border border-purple-200">
+            <h3 class="text-lg md:text-xl font-semibold text-purple-700 mb-3 border-b border-purple-200 pb-2">
+                <i class="fa-solid fa-lungs"></i> <span class="bilingual-en">Airway Statistics</span>
+                <span class="bilingual-zh">暢通呼吸道統計</span>
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-gray-700 text-center">
+                <div class="flex flex-col">
+                    <span class="text-xs md:text-sm font-medium"><span class="bilingual-en">Apneic Cases</span><span class="bilingual-zh block">無呼吸總數</span></span>
+                    <span id="summary-airway-total" class="text-xl md:text-2xl font-extrabold text-gray-900">0</span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xs md:text-sm font-medium text-green-700"><span class="bilingual-en">Correctly Opened</span><span class="bilingual-zh block">正確執行</span></span>
+                    <span id="summary-airway-correct" class="text-xl md:text-2xl font-extrabold text-green-700">0</span>
+                </div>
+                 <div class="flex flex-col">
+                    <span class="text-xs md:text-sm font-medium text-red-600"><span class="bilingual-en">Missed (Critical)</span><span class="bilingual-zh block">漏做 (嚴重錯誤)</span></span>
+                    <span id="summary-airway-missed" class="text-xl md:text-2xl font-extrabold text-red-600">0</span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xs md:text-sm font-medium text-yellow-600"><span class="bilingual-en">Incorrectly Used</span><span class="bilingual-zh block">誤做 (不需要)</span></span>
+                    <span id="summary-airway-wrong" class="text-xl md:text-2xl font-extrabold text-yellow-600">0</span>
+                </div>
+            </div>
+        </div>
         
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 rounded-lg shadow-sm">
@@ -533,7 +559,7 @@ let timerInterval = null;
 let startTime = 0; 
 let stepHistory = []; 
 let currentTourniquetDecision = false;
-let timeLimit = 120000; 
+let timeLimit = 120000; // Default time limit per patient (2 mins)
 
 const tg={RED:{en:"RED - Immediate",zh:"紅色 - 立即",class:"red-bg", color: 'red'},YELLOW:{en:"YELLOW - Delayed",zh:"黃色 - 延遲",class:"yellow-bg", color: 'yellow'},GREEN:{en:"GREEN - Minor",zh:"綠色 - 輕微",class:"green-bg", color: 'green'},BLACK:{en:"BLACK - Deceased / Expectant",zh:"黑色 - 死亡 / 預期",class:"black-bg", color: 'black'}};
 
@@ -599,13 +625,13 @@ const pcE=document.getElementById('patient-card'),
       npb=document.getElementById('next-patient-btn'),
       fcd=document.getElementById('final-classification'),
       scoreSummaryEl = document.getElementById('score-summary'),
-      btnBack = document.getElementById('btn-back-step'),
-      triageCard = document.querySelector('.triage-card');
+      btnBack = document.getElementById('btn-back-step');
 
 const rc=document.getElementById('resp-container'),pC=document.getElementById('pulse-container'),mC=document.getElementById('mental-container');
 const timerDisplay = document.getElementById('triage-timer');
 const difficultyInfo = document.getElementById('difficulty-info');
 const newIncidentBtn = document.getElementById('new-incident-btn');
+const triageCard = document.querySelector('.triage-card');
 
 const st={
     bleeding:document.getElementById('step-bleeding'),
@@ -881,7 +907,7 @@ function gp(){
     
     cp={id:pc,gender:g,age:a,canWalk:cW,respRate:rr,pulsePresent:pp,canObey:cO,airwayResponse:aR,correctTriage:fc, abnormalPulse: selectedAbnormal, massiveBleeding: bleeding, injury: injuryText, hasOpenedAirway: false};
     
-    currentTourniquetDecision = false; 
+    currentTourniquetDecision = false; // Reset for new patient
 }
 
 function spU(){
@@ -900,8 +926,10 @@ function spU(){
     const colorGreen = isMaster ? 'text-gray-900' : 'text-green-700';
     const colorRed = isMaster ? 'text-gray-900' : 'text-red-700';
 
+    // Override colors to black/gray for status display as per request
     const statusTextColor = 'text-gray-900'; 
 
+    // Updated logic for Status Box display: Simple text only
     let canWalkTextEn = "Can Walk";
     let canWalkTextZh = "能走動";
     let cannotWalkTextEn = "Cannot Walk";
@@ -912,14 +940,37 @@ function spU(){
     rrZN.textContent='';
     if(cp.respRate===0){rrD.textContent='Absent';rrZN.textContent='（無呼吸）';}else{rrD.textContent=cp.respRate;rrZN.textContent='';}
     
-    const abnormalEn = cp.abnormalPulse ? `${cp.abnormalPulse.en} / CRT > 2s` : "Absent / CRT > 2s";
-    const abnormalZh = cp.abnormalPulse ? `${cp.abnormalPulse.zh} / CRT > 2秒` : "橈動脈摸不到 / CRT > 2秒";
+    // --- 修正：針對無呼吸患者，強制顯示「無脈搏」與「無意識」 ---
+    let pulseEn, pulseZh;
+    if (cp.respRate === 0) {
+        pulseEn = "Absent";
+        pulseZh = "無脈搏";
+    } else if (cp.pulsePresent) {
+        pulseEn = "Present / CRT ≤ 2s";
+        pulseZh = "有脈搏 / CRT ≤ 2秒";
+    } else {
+        pulseEn = cp.abnormalPulse ? `${cp.abnormalPulse.en} / CRT > 2s` : "Absent / CRT > 2s";
+        pulseZh = cp.abnormalPulse ? `${cp.abnormalPulse.zh} / CRT > 2秒` : "橈動脈摸不到 / CRT > 2秒";
+    }
 
-    document.getElementById('pulse-status').innerHTML=cp.pulsePresent?
-        `<span class="bilingual-en ${statusTextColor} font-bold">Present / CRT ≤ 2s</span><span class="bilingual-zh block">有脈搏 / CRT ≤ 2秒</span>`:
-        `<span class="bilingual-en ${statusTextColor} font-bold">${abnormalEn}</span><span class="bilingual-zh block">${abnormalZh}</span>`;
+    document.getElementById('pulse-status').innerHTML = 
+        `<span class="bilingual-en ${statusTextColor} font-bold">${pulseEn}</span><span class="bilingual-zh block">${pulseZh}</span>`;
     
-    document.getElementById('mental-status-display').innerHTML=cp.canObey?`<span class="bilingual-en ${statusTextColor} font-bold">Can Obey Commands (Alert/Verbal)</span><span class="bilingual-zh block">可遵從指令 (清醒/聲音)</span>`:`<span class="bilingual-en ${statusTextColor} font-bold">Cannot Obey Commands (Painful/Unresponsive)</span><span class="bilingual-zh block">無法遵從指令 (疼痛/無反應)</span>`;
+    let mentalEn, mentalZh;
+    if (cp.respRate === 0) {
+        mentalEn = "Unconscious";
+        mentalZh = "無意識";
+    } else if (cp.canObey) {
+        mentalEn = "Can Obey Commands (Alert/Verbal)";
+        mentalZh = "可遵從指令 (清醒/聲音)";
+    } else {
+        mentalEn = "Cannot Obey Commands (Painful/Unresponsive)";
+        mentalZh = "無法遵從指令 (疼痛/無反應)";
+    }
+
+    document.getElementById('mental-status-display').innerHTML = 
+        `<span class="bilingual-en ${statusTextColor} font-bold">${mentalEn}</span><span class="bilingual-zh block">${mentalZh}</span>`;
+    // --- 修正結束 ---
     
     rc.classList.add('hidden');
     pC.classList.add('hidden');
@@ -930,7 +981,7 @@ function spU(){
     Object.values(st).forEach(s=>{s.querySelectorAll('button').forEach(btn=>{btn.disabled=false;});});
     st.ambulatory.classList.remove('hidden');
     
-    triageCard.classList.remove('time-up-alarm'); 
+    triageCard.classList.remove('time-up-alarm'); // Clear alarm on new patient
 
     stepHistory = [];
     updateBackBtn();
@@ -950,6 +1001,9 @@ function ft(chosenCategory,clickedButton){
     let isCorrect = chosenCategory === cp.correctTriage;
     let customFailMsg = null;
 
+    // Critical Error Check: Patient has NO breathing AND user did NOT open airway
+    // NOTE: If airway response was successful, correctTriage is RED. If not successful, BLACK.
+    // But if user skipped "Open Airway", they likely guessed.
     if (cp.respRate === 0 && !cp.hasOpenedAirway) {
         isCorrect = false;
         customFailMsg = {
@@ -966,7 +1020,10 @@ function ft(chosenCategory,clickedButton){
         chosenCategory: chosenCategory,
         isCorrect: isCorrect,
         bleedingPresent: cp.massiveBleeding,
-        tourniquetApplied: currentTourniquetDecision
+        tourniquetApplied: currentTourniquetDecision,
+        // Add airway info for stats
+        respRate: cp.respRate,
+        airwayOpened: cp.hasOpenedAirway
     });
     
     stR(chosenCategory, isCorrect, elapsedTimeMs, customFailMsg);
@@ -974,7 +1031,7 @@ function ft(chosenCategory,clickedButton){
 
 function stR(category, isCorrect, elapsedTimeMs, customFailMsg = null){
     stopTimer(); 
-    triageCard.classList.remove('time-up-alarm'); 
+    triageCard.classList.remove('time-up-alarm'); // Clear alarm on result
     
     const displayTime = formatTime(elapsedTimeMs);
     
@@ -982,6 +1039,7 @@ function stR(category, isCorrect, elapsedTimeMs, customFailMsg = null){
     let ft = '';
 
     if (customFailMsg) {
+        // Display custom failure message for critical procedural errors
         ft = `<span class="bilingual-en font-bold text-red-800">${customFailMsg.en} (Time: ${displayTime})</span>
               <span class="bilingual-zh block font-bold text-red-800">❌ ${customFailMsg.zh} (用時: ${displayTime})</span>`;
     } else if (isCorrect) {
@@ -1026,9 +1084,11 @@ function checkBleeding(isTourniquet, clickedButton) {
     
     currentTourniquetDecision = isTourniquet;
     
+    // Always proceed to Respiration, regardless of correctness (NO ALERTS)
     pushHistory('step-bleeding');
     st.bleeding.classList.add('hidden');
     
+    // Show Respiration Vitals and Step
     rc.classList.remove('hidden'); 
     st.respiration.classList.remove('hidden');
     st.respiration.scrollIntoView({behavior: 'smooth', block: 'start'});
@@ -1039,18 +1099,22 @@ function checkRespiration(uI, clickedButton) {
     const Rbs = st.respiration.querySelectorAll('.grid > button');
     Rbs.forEach(btn => btn.disabled = true);
 
+    // NO ALERTS logic
     if (uI === 0) { 
-        cp.hasOpenedAirway = true; 
+        // User selected 'Open Airway' (Absent)
+        cp.hasOpenedAirway = true; // Mark airway as opened
 
         pushHistory('step-respiration');
         aa.classList.remove('hidden');
         aa.classList.remove('bg-red-100', 'text-red-700', 'border-red-500', 'bg-green-100', 'text-green-700', 'border-green-500', 'bg-gray-100', 'text-gray-800', 'border-gray-500');
 
         const isAdvanced = (difficulty === 'master' || difficulty === 'pro');
+        // Determine result based on actual condition (if actually no breath, check airway response; if breath present, say present)
         const actuallyBreathing = cp.respRate > 0;
         const airwaySuccess = (cp.respRate === 0 && cp.airwayResponse);
 
         if (actuallyBreathing) {
+             // User thought absent, but patient was breathing
              if (isAdvanced) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Patient is breathing.</span>`;
@@ -1061,6 +1125,7 @@ function checkRespiration(uI, clickedButton) {
                 amz.innerHTML = `<span class="text-green-800">結果：傷患有呼吸 (紅色)。</span>`; 
              }
         } else if (airwaySuccess) {
+             // Effectively breathing after airway
              if (isAdvanced) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Breathing detected/started.</span>`;
@@ -1071,6 +1136,7 @@ function checkRespiration(uI, clickedButton) {
                 amz.innerHTML = `<span class="text-green-800">結果：開始呼吸/有呼吸 (紅色)。</span>`; 
              }
         } else {
+             // Still no breath
              if (isAdvanced) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Still no breathing.</span>`;
@@ -1081,14 +1147,18 @@ function checkRespiration(uI, clickedButton) {
                 amz.innerHTML = `<span class="text-red-800">結果：仍無呼吸 (黑色)。</span>`;
              }
         }
+        // Proceed to Final Choice
         st.finalChoice.classList.remove('hidden');
         st.finalChoice.scrollIntoView({behavior: 'smooth', block: 'start'});
 
     } else if (uI > 30) { 
+        // User selected Fast
         pushHistory('step-respiration');
+        // Proceed to Final Choice
         st.finalChoice.classList.remove('hidden');
         st.finalChoice.scrollIntoView({behavior: 'smooth', block: 'start'});
     } else { 
+        // User selected Normal
         pushHistory('step-respiration');
         st.respiration.classList.add('hidden');
         rc.classList.add('hidden');
@@ -1102,12 +1172,14 @@ function checkPerfusion(pAOCLR, clickedButton) {
     if(clickedButton) clickedButton.blur();
 
     if (pAOCLR) { 
+        // User selected Abnormal (Absent/Slow) -> Go to Final Choice
         pushHistory('step-perfusion');
         const Pbs = st.perfusion.querySelectorAll('button');
         Pbs.forEach(btn => btn.disabled = true);
         st.finalChoice.classList.remove('hidden');
         st.finalChoice.scrollIntoView({behavior: 'smooth', block: 'start'});
     } else { 
+        // User selected Normal -> Go to Mental
         pushHistory('step-perfusion');
         st.perfusion.classList.add('hidden');
         pC.classList.add('hidden');
@@ -1139,6 +1211,11 @@ function renderScoreSummary() {
     let tqCorrect = 0;
     let tqMissed = 0;
     let tqWrong = 0;
+
+    let airwayTotal = 0;
+    let airwayCorrect = 0;
+    let airwayMissed = 0;
+    let airwayWrong = 0;
     
     const categoryStats = {
         RED: { total: 0, correct: 0 },
@@ -1161,7 +1238,7 @@ function renderScoreSummary() {
             }
         }
         
-        // Calculate bleeding stats
+        // Bleeding stats
         if (record.bleedingPresent) {
             bleedingTotal++;
             if (record.tourniquetApplied) {
@@ -1172,6 +1249,21 @@ function renderScoreSummary() {
         } else {
             if (record.tourniquetApplied) {
                 tqWrong++;
+            }
+        }
+
+        // Airway stats
+        const needAirway = (record.respRate === 0);
+        if (needAirway) {
+            airwayTotal++;
+            if (record.airwayOpened) {
+                airwayCorrect++;
+            } else {
+                airwayMissed++;
+            }
+        } else {
+            if (record.airwayOpened) {
+                airwayWrong++;
             }
         }
     });
@@ -1190,6 +1282,11 @@ function renderScoreSummary() {
     document.getElementById('summary-tq-correct').textContent = tqCorrect;
     document.getElementById('summary-tq-missed').textContent = tqMissed;
     document.getElementById('summary-tq-wrong').textContent = tqWrong;
+
+    document.getElementById('summary-airway-total').textContent = airwayTotal;
+    document.getElementById('summary-airway-correct').textContent = airwayCorrect;
+    document.getElementById('summary-airway-missed').textContent = airwayMissed;
+    document.getElementById('summary-airway-wrong').textContent = airwayWrong;
 
     const tableBody = document.getElementById('summary-table-body');
     tableBody.innerHTML = ''; 
