@@ -27,9 +27,6 @@
             padding: 10px; 
             font-size: 16px; 
             user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
         }
         .bilingual-en { font-weight: 700; }
         .bilingual-zh { font-size: 1.05em; color: inherit; } 
@@ -155,6 +152,11 @@
         .back-button:disabled {
             opacity: 0;
             pointer-events: none;
+        }
+        /* JumpSTART specific */
+        .jumpstart-section {
+            background-color: #eef2ff;
+            border-left: 4px solid #6366f1;
         }
     </style>
 </head>
@@ -327,6 +329,47 @@
                     <span id="airway-message-en" class="bilingual-en block mt-1 text-sm md:text-base"></span>
                     <span id="airway-message-zh" class="bilingual-zh block mt-1 text-sm md:text-base"></span>
                 </div>
+
+                <!-- JumpSTART Special Sections (Hidden by default) -->
+                
+                <!-- JumpSTART Pulse Check (for apneic kids) -->
+                <div id="step-jumpstart-check-pulse" class="hidden mt-4 pt-4 border-t border-gray-300 jumpstart-section p-3 rounded">
+                    <div class="mb-3">
+                        <p class="font-bold text-indigo-800">JumpSTART (Child): Still no breathing.</p>
+                        <p class="text-sm text-indigo-700">Check for peripheral pulse.</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="btn-js-check-pulse" onclick="onCheckPulse(this)" class="action-button bg-indigo-600 hover:bg-indigo-700 text-white flex-1">
+                            <span class="bilingual-en">Check Pulse</span>
+                            <span class="bilingual-zh block">檢查脈搏</span>
+                        </button>
+                        <button id="btn-js-mark-black-1" onclick="onMarkBlackSkip(this)" class="action-button bg-gray-600 hover:bg-gray-700 text-white flex-1">
+                            <span class="bilingual-en">No Breathing → Black</span>
+                            <span class="bilingual-zh block">無呼吸 → 判定黑色</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Result Area for Pulse Check -->
+                    <div id="js-pulse-result" class="hidden mt-3 p-3 bg-white border border-gray-200 rounded shadow-sm">
+                        <p id="js-pulse-text" class="font-bold text-lg mb-3 text-center"></p>
+                        <!-- ADDED ID for buttons -->
+                        <div class="flex gap-3 hidden" id="js-pulse-options">
+                            <button id="btn-js-rescue-breaths" onclick="onRescueBreaths(this)" class="action-button bg-green-600 hover:bg-green-700 text-white flex-1">
+                                <span class="bilingual-en">Give 5 Rescue Breaths</span>
+                                <span class="bilingual-zh block">給予 5 次吹氣</span>
+                            </button>
+                            <button id="btn-js-mark-black-2" onclick="onMarkBlackFinal(this)" class="action-button bg-gray-600 hover:bg-gray-700 text-white flex-1">
+                                <span class="bilingual-en">Mark Deceased (Black)</span>
+                                <span class="bilingual-zh block">判定黑色</span>
+                            </button>
+                        </div>
+                        
+                        <!-- NEW: Breath Result Area -->
+                        <div id="js-breath-result" class="hidden mt-3 p-3 border-l-4">
+                            <p id="js-breath-text" class="font-bold text-lg"></p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Step 4: Perfusion -->
@@ -366,19 +409,19 @@
                 <div class="step-heading">6. <span class="bilingual-en">Final Classification</span> <span class="bilingual-zh">最終分類確認</span></div>
                 <p class="mb-3 text-gray-600 text-sm md:text-base"><span class="bilingual-en">Determine final category:</span><span class="bilingual-zh">請確認傷患的最終分類：</span></p>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <button onclick="finalizeTriage(Triage.RED, this)" class="action-button red-bg text-white final-triage-button">
+                    <button onclick="finalizeTriage('RED', this)" class="action-button red-bg text-white final-triage-button">
                         <span class="bilingual-en">RED</span>
                         <span class="bilingual-zh block">紅色 (立即)</span>
                     </button>
-                    <button onclick="finalizeTriage(Triage.YELLOW, this)" class="action-button yellow-bg text-gray-900 final-triage-button">
+                    <button onclick="finalizeTriage('YELLOW', this)" class="action-button yellow-bg text-gray-900 final-triage-button">
                         <span class="bilingual-en">YELLOW</span>
                         <span class="bilingual-zh block">黃色 (延遲)</span>
                     </button>
-                    <button onclick="finalizeTriage(Triage.GREEN, this)" class="action-button green-bg text-white final-triage-button">
+                    <button onclick="finalizeTriage('GREEN', this)" class="action-button green-bg text-white final-triage-button">
                         <span class="bilingual-en">GREEN</span>
                         <span class="bilingual-zh block">綠色 (輕微)</span>
                     </button>
-                    <button onclick="finalizeTriage(Triage.BLACK, this)" class="action-button black-bg text-white final-triage-button">
+                    <button onclick="finalizeTriage('BLACK', this)" class="action-button black-bg text-white final-triage-button">
                         <span class="bilingual-en">BLACK</span>
                         <span class="bilingual-zh block">黑色 (死亡)</span>
                     </button>
@@ -525,6 +568,11 @@
                     <span class="text-lg font-extrabold">偏好:</span>依現場救護能量及現場狀況(如孕婦可升一級,黑色如未明顯死亡救護能量充足也可後送...等)
                 </span>
             </p>
+            <div class="mt-4 text-sm text-gray-500 border-t border-orange-200 pt-2">
+                <p class="font-bold">參考文獻 (References):</p>
+                <p>1. Prehospital Trauma Life Support, Tenth Edition</p>
+                <p>2. 衛生福利部 高級救護技術員教科書第二版</p>
+            </div>
         </div>
         <div class="mt-8 text-center">
              <button onclick="resetGame()" class="action-button bg-blue-600 hover:bg-blue-700 text-white shadow-md w-full sm:w-auto">
@@ -559,55 +607,26 @@ let timerInterval = null;
 let startTime = 0; 
 let stepHistory = []; 
 let currentTourniquetDecision = false;
-let timeLimit = 120000; // Default time limit per patient (2 mins)
+let timeLimit = 120000; 
 
 const tg={RED:{en:"RED - Immediate",zh:"紅色 - 立即",class:"red-bg", color: 'red'},YELLOW:{en:"YELLOW - Delayed",zh:"黃色 - 延遲",class:"yellow-bg", color: 'yellow'},GREEN:{en:"GREEN - Minor",zh:"綠色 - 輕微",class:"green-bg", color: 'green'},BLACK:{en:"BLACK - Deceased / Expectant",zh:"黑色 - 死亡 / 預期",class:"black-bg", color: 'black'}};
 
 const buttonTextConfig = {
-    "btn-bleed-tourniquet": {
-        full: { en: "Apply Tourniquet", zh: "使用止血帶 → 繼續評估" },
-        clean: { en: "Apply Tourniquet", zh: "使用止血帶" }
-    },
-    "btn-bleed-none": {
-        full: { en: "No Tourniquet", zh: "不使用止血帶 → 繼續評估" },
-        clean: { en: "No Tourniquet", zh: "不使用止血帶" }
-    },
-    "btn-amb-can": {
-        full: { en: "GREEN", zh: "綠色" },
-        clean: { en: "GREEN", zh: "綠色" }
-    },
-    "btn-amb-cannot": {
-        full: { en: "Assess Further", zh: "繼續評估" },
-        clean: { en: "Assess Further", zh: "繼續評估" }
-    },
-    "btn-resp-absent": {
-        full: { en: "Open Airway", zh: "暢通呼吸道" },
-        clean: { en: "Open Airway", zh: "暢通呼吸道" }
-    },
-    "btn-resp-fast": {
-        full: { en: "Abnormal (>30 or <10)", zh: "過快(>30/min)或過慢(<10/min) → 最終確認" },
-        clean: { en: "Abnormal", zh: "異常" }
-    },
-    "btn-resp-normal": {
-        full: { en: "Normal (10-30/min)", zh: "正常 → 繼續 P" },
-        clean: { en: "Normal", zh: "正常" }
-    },
-    "btn-perf-absent": {
-        full: { en: "Absent Pulse / CRT > 2s", zh: "無脈搏或 CRT > 2秒 → 最終確認" },
-        clean: { en: "Absent / Slow", zh: "無脈搏 / 充填慢" }
-    },
-    "btn-perf-present": {
-        full: { en: "Present Pulse / CRT ≤ 2s", zh: "有脈搏且 CRT ≤ 2秒 → 繼續 M" },
-        clean: { en: "Present / Normal", zh: "有脈搏 / 充填正常" }
-    },
-    "btn-ment-cannot": {
-        full: { en: "Cannot Follow Commands", zh: "無法遵從指令 → 最終確認" },
-        clean: { en: "Cannot Follow", zh: "無法遵從指令" }
-    },
-    "btn-ment-can": {
-        full: { en: "Can Follow Commands", zh: "可遵從指令 → 最終確認" },
-        clean: { en: "Can Follow", zh: "可遵從指令" }
-    }
+    "btn-bleed-tourniquet": { full: { en: "Apply Tourniquet", zh: "使用止血帶 → 繼續評估" }, clean: { en: "Apply Tourniquet", zh: "使用止血帶" } },
+    "btn-bleed-none": { full: { en: "No Tourniquet", zh: "不使用止血帶 → 繼續評估" }, clean: { en: "No Tourniquet", zh: "不使用止血帶" } },
+    "btn-amb-can": { full: { en: "GREEN", zh: "綠色" }, clean: { en: "GREEN", zh: "綠色" } },
+    "btn-amb-cannot": { full: { en: "Assess Further", zh: "繼續評估" }, clean: { en: "Assess Further", zh: "繼續評估" } },
+    "btn-resp-absent": { full: { en: "Open Airway", zh: "暢通呼吸道" }, clean: { en: "Open Airway", zh: "暢通呼吸道" } },
+    "btn-resp-fast": { full: { en: "Abnormal (>30 or <10)", zh: "過快(>30/min)或過慢(<10/min) → 最終確認" }, clean: { en: "Abnormal", zh: "異常" } },
+    "btn-resp-normal": { full: { en: "Normal (10-30/min)", zh: "正常 → 繼續 P" }, clean: { en: "Normal", zh: "正常" } },
+    "btn-perf-absent": { full: { en: "Absent Pulse / CRT > 2s", zh: "無脈搏或 CRT > 2秒 → 最終確認" }, clean: { en: "Absent / Slow", zh: "無脈搏 / 充填慢" } },
+    "btn-perf-present": { full: { en: "Present Pulse / CRT ≤ 2s", zh: "有脈搏且 CRT ≤ 2秒 → 繼續 M" }, clean: { en: "Present / Normal", zh: "有脈搏 / 充填正常" } },
+    "btn-ment-cannot": { full: { en: "Cannot Follow Commands", zh: "無法遵從指令 → 最終確認" }, clean: { en: "Cannot Follow", zh: "無法遵從指令" } },
+    "btn-ment-can": { full: { en: "Can Follow Commands", zh: "可遵從指令 → 最終確認" }, clean: { en: "Can Follow", zh: "可遵從指令" } },
+    "btn-js-check-pulse": { full: { en: "Check Pulse", zh: "檢查脈搏" }, clean: { en: "Check Pulse", zh: "檢查脈搏" } },
+    "btn-js-mark-black-1": { full: { en: "No Breathing → Black", zh: "無呼吸 → 判定黑色" }, clean: { en: "No Breathing", zh: "無呼吸" } },
+    "btn-js-rescue-breaths": { full: { en: "Give 5 Rescue Breaths", zh: "給予 5 次吹氣" }, clean: { en: "5 Breaths", zh: "給予吹氣" } },
+    "btn-js-mark-black-2": { full: { en: "Mark Deceased (Black)", zh: "判定黑色" }, clean: { en: "Black", zh: "黑色" } }
 };
 
 const pcE=document.getElementById('patient-card'),
@@ -626,7 +645,12 @@ const pcE=document.getElementById('patient-card'),
       fcd=document.getElementById('final-classification'),
       scoreSummaryEl = document.getElementById('score-summary'),
       btnBack = document.getElementById('btn-back-step'),
-      triageCard = document.querySelector('.triage-card');
+      triageCard = document.querySelector('.triage-card'),
+      jsPulseResultDiv = document.getElementById('js-pulse-result'),
+      jsPulseText = document.getElementById('js-pulse-text'),
+      jsBreathResultDiv = document.getElementById('js-breath-result'),
+      jsBreathText = document.getElementById('js-breath-text'),
+      jsPulseOptions = document.getElementById('js-pulse-options');
 
 const rc=document.getElementById('resp-container'),pC=document.getElementById('pulse-container'),mC=document.getElementById('mental-container');
 const timerDisplay = document.getElementById('triage-timer');
@@ -640,7 +664,9 @@ const st={
     perfusion:document.getElementById('step-perfusion'),
     mental:document.getElementById('step-mental'),
     finalChoice:document.getElementById('step-final-choice'),
-    conclusion:document.getElementById('step-conclusion')
+    conclusion:document.getElementById('step-conclusion'),
+    jumpStartPulse: document.getElementById('step-jumpstart-check-pulse'),
+    jumpStartBreaths: document.getElementById('step-jumpstart-rescue-breaths')
 };
 
 function formatTime(ms) {
@@ -676,10 +702,7 @@ function setDifficulty(level, clickedButton) {
 }
 
 function applyDifficultyStyles(level) {
-    const allColorClasses = [
-        'bg-green-500', 'hover:bg-green-600', 'bg-red-500', 'hover:bg-red-600', 
-        'bg-gray-400', 'hover:bg-gray-500', 'bg-yellow-500', 'hover:bg-yellow-600'
-    ];
+    const allColorClasses = ['bg-green-500', 'hover:bg-green-600', 'bg-red-500', 'hover:bg-red-600', 'bg-gray-400', 'hover:bg-gray-500', 'bg-yellow-500', 'hover:bg-yellow-600'];
     
     const beginnerColorMap = [
         { id: 'btn-bleed-tourniquet', classes: ['bg-gray-600', 'hover:bg-gray-700'] }, 
@@ -692,24 +715,39 @@ function applyDifficultyStyles(level) {
         { id: 'btn-perf-absent', classes: ['bg-red-500', 'hover:bg-red-600'] },
         { id: 'btn-perf-present', classes: ['bg-green-500', 'hover:bg-green-600'] },
         { id: 'btn-ment-cannot', classes: ['bg-red-500', 'hover:bg-red-600'] },
-        { id: 'btn-ment-can', classes: ['bg-yellow-500', 'hover:bg-yellow-600'] }
+        { id: 'btn-ment-can', classes: ['bg-yellow-500', 'hover:bg-yellow-600'] },
+        { id: 'btn-js-check-pulse', classes: ['bg-green-500', 'hover:bg-green-600'] },
+        { id: 'btn-js-mark-black-1', classes: ['bg-gray-600', 'hover:bg-gray-700'] },
+        { id: 'btn-js-rescue-breaths', classes: ['bg-green-500', 'hover:bg-green-600'] },
+        { id: 'btn-js-mark-black-2', classes: ['bg-gray-600', 'hover:bg-gray-700'] } 
     ];
 
-    const triageSteps = [st.bleeding, st.ambulatory, st.respiration, st.perfusion, st.mental];
-    
-    triageSteps.forEach(step => {
+    const allSteps = Object.values(st);
+    allSteps.forEach(step => {
+        if (!step) return;
         const buttons = step.querySelectorAll('.action-button:not(.rpm-button)');
         
         buttons.forEach((btn) => {
             const btnId = btn.id;
             btn.classList.remove(...allColorClasses, 'pro-mode-button');
             
-            if (level === 'pro' || level === 'master') {
-                btn.classList.add('pro-mode-button');
+            // Logic to determine if we apply pro-mode-button
+            // EXCEPTION: Final Triage Buttons OR 'btn-amb-can' should retain color
+            const isException = (btn.classList.contains('final-triage-button') || btnId === 'btn-amb-can');
+            
+            if (!isException) {
+                if (level === 'pro' || level === 'master') {
+                    btn.classList.add('pro-mode-button');
+                } else {
+                    const colorEntry = beginnerColorMap.find(entry => entry.id === btnId);
+                    if (colorEntry) {
+                        btn.classList.add(...colorEntry.classes);
+                    }
+                }
             } else {
-                const colorEntry = beginnerColorMap.find(entry => entry.id === btnId);
-                if (colorEntry) {
-                    btn.classList.add(...colorEntry.classes);
+                // Ensure 'btn-amb-can' is green
+                if (btnId === 'btn-amb-can') {
+                    btn.classList.add('bg-green-500', 'hover:bg-green-600');
                 }
             }
 
@@ -723,222 +761,159 @@ function applyDifficultyStyles(level) {
                 `;
             }
         });
-        
-        const rpmButton = step.querySelector('.rpm-button');
+         const rpmButton = step.querySelector('.rpm-button');
         if(rpmButton && rpmButton.id === 'btn-amb-cannot') {
              if (level === 'pro' || level === 'master') {
                  rpmButton.classList.add('pro-mode-button');
              } else {
                  rpmButton.classList.remove('pro-mode-button');
              }
-
              const config = buttonTextConfig['btn-amb-cannot'];
              const textData = (level === 'master') ? config.clean : config.full;
-             rpmButton.innerHTML = `
-                <span class="bilingual-en">${textData.en}</span>
-                <span class="bilingual-zh block">${textData.zh}</span>
-             `;
+             rpmButton.innerHTML = `<span class="bilingual-en">${textData.en}</span><span class="bilingual-zh block">${textData.zh}</span>`;
         }
     });
 }
 
-function si(){
-    if (!difficulty) {
-        difficultyInfo.innerHTML = '<span class="bilingual-en text-red-600 font-bold">Error: Please select a difficulty level first!</span><span class="bilingual-zh block mt-1 text-red-600">錯誤：請先選擇一個難度等級！</span>';
-        return;
-    }
-    
-    stopTimer(); 
-    scoreRecords = []; 
-    pc=0;go=false;
-    
-    mT.classList.add('hidden');
-    sc.classList.add('hidden');
-    document.getElementById('difficulty-selection').classList.add('hidden'); 
-    scoreSummaryEl.classList.add('hidden'); 
-    pcE.classList.remove('hidden');
-
-    sd.innerHTML=`<span class="bilingual-en">Incident Active: Triage in Progress (${TOTAL_PATIENTS} Patients)</span><span class="bilingual-zh block mt-1">事件啟動：檢傷進行中 (${TOTAL_PATIENTS} 位傷患)</span>`;
-    
-    applyDifficultyStyles(difficulty);
-    
-    nP();
-}
-
-function startTimer() {
-    stopTimer(); 
-    startTime = performance.now(); 
-    
-    timerDisplay.textContent = formatTime(timeLimit);
-    timerDisplay.classList.remove('text-red-800'); 
-    triageCard.classList.remove('time-up-alarm'); 
-
-    timerInterval = setInterval(() => {
-        const elapsed = performance.now() - startTime;
-        let remaining = timeLimit - elapsed;
-        
-        if (remaining < 0) remaining = 0;
-        
-        timerDisplay.textContent = formatTime(remaining);
-        
-        if (remaining === 0) {
-            timerDisplay.classList.add('text-red-800');
-            triageCard.classList.add('time-up-alarm'); 
-        }
-    }, 100); 
-}
-
-function stopTimer() {
-    if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-    }
-}
-
-function updateBackBtn() {
-    if (stepHistory.length > 0) {
-        btnBack.classList.remove('hidden');
-    } else {
-        btnBack.classList.add('hidden');
-    }
-}
-
-function pushHistory(stepId) {
-    stepHistory.push(stepId);
-    updateBackBtn();
-}
-
 function goBack() {
     if (stepHistory.length === 0) return;
-    
     const prevStepId = stepHistory.pop();
-    
-    Object.values(st).forEach(s => s.classList.add('hidden'));
-    
+    Object.values(st).forEach(s => { if(s) s.classList.add('hidden'); });
     const prevStepElement = document.getElementById(prevStepId);
-    if (prevStepElement) {
-        prevStepElement.classList.remove('hidden');
-    }
+    if (prevStepElement) prevStepElement.classList.remove('hidden');
     
-    if (prevStepId === 'step-bleeding') {
-        rc.classList.add('hidden');
-        pC.classList.add('hidden');
-        mC.classList.add('hidden');
-    } else if (prevStepId === 'step-ambulatory') {
-        rc.classList.add('hidden');
-        pC.classList.add('hidden');
-        mC.classList.add('hidden');
-    } else if (prevStepId === 'step-respiration') {
+    if (prevStepId === 'step-respiration') {
         const Rbs = st.respiration.querySelectorAll('.grid > button');
         Rbs.forEach(btn => btn.disabled = false);
-        aa.classList.add('hidden'); 
-        
-        rc.classList.remove('hidden');
-        pC.classList.add('hidden');
-        mC.classList.add('hidden');
-    } else if (prevStepId === 'step-perfusion') {
-        const Pbs = st.perfusion.querySelectorAll('button');
-        Pbs.forEach(btn => btn.disabled = false);
-
-        rc.classList.remove('hidden'); 
-        pC.classList.remove('hidden'); 
-        mC.classList.add('hidden');
-    } else if (prevStepId === 'step-mental') {
-        rc.classList.remove('hidden');
-        pC.classList.remove('hidden');
-        mC.classList.remove('hidden');
+        aa.classList.add('hidden');
+        aa.className = "mt-4 p-3 border-l-4 hidden";
+    }
+    
+    if (prevStepId === 'step-jumpstart-check-pulse') {
+         jsPulseResultDiv.classList.add('hidden');
+         const btns = st.jumpStartPulse.querySelectorAll('button');
+         btns.forEach(b => b.disabled = false);
+         if(jsBreathResultDiv) jsBreathResultDiv.classList.add('hidden');
     }
 
+    if (prevStepId === 'step-respiration' || prevStepId === 'step-jumpstart-check-pulse' || prevStepId === 'step-jumpstart-rescue-breaths') {
+        rc.classList.remove('hidden');
+    }
     updateBackBtn();
 }
+
+function si(){ if (!difficulty) return; stopTimer(); scoreRecords = []; pc=0;go=false; mT.classList.add('hidden'); sc.classList.add('hidden'); document.getElementById('difficulty-selection').classList.add('hidden'); scoreSummaryEl.classList.add('hidden'); pcE.classList.remove('hidden'); sd.innerHTML=`<span class="bilingual-en">Incident Active</span><span class="bilingual-zh block mt-1">事件啟動</span>`; applyDifficultyStyles(difficulty); nP(); }
+function startTimer() { stopTimer(); startTime = performance.now(); timerDisplay.textContent = formatTime(timeLimit); timerDisplay.classList.remove('text-red-800'); triageCard.classList.remove('time-up-alarm'); timerInterval = setInterval(() => { const elapsed = performance.now() - startTime; let remaining = timeLimit - elapsed; if (remaining < 0) remaining = 0; timerDisplay.textContent = formatTime(remaining); if (remaining === 0) { timerDisplay.classList.add('text-red-800'); triageCard.classList.add('time-up-alarm'); } }, 100); }
+function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
+function updateBackBtn() { if (stepHistory.length > 0) { btnBack.classList.remove('hidden'); } else { btnBack.classList.add('hidden'); } }
+function pushHistory(stepId) { stepHistory.push(stepId); updateBackBtn(); }
+
 
 function gp(){
     pc++;
-    const gs=[{en:"Male",zh:"男性"},{en:"Female",zh:"女性"}];const as=['25','35','50','65','42','28','70','19','30','45','55','60'];
-    const g=gs[Math.floor(Math.random()*gs.length)];const a=as[Math.floor(Math.random()*as.length)];
-    let cW=false,rr=0,pp=true,cO=true,fc=null;
-    const aR=Math.random()<0.5;
+    const scenario = Math.floor(Math.random() * 13);
     
+    // Declare all variables at the top level of the function
+    let g, a;
+    let cW=false, rr=0, pp=true, cO=true, fc=null;
     let bleeding = false;
     let injuryText = {en: "Minor abrasions", zh: "輕微擦傷"}; 
     let tqReq = false;
+    let isPediatric = false;
     
-    const scenario=Math.floor(Math.random() * 10); 
-    
+    let jsPulse = false; 
+    let jsRescue = false; 
+    let airwayRes = false;
     let selectedAbnormal = null;
+    let airwayWorks, hasPulse, breathsWork; // temp vars for case 12
+
+    // Set random Gender and Adult Age
+    const gs=[{en:"Male",zh:"男性"},{en:"Female",zh:"女性"}];
+    g = gs[Math.floor(Math.random()*gs.length)];
+    a = Math.floor(Math.random() * 50) + 15; 
+
+    // Random default values for sub-logic
+    jsPulse = Math.random() < 0.5; 
+    jsRescue = Math.random() < 0.5; 
+    airwayRes = (Math.random() < 0.5);
 
     switch(scenario){
-    case 0:
-        cW=true;rr=15+Math.floor(Math.random()*10);pp=true;cO=true;fc=tg.GREEN;
-        injuryText = {en: "Scrapes on arms", zh: "手臂擦傷"};
-        break;
-    case 1:
-        cW=false;rr=0;
-        pp=false; 
-        cO=false; 
-        if(aR){fc=tg.RED;}else{fc=tg.BLACK;}
-        injuryText = {en: "Unconscious, head trauma", zh: "意識不清，頭部外傷"};
-        break;
-    case 2:
-        cW=false;rr=35+Math.floor(Math.random()*5);pp=true;cO=true;fc=tg.RED;
-        injuryText = {en: "Chest pain, difficulty breathing", zh: "胸痛，呼吸困難"};
-        break;
-    case 3:
-        cW=false;rr=15+Math.floor(Math.random()*10);pp=false;cO=true;fc=tg.RED;
-        injuryText = {en: "Pale skin, weak pulse", zh: "皮膚蒼白，脈搏微弱"};
-        break;
-    case 4:
-        cW=false;rr=15+Math.floor(Math.random()*10);pp=true;cO=false;fc=tg.RED;
-        injuryText = {en: "Confused, head injury", zh: "意識混亂，頭部受傷"};
-        break;
-    case 5:
-        cW=false;rr=15+Math.floor(Math.random()*10);pp=true;cO=true;fc=tg.YELLOW;
-        injuryText = {en: "Broken leg, in pain", zh: "腿部骨折，疼痛"};
-        break;
-    case 6: 
-        cW=false;rr=20;pp=false;cO=true;fc=tg.RED;
-        bleeding = true; tqReq = true;
-        injuryText = {en: "Severed leg, massive spurting blood", zh: "腿部斷裂，大量噴濺出血"};
-        break;
-    case 7: 
-        cW = false;
-        rr = 32 + Math.floor(Math.random() * 5); 
-        pp = false; 
-        cO = true; 
-        fc = tg.RED;
-        bleeding = true; tqReq = true;
-        injuryText = {
-            en: "Open arm fracture, large pool of blood, active bleeding",
-            zh: "手開放性骨折，地上有一灘血，傷口持續出血"
-        };
-        selectedAbnormal = {en: "Weak/Irregular", zh: "橈動脈微弱不規則"};
-        break;
-    case 8: 
-        cW = false;
-        rr = 4 + Math.floor(Math.random() * 5); 
-        pp = false; 
-        cO = false;
-        fc = tg.RED;
-        bleeding = true; tqReq = true;
-        injuryText = {
-            en: "Pants soaked with blood, active bleeding from legs, pool of blood",
-            zh: "雙腳褲子滲血，傷口處持續冒血，地上一攤血"
-        };
-        selectedAbnormal = {en: "Absent", zh: "橈動脈摸不到"};
-        break;
-    case 9: 
-        cW = false;
-        rr = 36;
-        pp = false; 
-        cO = true; 
-        fc = tg.RED;
-        bleeding = true; tqReq = false;
-        injuryText = {
-            en: "Massive neck bleeding, spurting",
-            zh: "頸部大出血，噴濺式出血"
-        };
-        selectedAbnormal = {en: "Weak/Irregular", zh: "橈動脈微弱不規則"};
-        break;
+        case 0: 
+            cW=true; rr=15; pp=true; cO=true; fc=tg.GREEN; 
+            injuryText={en:"Scrapes on arms",zh:"手臂擦傷"}; 
+            break;
+        case 1: 
+            cW=false; rr=0; pp=false; cO=false;
+            // For adult case 1, airway response determines Red/Black
+            airwayRes = Math.random() < 0.5;
+            fc = airwayRes ? tg.RED : tg.BLACK;
+            injuryText={en:"Unconscious, head trauma",zh:"意識不清，頭部外傷"}; 
+            break;
+        case 2: 
+            cW=false; rr=35; pp=true; cO=true; fc=tg.RED; 
+            injuryText={en:"Chest pain, difficulty breathing",zh:"胸痛，呼吸困難"}; 
+            break;
+        case 3: 
+            cW=false; rr=15; pp=false; cO=true; fc=tg.RED; 
+            injuryText={en:"Pale skin, weak pulse",zh:"皮膚蒼白，脈搏微弱"}; 
+            break;
+        case 4: 
+            cW=false; rr=15; pp=true; cO=false; fc=tg.RED; 
+            injuryText={en:"Confused, head injury", zh:"意識混亂，頭部受傷"}; 
+            break;
+        case 5: 
+            cW=false; rr=15; pp=true; cO=true; fc=tg.YELLOW; 
+            injuryText={en:"Broken leg, in pain",zh:"腿部骨折，疼痛"}; 
+            break;
+        case 6: 
+            cW=false; rr=20; pp=false; cO=true; fc=tg.RED; 
+            bleeding=true; tqReq=true; 
+            injuryText={en:"Severed leg, massive spurting blood",zh:"腿部斷裂，大量噴濺出血"}; 
+            break;
+        case 7: 
+            cW=false; rr=32; pp=false; cO=true; fc=tg.RED; 
+            bleeding=true; tqReq=true; 
+            injuryText={en:"Open arm fracture, large pool of blood, active bleeding",zh:"手開放性骨折，地上有一灘血，傷口持續出血"}; 
+            selectedAbnormal = {en: "Weak/Irregular", zh: "橈動脈微弱不規則"};
+            break;
+        case 8: 
+            cW=false; rr=4; pp=false; cO=false; fc=tg.RED; 
+            bleeding=true; tqReq=true; 
+            injuryText={en:"Pants soaked with blood, active bleeding from legs, pool of blood",zh:"雙腳褲子滲血，傷口處持續冒血，地上一攤血"}; 
+            selectedAbnormal = {en: "Absent", zh: "橈動脈摸不到"};
+            break;
+        case 9: 
+            cW=false; rr=36; pp=false; cO=true; fc=tg.RED; 
+            bleeding=true; tqReq=false; 
+            injuryText={en:"Massive neck bleeding, spurting",zh:"頸部大出血，噴濺式出血"}; 
+            selectedAbnormal = {en: "Weak/Irregular", zh: "橈動脈微弱不規則"};
+            break;
+        case 10: 
+            isPediatric=true; a=Math.floor(Math.random()*8)+1; 
+            cW=false; rr=42; pp=true; cO=true; fc=tg.YELLOW; 
+            injuryText={en:"Child, multiple abrasions, crying",zh:"兒童，多處擦傷，哭鬧"}; 
+            break;
+        case 11: 
+            isPediatric=true; a=Math.floor(Math.random()*8)+1; 
+            cW=false; rr=12; pp=false; cO=false; fc=tg.RED; 
+            injuryText={en:"Child, quiet, shallow breathing",zh:"兒童，安靜，呼吸淺快"}; 
+            break;
+        case 12: { 
+            isPediatric=true; a=Math.floor(Math.random()*8)+1; cW=false; rr=0; 
+            const airwayWorks = Math.random() < 0.3; 
+            const hasPulse = Math.random() < 0.5; 
+            const breathsWork = Math.random() < 0.5;
+            if (airwayWorks) fc = tg.RED;
+            else if (!hasPulse) fc = tg.BLACK;
+            else if (breathsWork) fc = tg.RED;
+            else fc = tg.BLACK;
+            
+            injuryText={en:"Child, motionless, blue lips",zh:"兒童，無動作，嘴唇發紫"};
+            airwayRes = airwayWorks;
+            jsPulse = hasPulse; 
+            jsRescue = breathsWork;
+            break;
+        }
     }
     
     if (!selectedAbnormal) {
@@ -949,7 +924,7 @@ function gp(){
         selectedAbnormal = abTexts[Math.floor(Math.random() * abTexts.length)];
     }
     
-    cp={id:pc,gender:g,age:a,canWalk:cW,respRate:rr,pulsePresent:pp,canObey:cO,airwayResponse:aR,correctTriage:fc, abnormalPulse: selectedAbnormal, massiveBleeding: bleeding, injury: injuryText, hasOpenedAirway: false, tourniquetRequired: tqReq};
+    cp={id:pc,gender:g,age:a,canWalk:cW,respRate:rr,pulsePresent:pp,canObey:cO,airwayResponse:airwayRes,correctTriage:fc, abnormalPulse: selectedAbnormal, massiveBleeding: bleeding, injury: injuryText, hasOpenedAirway: false, tourniquetRequired: tqReq, isPediatric: isPediatric, jsHasPulse: jsPulse, jsRescueEffective: jsRescue};
     
     currentTourniquetDecision = false; 
 }
@@ -967,16 +942,16 @@ function spU(){
     `;
     
     const isMaster = (difficulty === 'master');
-    const colorGreen = isMaster ? 'text-gray-900' : 'text-green-700';
-    const colorRed = isMaster ? 'text-gray-900' : 'text-red-700';
-
     const statusTextColor = 'text-gray-900'; 
 
+    // Updated logic for Status Box display
     let canWalkTextEn = "Can Walk";
     let canWalkTextZh = "能走動";
     let cannotWalkTextEn = "Cannot Walk";
     let cannotWalkTextZh = "無法走動";
 
+    // Force simple text for all modes based on user feedback
+    
     wtsd.innerHTML=cp.canWalk?`<span class="bilingual-en ${statusTextColor} font-bold">${canWalkTextEn}</span><span class="bilingual-zh block">${canWalkTextZh}</span>`:`<span class="bilingual-en ${statusTextColor} font-bold">${cannotWalkTextEn}</span><span class="bilingual-zh block">${cannotWalkTextZh}</span>`;
     
     rrZN.textContent='';
@@ -1016,9 +991,12 @@ function spU(){
     pC.classList.add('hidden');
     mC.classList.add('hidden');
 
-    Object.values(st).forEach(s=>s.classList.add('hidden'));
+    Object.values(st).forEach(s=> { if(s) s.classList.add('hidden'); });
     aa.classList.add('hidden');ame.textContent='';amz.textContent='';
-    Object.values(st).forEach(s=>{s.querySelectorAll('button').forEach(btn=>{btn.disabled=false;});});
+    jsPulseResultDiv.classList.add('hidden'); 
+    if(jsBreathResultDiv) jsBreathResultDiv.classList.add('hidden');
+    
+    Object.values(st).forEach(s=>{ if(s) s.querySelectorAll('button').forEach(btn=>{btn.disabled=false;});});
     st.ambulatory.classList.remove('hidden');
     
     triageCard.classList.remove('time-up-alarm'); 
@@ -1026,31 +1004,74 @@ function spU(){
     stepHistory = [];
     updateBackBtn();
     
+    // Dynamic Respiration Button Labels based on Age
+    const btnFast = document.getElementById('btn-resp-fast');
+    const btnNormal = document.getElementById('btn-resp-normal');
+    
+    if (cp.isPediatric) {
+        if (difficulty !== 'master') {
+            btnFast.innerHTML = `<span class="bilingual-en">Abnormal (>45 or <14) / min</span><span class="bilingual-zh block">過快(>45)或過慢(<14) → 最終確認</span>`;
+            btnNormal.innerHTML = `<span class="bilingual-en">Normal (14-45 / min)</span><span class="bilingual-zh block">正常 (14-45) → 繼續 P</span>`;
+        } else {
+             btnFast.innerHTML = `<span class="bilingual-en">Abnormal</span><span class="bilingual-zh block">異常</span>`;
+             btnNormal.innerHTML = `<span class="bilingual-en">Normal</span><span class="bilingual-zh block">正常</span>`;
+        }
+    } else {
+        // Adult
+        if (difficulty !== 'master') {
+             btnFast.innerHTML = `<span class="bilingual-en">Abnormal (>30 or <10) / min</span><span class="bilingual-zh block">過快(>30)或過慢(<10) → 最終確認</span>`;
+             btnNormal.innerHTML = `<span class="bilingual-en">Normal (10-30 / min)</span><span class="bilingual-zh block">正常 (10-30) → 繼續 P</span>`;
+        } else {
+             btnFast.innerHTML = `<span class="bilingual-en">Abnormal</span><span class="bilingual-zh block">異常</span>`;
+             btnNormal.innerHTML = `<span class="bilingual-en">Normal</span><span class="bilingual-zh block">正常</span>`;
+        }
+    }
+    
     startTimer(); 
 }
 
 function tfc(){
-    Object.values(st).forEach(s=>s.classList.add('hidden'));
+    Object.values(st).forEach(s=> { if(s) s.classList.add('hidden'); });
     st.finalChoice.classList.remove('hidden');
 }
 
-function ft(chosenCategory,clickedButton){
+window.finalizeTriage = function(categoryKey, clickedButton, overrideFailMsg = null){
     if(clickedButton)clickedButton.blur();
+    
+    // HIDE ALL STEPS to ensure clean slate
+    Object.values(st).forEach(s=> { if(s) s.classList.add('hidden'); });
+
+    // If this is a forced fail (like skipping JumpSTART pulse check), we handle it here
+    if (overrideFailMsg) {
+        // Record as incorrect with custom message
+        const elapsedTimeMs = performance.now() - startTime; 
+        scoreRecords.push({
+            triageTimeMs: elapsedTimeMs,
+            correctCategory: cp.correctTriage,
+            chosenCategory: tg[categoryKey], // Usually BLACK in this case
+            isCorrect: false,
+            bleedingPresent: cp.massiveBleeding,
+            tourniquetApplied: currentTourniquetDecision,
+            tourniquetRequired: cp.tourniquetRequired, 
+            respRate: cp.respRate,
+            airwayOpened: cp.hasOpenedAirway
+        });
+        stR(tg[categoryKey], false, elapsedTimeMs, overrideFailMsg);
+        return;
+    }
+
     st.finalChoice.classList.add('hidden');
     
+    const chosenCategory = tg[categoryKey];
     let isCorrect = chosenCategory === cp.correctTriage;
     let customFailMsg = null;
 
     if (cp.respRate === 0 && !cp.hasOpenedAirway) {
         isCorrect = false;
-        customFailMsg = {
-            en: "PROCEDURAL ERROR: Airway was not opened.",
-            zh: "程序錯誤：未執行暢通呼吸道。"
-        };
+        customFailMsg = { en: "PROCEDURAL ERROR: Airway was not opened.", zh: "程序錯誤：未執行暢通呼吸道。" };
     }
 
     const elapsedTimeMs = performance.now() - startTime; 
-
     scoreRecords.push({
         triageTimeMs: elapsedTimeMs,
         correctCategory: cp.correctTriage,
@@ -1062,7 +1083,6 @@ function ft(chosenCategory,clickedButton){
         respRate: cp.respRate,
         airwayOpened: cp.hasOpenedAirway
     });
-    
     stR(chosenCategory, isCorrect, elapsedTimeMs, customFailMsg);
 }
 
@@ -1104,7 +1124,7 @@ function checkAmbulatory(cWR, clickedButton) {
     st.ambulatory.classList.add('hidden');
 
     if (cWR) { 
-        ft(tg.GREEN);
+        window.finalizeTriage('GREEN'); 
         return;
     } else { 
         pushHistory('step-ambulatory');
@@ -1138,33 +1158,37 @@ function checkRespiration(uI, clickedButton) {
 
         pushHistory('step-respiration');
         aa.classList.remove('hidden');
-        aa.classList.remove('bg-red-100', 'text-red-700', 'border-red-500', 'bg-green-100', 'text-green-700', 'border-green-500', 'bg-gray-100', 'text-gray-800', 'border-gray-500');
+        aa.className = "mt-4 p-3 border-l-4"; 
 
         const isAdvanced = (difficulty === 'master' || difficulty === 'pro');
         const actuallyBreathing = cp.respRate > 0;
         const airwaySuccess = (cp.respRate === 0 && cp.airwayResponse);
 
         if (actuallyBreathing) {
-             if (isAdvanced) {
-                aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
-                ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Patient is breathing.</span>`;
-                amz.innerHTML = `<span class="text-gray-800">結果：傷患有呼吸。</span>`;
-             } else {
-                aa.classList.add('bg-green-100', 'text-green-700', 'border-green-500');
-                ame.innerHTML = `<span class="text-green-800 font-bold">Result: Patient is breathing.</span>`;
-                amz.innerHTML = `<span class="text-green-800">結果：傷患有呼吸 (紅色)。</span>`; 
-             }
+             // Error Procedure: Airway opened for patient who was breathing
+             aa.classList.add('bg-red-100', 'text-red-700', 'border-red-500');
+             ame.innerHTML = `<span class="font-bold">PROCEDURAL ERROR: Airway opened unnecessarily.</span>`;
+             amz.innerHTML = `<span>程序錯誤：不須暢通呼吸道 (傷患已有呼吸)。</span>`;
+             
+             st.finalChoice.classList.remove('hidden');
+             st.finalChoice.scrollIntoView({behavior: 'smooth', block: 'start'});
+             
         } else if (airwaySuccess) {
+             // BREATHING RESTORED/PRESENT -> RED
              if (isAdvanced) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
-                ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Breathing detected/started.</span>`;
-                amz.innerHTML = `<span class="text-gray-800">結果：呼吸恢復/有呼吸。</span>`;
+                ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Breathing detected.</span>`;
+                amz.innerHTML = `<span class="text-gray-800">結果：有呼吸/呼吸恢復。</span>`;
              } else {
                 aa.classList.add('bg-green-100', 'text-green-700', 'border-green-500');
-                ame.innerHTML = `<span class="text-green-800 font-bold">Result: Breathing started/present.</span>`;
-                amz.innerHTML = `<span class="text-green-800">結果：開始呼吸/有呼吸 (紅色)。</span>`; 
+                ame.innerHTML = `<span class="text-green-800 font-bold">Result: Breathing started.</span>`;
+                amz.innerHTML = `<span class="text-green-800">結果：呼吸恢復 (紅色)。</span>`; 
              }
+             st.finalChoice.classList.remove('hidden');
+             st.finalChoice.scrollIntoView({behavior: 'smooth', block: 'start'});
+             
         } else {
+             // STILL APNEIC
              if (isAdvanced) {
                 aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500');
                 ame.innerHTML = `<span class="text-gray-800 font-bold">Result: Still no breathing.</span>`;
@@ -1172,12 +1196,17 @@ function checkRespiration(uI, clickedButton) {
              } else {
                 aa.classList.add('bg-red-100', 'text-red-700', 'border-red-500');
                 ame.innerHTML = `<span class="text-red-800 font-bold">Result: Still no breathing.</span>`;
-                amz.innerHTML = `<span class="text-red-800">結果：仍無呼吸 (黑色)。</span>`;
+                amz.innerHTML = `<span class="text-red-800">結果：仍無呼吸。</span>`;
+             }
+             
+             if (cp.isPediatric) {
+                 st.jumpStartPulse.classList.remove('hidden');
+                 st.jumpStartPulse.scrollIntoView({behavior: 'smooth', block: 'start'});
+             } else {
+                 st.finalChoice.classList.remove('hidden');
+                 st.finalChoice.scrollIntoView({behavior: 'smooth', block: 'start'});
              }
         }
-        st.finalChoice.classList.remove('hidden');
-        st.finalChoice.scrollIntoView({behavior: 'smooth', block: 'start'});
-
     } else if (uI > 30) { 
         pushHistory('step-respiration');
         st.finalChoice.classList.remove('hidden');
@@ -1185,23 +1214,120 @@ function checkRespiration(uI, clickedButton) {
     } else { 
         pushHistory('step-respiration');
         st.respiration.classList.add('hidden');
-        rc.classList.add('hidden');
-        pC.classList.remove('hidden');
+        rc.classList.add('hidden'); // Hide resp
+        pC.classList.remove('hidden'); // Show perfusion
         st.perfusion.classList.remove('hidden');
         st.perfusion.scrollIntoView({behavior: 'smooth', block: 'start'});
     }
 }
 
+// NEW: JumpSTART Pulse Check
+window.onCheckPulse = function(btn) {
+    if(btn) btn.blur();
+    const parent = btn.parentElement;
+    const btns = parent.querySelectorAll('button');
+    btns.forEach(b => b.disabled = true);
+    
+    pushHistory('step-jumpstart-check-pulse'); 
+    
+    // FIX: Fetch elements here to avoid null issues if initialized too early
+    const resultDiv = document.getElementById('js-pulse-result');
+    const resultText = document.getElementById('js-pulse-text');
+    const optionsDiv = document.getElementById('js-pulse-options');
+
+    if(resultDiv) resultDiv.classList.remove('hidden');
+    
+    if (cp.jsHasPulse) {
+        if(resultText) {
+            resultText.textContent = "Pulse Present (有脈搏)";
+            resultText.className = "font-bold text-lg mb-3 text-center text-green-600";
+        }
+        if(optionsDiv) optionsDiv.classList.remove('hidden'); 
+        
+        // Hide Final Choice (wait for breath check)
+        st.finalChoice.classList.add('hidden'); 
+        
+    } else {
+        if(resultText) {
+            resultText.textContent = "Pulse Absent (無脈搏)";
+            resultText.className = "font-bold text-lg mb-3 text-center text-red-600";
+        }
+        
+        if(optionsDiv) optionsDiv.classList.add('hidden'); // Hide the "Give Breath" options
+        st.finalChoice.classList.remove('hidden');
+        st.finalChoice.scrollIntoView({behavior: 'smooth', block: 'start'});
+    }
+};
+
+// NEW: JumpSTART Rescue Breaths
+window.onRescueBreaths = function(btn) {
+    if(btn) btn.blur();
+    const parent = btn.parentElement;
+    const btns = parent.querySelectorAll('button');
+    btns.forEach(b => b.disabled = true);
+
+    pushHistory('step-jumpstart-rescue-breaths');
+    
+    if(jsBreathResultDiv) jsBreathResultDiv.classList.remove('hidden');
+    
+    let msgEn = "";
+    let msgZh = "";
+    let resultClass = "";
+
+    if (cp.jsRescueEffective) {
+        msgEn = "Result: Breathing started after 5 breaths.";
+        msgZh = "結果：給予 5 次吹氣後恢復呼吸。";
+        resultClass = "text-green-800 bg-green-100 border-green-500";
+    } else {
+        msgEn = "Result: Still no breathing after 5 breaths.";
+        msgZh = "結果：給予 5 次吹氣後仍無呼吸。";
+        resultClass = "text-red-800 bg-red-100 border-red-500";
+    }
+    
+    if(jsBreathText) {
+        jsBreathText.innerHTML = `<span class="bilingual-en block">${msgEn}</span><span class="bilingual-zh block">${msgZh}</span>`;
+        jsBreathResultDiv.className = `mt-3 p-3 border-l-4 rounded ${resultClass}`;
+    }
+    
+    st.finalChoice.classList.remove('hidden');
+    st.finalChoice.scrollIntoView({behavior: 'smooth', block: 'start'});
+};
+
+window.onMarkBlackSkip = function(btn) {
+    if(btn) btn.blur();
+    
+    // Direct error if skipped pulse check for JumpSTART apnea
+    const failMsg = {
+         en: "PROCEDURAL ERROR: Check pulse before marking deceased in children.",
+         zh: "程序錯誤：需檢查脈搏"
+    };
+    window.finalizeTriage('BLACK', null, failMsg);
+};
+
+window.onMarkBlackFinal = function(btn) {
+    if(btn) btn.blur();
+    
+    // FIX: Check if user skipped breaths when pulse was present
+    const failMsg = {
+        en: "PROCEDURAL ERROR: Patient has pulse. Must attempt 5 rescue breaths.",
+        zh: "程序錯誤：傷患有脈搏，需嘗試吹氣5次。"
+    };
+    window.finalizeTriage('BLACK', null, failMsg);
+};
+
+
 function checkPerfusion(pAOCLR, clickedButton) {
     if(clickedButton) clickedButton.blur();
 
     if (pAOCLR) { 
+        // User selected Abnormal (Absent/Slow) -> Go to Final Choice
         pushHistory('step-perfusion');
         const Pbs = st.perfusion.querySelectorAll('button');
         Pbs.forEach(btn => btn.disabled = true);
         st.finalChoice.classList.remove('hidden');
         st.finalChoice.scrollIntoView({behavior: 'smooth', block: 'start'});
     } else { 
+        // User selected Normal -> Go to Mental
         pushHistory('step-perfusion');
         st.perfusion.classList.add('hidden');
         pC.classList.add('hidden');
@@ -1220,7 +1346,7 @@ function checkMental(cOR,clickedButton){
 
 function nP(){
     if(pc>=TOTAL_PATIENTS){
-    eI();return;
+        eI();return;
     }
     gp();spU();
 }
@@ -1389,24 +1515,10 @@ function resetGame() {
     sc.classList.add('hidden');
     document.getElementById('new-incident-btn').disabled=true; 
     
-    document.getElementById('difficulty-beginner').classList.remove('ring-4', 'ring-blue-400');
-    document.getElementById('difficulty-pro').classList.remove('ring-4', 'ring-blue-400');
-    document.getElementById('difficulty-master').classList.remove('ring-4', 'ring-blue-400');
-    difficultyInfo.innerHTML = '<span class="bilingual-en">Please select a difficulty level to start.</span><span class="bilingual-zh block">請選擇難度等級以開始。</span>';
-    
-    triageCard.classList.remove('time-up-alarm'); // Ensure alarm is off
+    triageCard.classList.remove('time-up-alarm'); 
 }
 
-window.addEventListener('load', () => {
-    document.body.addEventListener('contextmenu', event => event.preventDefault());
-    document.body.addEventListener('selectstart', event => event.preventDefault()); 
-});
-
-window.onload=function(){
-    document.getElementById('new-incident-btn').disabled=true; 
-}
-
-window.Triage = tg;
+// Exposed functions
 window.setDifficulty = setDifficulty;
 window.startNewIncident = si;
 window.nextPatient = nP;
@@ -1415,13 +1527,11 @@ window.checkAmbulatory = checkAmbulatory;
 window.checkRespiration = checkRespiration;
 window.checkPerfusion = checkPerfusion;
 window.checkMental = checkMental;
-window.finalizeTriage = ft;
 window.resetGame = resetGame; 
 window.goBack = goBack; 
 window.toggleQRCode = () => {
     const qrContainer = document.getElementById('qrcode-display');
     const qrDiv = document.getElementById('qrcode');
-    
     if (qrContainer.classList.contains('hidden')) {
         qrContainer.classList.remove('hidden');
         qrDiv.innerHTML = "";
@@ -1434,7 +1544,6 @@ window.toggleQRCode = () => {
         qrContainer.classList.add('hidden');
     }
 };
-
 })();
 </script>
 
