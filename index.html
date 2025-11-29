@@ -408,7 +408,8 @@
             <div id="step-final-choice" class="hidden">
                 <div class="step-heading">6. <span class="bilingual-en">Final Classification</span> <span class="bilingual-zh">最終分類確認</span></div>
                 <p class="mb-3 text-gray-600 text-sm md:text-base"><span class="bilingual-en">Determine final category:</span><span class="bilingual-zh">請確認傷患的最終分類：</span></p>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <!-- MODIFIED: Removed Green button, adjusted grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <button onclick="finalizeTriage('RED', this)" class="action-button red-bg text-white final-triage-button">
                         <span class="bilingual-en">RED</span>
                         <span class="bilingual-zh block">紅色 (立即)</span>
@@ -416,10 +417,6 @@
                     <button onclick="finalizeTriage('YELLOW', this)" class="action-button yellow-bg text-gray-900 final-triage-button">
                         <span class="bilingual-en">YELLOW</span>
                         <span class="bilingual-zh block">黃色 (延遲)</span>
-                    </button>
-                    <button onclick="finalizeTriage('GREEN', this)" class="action-button green-bg text-white final-triage-button">
-                        <span class="bilingual-en">GREEN</span>
-                        <span class="bilingual-zh block">綠色 (輕微)</span>
                     </button>
                     <button onclick="finalizeTriage('BLACK', this)" class="action-button black-bg text-white final-triage-button">
                         <span class="bilingual-en">BLACK</span>
@@ -731,7 +728,6 @@ function applyDifficultyStyles(level) {
             const btnId = btn.id;
             btn.classList.remove(...allColorClasses, 'pro-mode-button');
             
-            // Logic to determine if we apply pro-mode-button
             // EXCEPTION: Final Triage Buttons OR 'btn-amb-can' should retain color
             const isException = (btn.classList.contains('final-triage-button') || btnId === 'btn-amb-can');
             
