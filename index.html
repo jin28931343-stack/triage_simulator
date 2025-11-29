@@ -205,19 +205,27 @@
                     <rect x="4" y="9" width="2" height="1" fill="#374151" />
                 </g>
             </defs>
+
+            <!-- Green Tag (Back) -->
             <g transform="translate(0, 5)">
                 <use href="#tag" />
                 <rect x="1" y="14" width="8" height="1" fill="#10b981" />
             </g>
+            
+            <!-- Yellow Tag -->
             <g transform="translate(7, 3)">
                 <use href="#tag" />
                 <rect x="1" y="14" width="8" height="1" fill="#f59e0b" />
             </g>
+
+            <!-- Red Tag -->
             <g transform="translate(14, 1)">
                 <use href="#tag" />
                 <rect x="1" y="14" width="8" height="1" fill="#ef4444" />
             </g>
-            <g transform="translate(21, 0)"> 
+
+            <!-- Black Tag (Front) -->
+            <g transform="translate(21, 0)"> <!-- Highest -->
                 <use href="#tag" />
                 <rect x="1" y="14" width="8" height="1" fill="#1f2937" />
             </g>
@@ -229,7 +237,7 @@
         </div>
     </h1>
 
-    <!-- 1. Difficulty Selection (Cards with Images) -->
+    <!-- 1. Difficulty Selection -->
     <section id="difficulty-selection" class="flex flex-col gap-4 p-3 rounded-lg border border-gray-200">
         <h2 class="text-lg md:text-xl font-bold text-gray-700 text-center">
             <span class="bilingual-en">Select Difficulty</span>
@@ -239,19 +247,19 @@
             <!-- Beginner: White Shirt -->
             <button id="difficulty-beginner" onclick="setDifficulty('beginner', this)" 
                 class="action-button bg-green-600 hover:bg-green-700 shadow-md border-2 border-green-600 flex flex-col items-center justify-center py-4 h-full">
-                <!-- Image file name for White Shirt -->
-                <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h (2).jpg" alt="Beginner" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm">
+                <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h (2).jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Beginner" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
+                <span class="img-error hidden text-xs text-yellow-200 mb-1">(No Image)</span>
                 <div>
                     <span class="bilingual-en text-lg">1. Beginner</span>
                     <span class="bilingual-zh block text-sm">初學者</span>
                 </div>
             </button>
             
-            <!-- Professional: Blue Vest No Hat -->
+            <!-- Professional: Blue Vest -->
             <button id="difficulty-pro" onclick="setDifficulty('pro', this)" 
                 class="action-button bg-gray-600 hover:bg-gray-700 shadow-md border-2 border-gray-600 flex flex-col items-center justify-center py-4 h-full">
-                <!-- Image file name for Blue Vest -->
-                <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h (1).jpg" alt="Professional" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm">
+                <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h (1).jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Professional" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
+                <span class="img-error hidden text-xs text-yellow-200 mb-1">(No Image)</span>
                 <div>
                     <span class="bilingual-en text-lg">2. Professional</span>
                     <span class="bilingual-zh block text-sm">專業人員</span>
@@ -261,8 +269,8 @@
             <!-- Master: Blue Hat -->
             <button id="difficulty-master" onclick="setDifficulty('master', this)" 
                 class="action-button bg-red-700 hover:bg-red-800 shadow-md border-2 border-red-700 flex flex-col items-center justify-center py-4 h-full">
-                <!-- Image file name for Blue Hat -->
-                <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h.jpg" alt="Master" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm">
+                <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h.jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Master" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
+                <span class="img-error hidden text-xs text-yellow-200 mb-1">(No Image)</span>
                 <div>
                     <span class="bilingual-en text-lg">3. Master</span>
                     <span class="bilingual-zh block text-sm">大師級</span>
@@ -657,7 +665,7 @@
         </div>
         <!-- Feedback and Reset Buttons - MOVED UP -->
         <div class="mt-8 flex flex-col-reverse sm:flex-row justify-between items-center gap-4">
-             <a href="https://docs.google.com/forms/d/e/1FAIpQLSe420eDukPpIr0yi8OWoj8k5fX-zdzMUkLtchGqrBl8zE4cbg/viewform?usp=header" target="_blank" class="action-button bg-teal-600 hover:bg-teal-700 text-white text-center shadow-md w-full sm:w-auto no-underline">
+             <a href="https://forms.gle/YourFormID" target="_blank" class="action-button bg-teal-600 hover:bg-teal-700 text-white text-center shadow-md w-full sm:w-auto no-underline">
                 <span class="bilingual-en">Give Feedback</span>
                 <span class="bilingual-zh block">填寫回饋問卷</span>
             </a>
@@ -691,6 +699,7 @@
                                     <li>新增音樂音效。</li>
                                     <li>新增重大更新日誌。</li>
                                     <li>新增圖示。</li>
+                                    <li>修正手機版捲動問題。</li>
                                 </ul>
                             </div>
                             <div>
@@ -1117,7 +1126,11 @@ function startWithEffect() {
     }, 500);
 }
 
-function si(){ if (!difficulty) return; stopTimer(); stopBGM(); scoreRecords = []; pc=0;go=false; mT.classList.add('hidden'); sc.classList.add('hidden'); document.getElementById('difficulty-selection').classList.add('hidden'); scoreSummaryEl.classList.add('hidden'); pcE.classList.remove('hidden'); sd.innerHTML=`<span class="bilingual-en">Incident Active</span><span class="bilingual-zh block mt-1">事件啟動</span>`; applyDifficultyStyles(difficulty); nP(); }
+function si(){ if (!difficulty) return; 
+    // FIX: Scroll to top on incident start
+    window.scrollTo(0, 0);
+    stopTimer(); stopBGM(); scoreRecords = []; pc=0;go=false; mT.classList.add('hidden'); sc.classList.add('hidden'); document.getElementById('difficulty-selection').classList.add('hidden'); scoreSummaryEl.classList.add('hidden'); pcE.classList.remove('hidden'); sd.innerHTML=`<span class="bilingual-en">Incident Active</span><span class="bilingual-zh block mt-1">事件啟動</span>`; applyDifficultyStyles(difficulty); nP(); 
+}
 function startTimer() { stopTimer(); startTime = performance.now(); timerDisplay.textContent = formatTime(timeLimit); timerDisplay.classList.remove('text-red-800'); triageCard.classList.remove('time-up-alarm'); timerInterval = setInterval(() => { const elapsed = performance.now() - startTime; let remaining = timeLimit - elapsed; if (remaining < 0) remaining = 0; timerDisplay.textContent = formatTime(remaining); if (remaining === 0) { timerDisplay.classList.add('text-red-800'); triageCard.classList.add('time-up-alarm'); } }, 100); }
 function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
 function updateBackBtn() { if (stepHistory.length > 0) { btnBack.classList.remove('hidden'); } else { btnBack.classList.add('hidden'); } }
@@ -1313,6 +1326,8 @@ function spU(){
     st.ambulatory.classList.remove('hidden');
     
     triageCard.classList.remove('time-up-alarm'); 
+    // Also scroll to top when patient updates
+    window.scrollTo(0, 0);
 
     stepHistory = [];
     updateBackBtn();
@@ -1515,7 +1530,7 @@ function checkRespiration(uI, clickedButton) {
              } else {
                 aa.classList.add('bg-red-100', 'text-red-700', 'border-red-500');
                 ame.innerHTML = `<span class="text-red-800 font-bold">Result: Still no breathing.</span>`;
-                amz.innerHTML = `<span class="text-red-800">結果：仍無呼吸。</span>`;
+                amz.innerHTML = `<span class="text-red-800結果：仍無呼吸。</span>`;
              }
              
              if (cp.isPediatric) {
@@ -1572,7 +1587,7 @@ window.onCheckPulse = function(btn) {
             resultText.className = "font-bold text-lg mb-3 text-center text-red-600";
         }
         
-        if(optionsDiv) optionsDiv.classList.add('hidden'); 
+        if(optionsDiv) optionsDiv.classList.add('hidden'); // Hide the "Give Breath" options
         st.finalChoice.classList.remove('hidden');
         st.finalChoice.scrollIntoView({behavior: 'smooth', block: 'start'});
     }
@@ -1827,6 +1842,8 @@ function renderScoreSummary() {
 }
 
 function resetGame() {
+    // FIX: Force scroll to top on reset
+    window.scrollTo(0, 0);
     stopTimer();
     pc = 0;
     scoreRecords = [];
