@@ -7,7 +7,7 @@
     <!-- 主要 SEO 設定 -->
     <title>START Triage Simulator | START & JumpSTART 檢傷分類模擬器</title>
     <meta name="description" content="免費線上大量傷病患檢傷分類模擬器。包含成人 START 與兒童 JumpSTART 檢傷流程練習。專為 EMT、救護技術員、消防員及醫護人員設計的教育訓練工具。Free online Mass Casualty Incident (MCI) triage simulator.">
-    <meta name="keywords" content="檢傷分類, START Triage, JumpSTART, 大量傷病患, MCI, EMT, 救護員, 台南消防, 檢傷分類模擬器, 救護訓練, Triage Simulator, EMS education">
+    <meta name="keywords" content="檢傷分類, START Triage, JumpSTART, 大量傷病患, MCI, EMT, 救護員, 消防, 模擬器, 救護訓練, Triage Simulator, EMS education">
     <meta name="author" content="莊進宏 (JHUANG JIN HONG) - 台南市政府消防局">
     <meta name="robots" content="index, follow">
 
@@ -15,10 +15,8 @@
     <meta property="og:title" content="START 檢傷分類模擬器 (Triage Simulator)">
     <meta property="og:description" content="專為 EMT 設計的互動式檢傷練習工具。支援 START 與 JumpSTART 流程，包含音效與即時回饋。">
     <meta property="og:type" content="website">
-    <!-- 如果您有將網站架設起來，這裡填入您的網址 -->
-    <!-- <meta property="og:url" content="https://您的帳號.github.io/triage_simulator/"> -->
-    <!-- 如果有截圖，可以填入圖片連結 -->
-    <!-- <meta property="og:image" content="預覽圖連結.jpg"> -->
+    <!-- 如果您有將網站架設在某個網址，請填寫在這： <meta property="og:url" content="https://your-website.com"> -->
+    <!-- 如果您有代表性的圖片，請填寫在這： <meta property="og:image" content="https://your-website.com/thumbnail.jpg"> -->
 
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&family=Noto+Sans+TC:wght&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -51,7 +49,7 @@
             background-color: #f9fafb;
             border-radius: 1rem;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-            max-width: 650px; 
+            max-width: 800px; /* Increased max-width for 4 columns */
             width: 100%;
             padding: 1rem; 
             display: flex;
@@ -191,13 +189,14 @@
             background-color: #eef2ff;
             border-left: 4px solid #6366f1;
         }
-        /* Log Animation */
-        .log-popup {
-            transition: transform 0.2s ease-out, opacity 0.2s ease-out;
-            transform-origin: bottom left;
+        /* Arcade Score Animation */
+        @keyframes scorePop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); color: #fbbf24; } /* Yellow pop */
+            100% { transform: scale(1); }
         }
-        .log-popup.hidden {
-            display: none;
+        .score-pop {
+            animation: scorePop 0.5s ease-in-out;
         }
     </style>
 </head>
@@ -241,21 +240,22 @@
 
         <div>
             <span class="bilingual-en">START Triage Simulator</span>
-            <span class="bilingual-zh block mt-1 text-lg">START 檢傷分類模擬器</span>
+            <span class="bilingual-zh block mt-1 text-lg">START & JumpSTART 檢傷分類模擬器</span>
         </div>
     </h1>
 
     <!-- 1. Difficulty Selection (Cards with Images) -->
     <section id="difficulty-selection" class="flex flex-col gap-4 p-3 rounded-lg border border-gray-200">
         <h2 class="text-lg md:text-xl font-bold text-gray-700 text-center">
-            <span class="bilingual-en">Select Difficulty</span>
-            <span class="bilingual-zh block">選擇困難度</span>
+            <span class="bilingual-en">Select Mode</span>
+            <span class="bilingual-zh block">選擇模式</span>
         </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <!-- MODIFIED Grid to 4 columns -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
             <!-- Beginner: White Shirt -->
             <button id="difficulty-beginner" onclick="setDifficulty('beginner', this)" 
                 class="action-button bg-green-600 hover:bg-green-700 shadow-md border-2 border-green-600 flex flex-col items-center justify-center py-4 h-full">
-                <img src="beginner.jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Beginner" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
+                <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h (2).jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Beginner" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
                 <span class="img-error hidden text-xs text-yellow-200 mb-1">(No Image)</span>
                 <div>
                     <span class="bilingual-en text-lg">1. Beginner</span>
@@ -266,7 +266,7 @@
             <!-- Professional: Blue Vest -->
             <button id="difficulty-pro" onclick="setDifficulty('pro', this)" 
                 class="action-button bg-gray-600 hover:bg-gray-700 shadow-md border-2 border-gray-600 flex flex-col items-center justify-center py-4 h-full">
-                <img src="pro.jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Professional" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
+                <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h (1).jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Professional" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
                 <span class="img-error hidden text-xs text-yellow-200 mb-1">(No Image)</span>
                 <div>
                     <span class="bilingual-en text-lg">2. Professional</span>
@@ -277,17 +277,29 @@
             <!-- Master: Blue Hat -->
             <button id="difficulty-master" onclick="setDifficulty('master', this)" 
                 class="action-button bg-red-700 hover:bg-red-800 shadow-md border-2 border-red-700 flex flex-col items-center justify-center py-4 h-full">
-                <img src="master.jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Master" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
+                <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h.jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Master" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
                 <span class="img-error hidden text-xs text-yellow-200 mb-1">(No Image)</span>
                 <div>
                     <span class="bilingual-en text-lg">3. Master</span>
                     <span class="bilingual-zh block text-sm">大師級</span>
                 </div>
             </button>
+
+             <!-- NEW: Arcade Mode Button -->
+            <button id="difficulty-arcade" onclick="setDifficulty('arcade', this)" 
+                class="action-button bg-indigo-600 hover:bg-indigo-700 shadow-md border-2 border-indigo-600 flex flex-col items-center justify-center py-4 h-full">
+                <!-- Using the new uploaded image for Arcade Mode -->
+                <img src="Stree.jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Arcade Mode" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20" style="image-rendering: pixelated;">
+                <span class="img-error hidden text-xs text-yellow-200 mb-1">(No Image)</span>
+                <div>
+                    <span class="bilingual-en text-lg font-bold">4. Arcade</span>
+                    <span class="bilingual-zh block text-sm font-bold">街機模式</span>
+                </div>
+            </button>
         </div>
         <p id="difficulty-info" class="text-xs md:text-sm text-center text-gray-500 mt-2">
-            <span class="bilingual-en">Please select a difficulty level to start.</span>
-            <span class="bilingual-zh block">請選擇難度等級以開始。</span>
+            <span class="bilingual-en">Please select a mode to start.</span>
+            <span class="bilingual-zh block">請選擇模式以開始。</span>
         </p>
 
         <!-- QR Code Button -->
@@ -324,6 +336,7 @@
                 <span class="bilingual-zh mt-1 block">傷患編號</span>
             </h2>
             
+            <!-- Timer Display -->
             <div id="triage-timer" class="text-lg md:text-xl font-mono text-red-600 font-extrabold flex-grow text-right">00:00</div>
             
             <div id="triage-result" class="triage-color red-bg hidden flex-shrink-0 ml-2">
@@ -546,6 +559,17 @@
             <span class="bilingual-en">Incident Summary Report</span>
             <span class="bilingual-zh block mt-1">事件總結報告</span>
         </h2>
+
+        <!-- NEW: Arcade Score Display (Hidden by default) -->
+        <div id="arcade-score-container" class="hidden mb-6 md:mb-8 p-4 bg-indigo-100 rounded-lg border-2 border-indigo-500 text-center">
+            <h3 class="text-xl md:text-2xl font-bold text-indigo-900 mb-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="bilingual-en">Arcade Mode Score</span>
+                <span class="bilingual-zh">街機模式總分</span>
+            </h3>
+            <div id="arcade-final-score" class="text-4xl md:text-5xl font-extrabold text-indigo-700 score-pop">0</div>
+        </div>
+
         <div class="mb-6 md:mb-8 p-3 md:p-4 bg-blue-50 rounded-lg border border-blue-200">
             <h3 class="text-lg md:text-xl font-semibold text-blue-700 mb-3 border-b border-blue-200 pb-2">
                 <i class="fa-solid fa-clock"></i> <span class="bilingual-en">Time Statistics</span>
@@ -701,13 +725,11 @@
                         <h4 class="font-bold text-gray-800 mb-2 border-b pb-1">更新日誌 (Update Log)</h4>
                         <div class="max-h-60 overflow-y-auto space-y-3">
                             <div>
-                                <p class="font-bold text-blue-600">11/29</p>
+                                <p class="font-bold text-blue-600">11/29 (Arcade Update)</p>
                                 <ul class="list-disc pl-4 text-gray-600 space-y-1">
-                                    <li>新增問卷。</li>
-                                    <li>修正無法行走傷患不會出現綠色分類選項。</li>
-                                    <li>新增音樂音效。</li>
-                                    <li>新增重大更新日誌。</li>
-                                    <li>新增圖示。</li>
+                                    <li>新增「街機模式」(Arcade Mode)。</li>
+                                    <li>街機模式無人數限制，時間動態縮短。</li>
+                                    <li>新增街機模式計分系統。</li>
                                     <li>修正手機版捲動問題。</li>
                                 </ul>
                             </div>
@@ -739,7 +761,7 @@
                     <div class="text-[10px] text-gray-500">Tainan City Fire Bureau</div>
                 </div>
                 <p>
-                    <span class="font-semibold text-gray-700">版本: Beta 1141129</span>
+                    <span class="font-semibold text-gray-700">版本: Beta 1141129-A</span>
                 </p>
              </div>
         </footer>
@@ -749,7 +771,7 @@
 
 <script>
 (function(){
-const TOTAL_PATIENTS = 15;
+const TOTAL_PATIENTS_STANDARD = 15; // Renamed for clarity
 let pc=0; 
 let cp={};
 let go=true;
@@ -760,6 +782,14 @@ let startTime = 0;
 let stepHistory = []; 
 let currentTourniquetDecision = false;
 let timeLimit = 120000; 
+
+// Arcade Mode specific variables
+let arcadeScore = 0;
+let patientsCompletedInArcade = 0;
+const ARCADE_INITIAL_TIME = 60000; // 60 seconds
+const ARCADE_TIME_DROP = 10000; // 10 seconds drop
+const ARCADE_DROP_INTERVAL = 5; // Every 5 patients
+const ARCADE_MIN_TIME = 5000; // Minimum 5 seconds
 
 // Initialize Audio Context on user interaction
 let audioCtx = null;
@@ -962,7 +992,9 @@ const pcE=document.getElementById('patient-card'),
       jsPulseText = document.getElementById('js-pulse-text'),
       jsBreathResultDiv = document.getElementById('js-breath-result'),
       jsBreathText = document.getElementById('js-breath-text'),
-      jsPulseOptions = document.getElementById('js-pulse-options');
+      jsPulseOptions = document.getElementById('js-pulse-options'),
+      arcadeScoreContainer = document.getElementById('arcade-score-container'),
+      arcadeFinalScore = document.getElementById('arcade-final-score');
 
 const rc=document.getElementById('resp-container'),pC=document.getElementById('pulse-container'),mC=document.getElementById('mental-container');
 const timerDisplay = document.getElementById('triage-timer');
@@ -989,12 +1021,24 @@ function formatTime(ms) {
 }
 
 function setDifficulty(level, clickedButton) {
+    // Reset selection styles
     document.getElementById('difficulty-beginner').classList.remove('ring-4', 'ring-blue-400');
     document.getElementById('difficulty-pro').classList.remove('ring-4', 'ring-blue-400');
     document.getElementById('difficulty-master').classList.remove('ring-4', 'ring-blue-400');
+    document.getElementById('difficulty-arcade').classList.remove('ring-4', 'ring-indigo-400');
 
     difficulty = level;
-    clickedButton.classList.add('ring-4', 'ring-blue-400');
+    
+    // Reset Arcade Variables
+    arcadeScore = 0;
+    patientsCompletedInArcade = 0;
+    arcadeScoreContainer.classList.add('hidden');
+
+    if (level === 'arcade') {
+         clickedButton.classList.add('ring-4', 'ring-indigo-400');
+    } else {
+         clickedButton.classList.add('ring-4', 'ring-blue-400');
+    }
 
     newIncidentBtn.disabled = false;
     sc.classList.remove('hidden');
@@ -1008,6 +1052,9 @@ function setDifficulty(level, clickedButton) {
     } else if (level === 'master') {
         timeLimit = 30000; 
         difficultyInfo.innerHTML = '<span class="bilingual-en text-red-700 font-bold">Master Mode: Buttons are grayscale AND text hints/numbers are removed. Pure knowledge test. 30 sec per patient.</span><span class="bilingual-zh block mt-1 text-red-700">大師級模式：按鈕無顏色且無數字/結果提示。純知識測試。每位傷患限時 30 秒。</span>';
+    } else if (level === 'arcade') {
+        timeLimit = ARCADE_INITIAL_TIME;
+        difficultyInfo.innerHTML = '<span class="bilingual-en text-indigo-700 font-bold">Arcade Mode: Master rules. Unlimited patients. Time decreases every 5 patients. Game ends when time runs out. Scoring enabled.</span><span class="bilingual-zh block mt-1 text-indigo-700">街機模式：大師級規則。無限病患。每5人時間縮短。時間到即結束。啟用計分。</span>';
     }
     
     applyDifficultyStyles(level);
@@ -1037,6 +1084,10 @@ function applyDifficultyStyles(level) {
         { id: 'btn-js-mark-black-2', classes: ['bg-gray-600', 'hover:bg-gray-700'] } 
     ];
 
+    // Determine if Master-like styling is needed (Master or Arcade)
+    const useMasterStyling = (level === 'master' || level === 'arcade');
+    const useProStyling = (level === 'pro');
+
     const allSteps = Object.values(st);
     allSteps.forEach(step => {
         if (!step) return;
@@ -1050,7 +1101,7 @@ function applyDifficultyStyles(level) {
             const isException = (btn.classList.contains('final-triage-button') || btnId === 'btn-amb-can');
             
             if (!isException) {
-                if (level === 'pro' || level === 'master') {
+                if (useProStyling || useMasterStyling) {
                     btn.classList.add('pro-mode-button');
                 } else {
                     const colorEntry = beginnerColorMap.find(entry => entry.id === btnId);
@@ -1067,7 +1118,8 @@ function applyDifficultyStyles(level) {
 
             if (btnId && buttonTextConfig[btnId]) {
                 const config = buttonTextConfig[btnId];
-                const textData = (level === 'master') ? config.clean : config.full;
+                // Use clean text for Master AND Arcade
+                const textData = (useMasterStyling) ? config.clean : config.full;
                 
                 btn.innerHTML = `
                     <span class="bilingual-en">${textData.en}</span>
@@ -1077,13 +1129,13 @@ function applyDifficultyStyles(level) {
         });
          const rpmButton = step.querySelector('.rpm-button');
         if(rpmButton && rpmButton.id === 'btn-amb-cannot') {
-             if (level === 'pro' || level === 'master') {
+             if (useProStyling || useMasterStyling) {
                  rpmButton.classList.add('pro-mode-button');
              } else {
                  rpmButton.classList.remove('pro-mode-button');
              }
              const config = buttonTextConfig['btn-amb-cannot'];
-             const textData = (level === 'master') ? config.clean : config.full;
+             const textData = (useMasterStyling) ? config.clean : config.full;
              rpmButton.innerHTML = `<span class="bilingual-en">${textData.en}</span><span class="bilingual-zh block">${textData.zh}</span>`;
         }
     });
@@ -1140,7 +1192,34 @@ function si(){ if (!difficulty) return;
     window.scrollTo(0, 0);
     stopTimer(); stopBGM(); scoreRecords = []; pc=0;go=false; mT.classList.add('hidden'); sc.classList.add('hidden'); document.getElementById('difficulty-selection').classList.add('hidden'); scoreSummaryEl.classList.add('hidden'); pcE.classList.remove('hidden'); sd.innerHTML=`<span class="bilingual-en">Incident Active</span><span class="bilingual-zh block mt-1">事件啟動</span>`; applyDifficultyStyles(difficulty); nP(); 
 }
-function startTimer() { stopTimer(); startTime = performance.now(); timerDisplay.textContent = formatTime(timeLimit); timerDisplay.classList.remove('text-red-800'); triageCard.classList.remove('time-up-alarm'); timerInterval = setInterval(() => { const elapsed = performance.now() - startTime; let remaining = timeLimit - elapsed; if (remaining < 0) remaining = 0; timerDisplay.textContent = formatTime(remaining); if (remaining === 0) { timerDisplay.classList.add('text-red-800'); triageCard.classList.add('time-up-alarm'); } }, 100); }
+
+function startTimer() {
+    stopTimer();
+    startTime = performance.now();
+    timerDisplay.textContent = formatTime(timeLimit);
+    timerDisplay.classList.remove('text-red-800');
+    triageCard.classList.remove('time-up-alarm');
+
+    timerInterval = setInterval(() => {
+        const elapsed = performance.now() - startTime;
+        let remaining = timeLimit - elapsed;
+        if (remaining < 0) remaining = 0;
+        timerDisplay.textContent = formatTime(remaining);
+
+        if (remaining === 0) {
+            // Arcade Mode: Game Over on timeout
+            if (difficulty === 'arcade') {
+                 stopTimer();
+                 eI(); // End Incident immediately
+            } else {
+                // Normal Modes: Just flash red
+                timerDisplay.classList.add('text-red-800');
+                triageCard.classList.add('time-up-alarm');
+            }
+        }
+    }, 100);
+}
+
 function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
 function updateBackBtn() { if (stepHistory.length > 0) { btnBack.classList.remove('hidden'); } else { btnBack.classList.add('hidden'); } }
 function pushHistory(stepId) { stepHistory.push(stepId); updateBackBtn(); }
@@ -1278,7 +1357,7 @@ function spU(){
         </div>
     `;
     
-    const isMaster = (difficulty === 'master');
+    const useMasterStyling = (difficulty === 'master' || difficulty === 'arcade');
     const statusTextColor = 'text-gray-900'; 
 
     // Updated logic for Status Box display
@@ -1346,7 +1425,7 @@ function spU(){
     const btnNormal = document.getElementById('btn-resp-normal');
     
     if (cp.isPediatric) {
-        if (difficulty !== 'master') {
+        if (!useMasterStyling) {
             btnFast.innerHTML = `<span class="bilingual-en">Abnormal (>45 or <14) / min</span><span class="bilingual-zh block">過快(>45)或過慢(<14) → 最終確認</span>`;
             btnNormal.innerHTML = `<span class="bilingual-en">Normal (14-45 / min)</span><span class="bilingual-zh block">正常 (14-45) → 繼續 P</span>`;
         } else {
@@ -1355,7 +1434,7 @@ function spU(){
         }
     } else {
         // Adult
-        if (difficulty !== 'master') {
+        if (!useMasterStyling) {
              btnFast.innerHTML = `<span class="bilingual-en">Abnormal (>30 or <10) / min</span><span class="bilingual-zh block">過快(>30)或過慢(<10) → 最終確認</span>`;
              btnNormal.innerHTML = `<span class="bilingual-en">Normal (10-30 / min)</span><span class="bilingual-zh block">正常 (10-30) → 繼續 P</span>`;
         } else {
@@ -1378,15 +1457,14 @@ window.finalizeTriage = function(categoryKey, clickedButton, overrideFailMsg = n
     // HIDE ALL STEPS to ensure clean slate
     Object.values(st).forEach(s=> { if(s) s.classList.add('hidden'); });
 
-    // If this is a forced fail (like skipping JumpSTART pulse check), we handle it here
+    // Forced Fail Logic (e.g., skipping JumpSTART pulse check)
     if (overrideFailMsg) {
-        playErrorSound(); // Trigger error sound on forced fail
-        // Record as incorrect with custom message
+        playErrorSound(); 
         const elapsedTimeMs = performance.now() - startTime; 
         scoreRecords.push({
             triageTimeMs: elapsedTimeMs,
             correctCategory: cp.correctTriage,
-            chosenCategory: tg[categoryKey], // Usually BLACK in this case
+            chosenCategory: tg[categoryKey],
             isCorrect: false,
             bleedingPresent: cp.massiveBleeding,
             tourniquetApplied: currentTourniquetDecision,
@@ -1448,7 +1526,7 @@ function stR(category, isCorrect, elapsedTimeMs, customFailMsg = null){
               <span class="bilingual-zh block">✅ 正確：這位傷患的分類是 ${category.zh}。(用時: ${displayTime})</span>`;
     } else {
         ft = `<span class="bilingual-en">INCORRECT: The correct category is ${cp.correctTriage.en}. You chose ${category.en}. (Time: ${displayTime})</span>
-              <span class="bilingual-zh block">❌ 錯誤：正確的分類是 ${cp.correctTriage.zh}。您選擇了 ${category.zh}。(用時: ${displayTime})</span>`;
+              <span class="bilingual-zh block">✅ 錯誤：正確的分類是 ${cp.correctTriage.zh}。您選擇了 ${category.zh}。(用時: ${displayTime})</span>`;
     }
     
     trd.classList.remove('hidden','red-bg','yellow-bg','green-bg','black-bg');
@@ -1505,7 +1583,7 @@ function checkRespiration(uI, clickedButton) {
         aa.classList.remove('hidden');
         aa.className = "mt-4 p-3 border-l-4"; 
 
-        const isAdvanced = (difficulty === 'master' || difficulty === 'pro');
+        const isAdvanced = (difficulty === 'master' || difficulty === 'arcade' || difficulty === 'pro');
         const actuallyBreathing = cp.respRate > 0;
         const airwaySuccess = (cp.respRate === 0 && cp.airwayResponse);
 
@@ -1596,7 +1674,7 @@ window.onCheckPulse = function(btn) {
             resultText.className = "font-bold text-lg mb-3 text-center text-red-600";
         }
         
-        if(optionsDiv) optionsDiv.classList.add('hidden'); // Hide the "Give Breath" options
+        if(optionsDiv) optionsDiv.classList.add('hidden'); 
         st.finalChoice.classList.remove('hidden');
         st.finalChoice.scrollIntoView({behavior: 'smooth', block: 'start'});
     }
@@ -1684,16 +1762,32 @@ function checkMental(cOR,clickedButton){
     if(clickedButton)clickedButton.blur();
     pushHistory('step-mental');
     st.mental.classList.add('hidden');
-    tfc();
+    // Directly show final choices
+    st.finalChoice.classList.remove('hidden');
 }
 
 function nP(){
-    if(pc>=TOTAL_PATIENTS){
-        eI();return;
+    // Standard modes have a limit, Arcade mode runs until timeout
+    if (difficulty !== 'arcade' && pc >= TOTAL_PATIENTS_STANDARD) {
+        eI();
+        return;
     }
-    gp();spU();
+
+    // Arcade Mode Logic: Update time limit dynamicallly
+    if (difficulty === 'arcade') {
+        patientsCompletedInArcade++;
+        // Every 5 patients, reduce time
+        if (patientsCompletedInArcade > 0 && patientsCompletedInArcade % ARCADE_DROP_INTERVAL === 0) {
+            timeLimit = Math.max(ARCADE_MIN_TIME, timeLimit - ARCADE_TIME_DROP);
+            // console.log(`Arcade Time Reduced! New limit: ${timeLimit/1000}s. Patients: ${patientsCompletedInArcade}`);
+        }
+    }
+
+    gp();
+    spU();
 }
 
+// EXPOSED: eI function explicitly exposed for the error
 function eI(){
     stopTimer(); 
     playBGM(); // Play victory BGM (Resume BGM)
@@ -1703,7 +1797,9 @@ function eI(){
     renderScoreSummary();
     
     sc.classList.remove('hidden');
-    sd.innerHTML=`<span class="bilingual-en">Incident Over. Total ${TOTAL_PATIENTS} patients triaged.</span><span class="bilingual-zh block mt-1">事件結束。共完成 ${TOTAL_PATIENTS} 位傷患檢傷。</span>`;
+    
+    const totalPatientsDone = scoreRecords.length;
+    sd.innerHTML=`<span class="bilingual-en">Incident Over. Total ${totalPatientsDone} patients triaged.</span><span class="bilingual-zh block mt-1">事件結束。共完成 ${totalPatientsDone} 位傷患檢傷。</span>`;
     
     document.getElementById('new-incident-btn').disabled=true;
 }
@@ -1729,10 +1825,18 @@ function renderScoreSummary() {
         BLACK: { total: 0, correct: 0 }
     };
     
+    // Reset arcade score calculation for final tally
+    let currentArcadeTotalScore = 0;
+
     scoreRecords.forEach(record => {
         totalTimeMs += record.triageTimeMs;
         if (record.isCorrect) {
             correctCount++;
+             // Arcade Scoring: Correct Triage
+            if (difficulty === 'arcade') currentArcadeTotalScore += 100;
+        } else {
+             // Arcade Scoring: Incorrect Triage
+            if (difficulty === 'arcade') currentArcadeTotalScore -= 200;
         }
         
         const correctKey = record.correctCategory.color.toUpperCase();
@@ -1743,14 +1847,18 @@ function renderScoreSummary() {
             }
         }
         
+        // Tourniquet Scoring & Stats
         if (record.bleedingPresent) {
             bleedingTotal++;
-            
             if (record.tourniquetRequired) {
                 if (record.tourniquetApplied) {
                     tqCorrect++;
+                    // Arcade Scoring: Correct TQ (Required & Applied)
+                    if (difficulty === 'arcade') currentArcadeTotalScore += 100;
                 } else {
                     tqMissed++;
+                    // Arcade Scoring: Missed TQ (Required & Not Applied)
+                    if (difficulty === 'arcade') currentArcadeTotalScore -= 200;
                 }
             } else {
                 if (record.tourniquetApplied) {
@@ -1765,13 +1873,18 @@ function renderScoreSummary() {
             }
         }
 
+        // Airway Scoring & Stats
         const needAirway = (record.respRate === 0);
         if (needAirway) {
             airwayTotal++;
             if (record.airwayOpened) {
                 airwayCorrect++;
+                // Arcade Scoring: Correct Airway (Needed & Opened)
+                if (difficulty === 'arcade') currentArcadeTotalScore += 100;
             } else {
                 airwayMissed++;
+                // Arcade Scoring: Missed Airway (Needed & Not Opened)
+                if (difficulty === 'arcade') currentArcadeTotalScore -= 200;
             }
         } else {
             if (record.airwayOpened) {
@@ -1780,6 +1893,19 @@ function renderScoreSummary() {
         }
     });
 
+    // Display Arcade Score if in Arcade mode
+    if (difficulty === 'arcade') {
+        arcadeScore = currentArcadeTotalScore;
+        arcadeFinalScore.textContent = arcadeScore;
+        arcadeScoreContainer.classList.remove('hidden');
+        // Trigger pop animation
+        arcadeFinalScore.classList.remove('score-pop');
+        void arcadeFinalScore.offsetWidth; // trigger reflow
+        arcadeFinalScore.classList.add('score-pop');
+    } else {
+        arcadeScoreContainer.classList.add('hidden');
+    }
+
     const totalPatients = scoreRecords.length;
     const avgTimeMs = totalPatients > 0 ? totalTimeMs / totalPatients : 0;
     const overallAccuracy = totalPatients > 0 ? (correctCount / totalPatients) * 100 : 0;
@@ -1787,6 +1913,7 @@ function renderScoreSummary() {
     document.getElementById('summary-total-time').textContent = formatTime(totalTimeMs);
     document.getElementById('summary-avg-time').textContent = formatTime(avgTimeMs);
 
+    // Use actual total patients run, not the standard constant
     document.getElementById('summary-total-patients').textContent = totalPatients;
     document.getElementById('summary-overall-accuracy').textContent = `${overallAccuracy.toFixed(1)}%`;
     
@@ -1856,6 +1983,13 @@ function resetGame() {
     scoreRecords = [];
     difficulty = null;
     timerDisplay.textContent = '00:00';
+
+    // Reset Arcade Specifics
+    arcadeScore = 0;
+    patientsCompletedInArcade = 0;
+    timeLimit = 120000; // Default back to standard
+    arcadeScoreContainer.classList.add('hidden');
+
     
     mT.classList.remove('hidden');
     document.getElementById('difficulty-selection').classList.remove('hidden');
@@ -1865,6 +1999,10 @@ function resetGame() {
     document.getElementById('new-incident-btn').disabled=true; 
     
     triageCard.classList.remove('time-up-alarm'); 
+    document.getElementById('difficulty-beginner').classList.remove('ring-4', 'ring-blue-400');
+    document.getElementById('difficulty-pro').classList.remove('ring-4', 'ring-blue-400');
+    document.getElementById('difficulty-master').classList.remove('ring-4', 'ring-blue-400');
+    document.getElementById('difficulty-arcade').classList.remove('ring-4', 'ring-indigo-400');
     
     // Restart BGM for the menu
     playBGM();
@@ -1919,4 +2057,3 @@ window.eI = eI;
 
 </body>
 </html>
-
