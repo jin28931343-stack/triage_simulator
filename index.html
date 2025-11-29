@@ -1,9 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>START Triage Simulation | START 檢傷分類模擬</title>
+    
+    <!-- 主要 SEO 設定 -->
+    <title>START Triage Simulator | START & JumpSTART 檢傷分類模擬器</title>
+    <meta name="description" content="免費線上大量傷病患檢傷分類模擬器。包含成人 START 與兒童 JumpSTART 檢傷流程練習。專為 EMT、救護技術員、消防員及醫護人員設計的教育訓練工具。Free online Mass Casualty Incident (MCI) triage simulator.">
+    <meta name="keywords" content="檢傷分類, START Triage, JumpSTART, 大量傷病患, MCI, EMT, 救護員, 消防, 模擬器, 救護訓練, Triage Simulator, EMS education">
+    <meta name="author" content="莊進宏 (JHUANG JIN HONG) - 台南市政府消防局">
+    <meta name="robots" content="index, follow">
+
+    <!-- 社群分享設定 (Open Graph) - 讓分享到 FB/Line 時更好看 -->
+    <meta property="og:title" content="START 檢傷分類模擬器 (Triage Simulator)">
+    <meta property="og:description" content="專為 EMT 設計的互動式檢傷練習工具。支援 START 與 JumpSTART 流程，包含音效與即時回饋。">
+    <meta property="og:type" content="website">
+    <!-- 如果您有將網站架設起來，這裡填入您的網址 -->
+    <!-- <meta property="og:url" content="https://您的帳號.github.io/triage_simulator/"> -->
+    <!-- 如果有截圖，可以填入圖片連結 -->
+    <!-- <meta property="og:image" content="預覽圖連結.jpg"> -->
+
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&family=Noto+Sans+TC:wght&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -205,27 +221,19 @@
                     <rect x="4" y="9" width="2" height="1" fill="#374151" />
                 </g>
             </defs>
-
-            <!-- Green Tag (Back) -->
             <g transform="translate(0, 5)">
                 <use href="#tag" />
                 <rect x="1" y="14" width="8" height="1" fill="#10b981" />
             </g>
-            
-            <!-- Yellow Tag -->
             <g transform="translate(7, 3)">
                 <use href="#tag" />
                 <rect x="1" y="14" width="8" height="1" fill="#f59e0b" />
             </g>
-
-            <!-- Red Tag -->
             <g transform="translate(14, 1)">
                 <use href="#tag" />
                 <rect x="1" y="14" width="8" height="1" fill="#ef4444" />
             </g>
-
-            <!-- Black Tag (Front) -->
-            <g transform="translate(21, 0)"> <!-- Highest -->
+            <g transform="translate(21, 0)"> 
                 <use href="#tag" />
                 <rect x="1" y="14" width="8" height="1" fill="#1f2937" />
             </g>
@@ -237,7 +245,7 @@
         </div>
     </h1>
 
-    <!-- 1. Difficulty Selection -->
+    <!-- 1. Difficulty Selection (Cards with Images) -->
     <section id="difficulty-selection" class="flex flex-col gap-4 p-3 rounded-lg border border-gray-200">
         <h2 class="text-lg md:text-xl font-bold text-gray-700 text-center">
             <span class="bilingual-en">Select Difficulty</span>
@@ -247,7 +255,7 @@
             <!-- Beginner: White Shirt -->
             <button id="difficulty-beginner" onclick="setDifficulty('beginner', this)" 
                 class="action-button bg-green-600 hover:bg-green-700 shadow-md border-2 border-green-600 flex flex-col items-center justify-center py-4 h-full">
-                <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h (2).jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Beginner" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
+                <img src="beginner.jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Beginner" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
                 <span class="img-error hidden text-xs text-yellow-200 mb-1">(No Image)</span>
                 <div>
                     <span class="bilingual-en text-lg">1. Beginner</span>
@@ -258,7 +266,7 @@
             <!-- Professional: Blue Vest -->
             <button id="difficulty-pro" onclick="setDifficulty('pro', this)" 
                 class="action-button bg-gray-600 hover:bg-gray-700 shadow-md border-2 border-gray-600 flex flex-col items-center justify-center py-4 h-full">
-                <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h (1).jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Professional" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
+                <img src="pro.jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Professional" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
                 <span class="img-error hidden text-xs text-yellow-200 mb-1">(No Image)</span>
                 <div>
                     <span class="bilingual-en text-lg">2. Professional</span>
@@ -269,7 +277,7 @@
             <!-- Master: Blue Hat -->
             <button id="difficulty-master" onclick="setDifficulty('master', this)" 
                 class="action-button bg-red-700 hover:bg-red-800 shadow-md border-2 border-red-700 flex flex-col items-center justify-center py-4 h-full">
-                <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h.jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Master" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
+                <img src="master.jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Master" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
                 <span class="img-error hidden text-xs text-yellow-200 mb-1">(No Image)</span>
                 <div>
                     <span class="bilingual-en text-lg">3. Master</span>
@@ -663,9 +671,10 @@
                 <p>2. 衛生福利部 高級救護技術員教科書第二版</p>
             </div>
         </div>
+        
         <!-- Feedback and Reset Buttons - MOVED UP -->
         <div class="mt-8 flex flex-col-reverse sm:flex-row justify-between items-center gap-4">
-             <a href="https://forms.gle/YourFormID" target="_blank" class="action-button bg-teal-600 hover:bg-teal-700 text-white text-center shadow-md w-full sm:w-auto no-underline">
+             <a href="https://docs.google.com/forms/d/e/1FAIpQLSe420eDukPpIr0yi8OWoj8k5fX-zdzMUkLtchGqrBl8zE4cbg/viewform?usp=header" target="_blank" class="action-button bg-teal-600 hover:bg-teal-700 text-white text-center shadow-md w-full sm:w-auto no-underline">
                 <span class="bilingual-en">Give Feedback</span>
                 <span class="bilingual-zh block">填寫回饋問卷</span>
             </a>
@@ -1675,8 +1684,7 @@ function checkMental(cOR,clickedButton){
     if(clickedButton)clickedButton.blur();
     pushHistory('step-mental');
     st.mental.classList.add('hidden');
-    // Directly show final choices
-    st.finalChoice.classList.remove('hidden');
+    tfc();
 }
 
 function nP(){
@@ -1686,7 +1694,6 @@ function nP(){
     gp();spU();
 }
 
-// EXPOSED: eI function explicitly exposed for the error
 function eI(){
     stopTimer(); 
     playBGM(); // Play victory BGM (Resume BGM)
