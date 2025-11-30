@@ -33,6 +33,16 @@
             user-select: none;
             -webkit-user-select: none;
         }
+
+        /* --- NEW: Scale Down for Desktop --- */
+        @media (min-width: 1024px) {
+            body {
+                zoom: 0.75; /* For Chrome/Edge/Safari */
+                -moz-transform: scale(0.75); /* For Firefox */
+                -moz-transform-origin: center top;
+            }
+        }
+
         .bilingual-en { font-weight: 700; }
         .bilingual-zh { font-size: 1.05em; color: inherit; } 
         .triage-card {
@@ -447,12 +457,8 @@
                  </div>
              </div>
              <div class="text-right text-gray-500 w-full sm:w-auto">
-                <div class="mb-1">
-                    <div class="font-semibold text-gray-700">作者: 莊進宏</div>
-                    <div class="text-[10px] text-gray-500">JHUANG JIN HONG</div>
-                    <div class="font-semibold text-gray-700 mt-1">台南市政府消防局</div>
-                    <div class="text-[10px] text-gray-500">Tainan City Fire Bureau</div>
-                </div>
+                <div class="mb-1"><div class="font-semibold text-gray-700">作者: 莊進宏</div><div class="text-[10px] text-gray-500">JHUANG JIN HONG</div><div class="font-semibold text-gray-700 mt-1">台南市政府消防局</div></div>
+                <p><span class="font-semibold text-gray-700">Tainan City Fire Bureau</span></p>
                 <p><span class="font-semibold text-gray-700">版本: Online Beta 1141130-E</span></p>
              </div>
         </footer>
