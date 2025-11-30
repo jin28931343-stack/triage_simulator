@@ -16,7 +16,7 @@
     <meta property="og:description" content="專為 EMT 設計的互動式檢傷練習工具。支援 START 與 JumpSTART 流程，包含音效與即時回饋。">
     <meta property="og:type" content="website">
     <!-- 如果您有將網站架設在某個網址，請填寫在這： <meta property="og:url" content="https://your-website.com"> -->
-    <!-- 如果您有代表性的圖片，請填寫在這： <meta property="og:image" content="https://your-website.com/thumbnail.jpg"> -->
+    <!-- 如果您有代表性的圖片，請填寫在這： <meta property="og:image" content="https://github.com/jin28931343-stack/triage_simulator/tittle.jpg"> -->
 
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&family=Noto+Sans+TC:wght&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -252,47 +252,47 @@
         </h2>
         <!-- MODIFIED Grid to 4 columns -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-            <!-- Beginner: White Shirt -->
+            <!-- Beginner: White Shirt - GREEN -->
             <button id="difficulty-beginner" onclick="setDifficulty('beginner', this)" 
                 class="action-button bg-green-600 hover:bg-green-700 shadow-md border-2 border-green-600 flex flex-col items-center justify-center py-4 h-full">
                 <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h (2).jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Beginner" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
                 <span class="img-error hidden text-xs text-yellow-200 mb-1">(No Image)</span>
                 <div>
-                    <span class="bilingual-en text-lg">1. Beginner</span>
+                    <span class="bilingual-en text-lg">Beginner</span>
                     <span class="bilingual-zh block text-sm">初學者</span>
                 </div>
             </button>
             
-            <!-- Professional: Blue Vest -->
+            <!-- Professional: Blue Vest - CHANGED TO YELLOW -->
             <button id="difficulty-pro" onclick="setDifficulty('pro', this)" 
-                class="action-button bg-gray-600 hover:bg-gray-700 shadow-md border-2 border-gray-600 flex flex-col items-center justify-center py-4 h-full">
+                class="action-button bg-yellow-600 hover:bg-yellow-700 shadow-md border-2 border-yellow-600 flex flex-col items-center justify-center py-4 h-full">
                 <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h (1).jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Professional" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
                 <span class="img-error hidden text-xs text-yellow-200 mb-1">(No Image)</span>
                 <div>
-                    <span class="bilingual-en text-lg">2. Professional</span>
+                    <span class="bilingual-en text-lg">Professional</span>
                     <span class="bilingual-zh block text-sm">專業人員</span>
                 </div>
             </button>
             
-            <!-- Master: Blue Hat -->
+            <!-- Master: Blue Hat - RED -->
             <button id="difficulty-master" onclick="setDifficulty('master', this)" 
                 class="action-button bg-red-700 hover:bg-red-800 shadow-md border-2 border-red-700 flex flex-col items-center justify-center py-4 h-full">
                 <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h.jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Master" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
                 <span class="img-error hidden text-xs text-yellow-200 mb-1">(No Image)</span>
                 <div>
-                    <span class="bilingual-en text-lg">3. Master</span>
+                    <span class="bilingual-en text-lg">Master</span>
                     <span class="bilingual-zh block text-sm">大師級</span>
                 </div>
             </button>
 
-             <!-- NEW: Arcade Mode Button -->
+             <!-- NEW: Arcade Mode Button - CHANGED TO BLACK -->
             <button id="difficulty-arcade" onclick="setDifficulty('arcade', this)" 
-                class="action-button bg-indigo-600 hover:bg-indigo-700 shadow-md border-2 border-indigo-600 flex flex-col items-center justify-center py-4 h-full">
+                class="action-button bg-gray-900 hover:bg-black shadow-md border-2 border-gray-900 flex flex-col items-center justify-center py-4 h-full">
                 <!-- Using the new uploaded image for Arcade Mode -->
                 <img src="Stree.jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Arcade Mode" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20" style="image-rendering: pixelated;">
                 <span class="img-error hidden text-xs text-yellow-200 mb-1">(No Image)</span>
                 <div>
-                    <span class="bilingual-en text-lg font-bold">4. Arcade</span>
+                    <span class="bilingual-en text-lg font-bold">Arcade</span>
                     <span class="bilingual-zh block text-sm font-bold">街機模式</span>
                 </div>
             </button>
@@ -951,7 +951,7 @@ document.addEventListener('click', () => {
 }, { once: true });
 
 
-const tg={RED:{en:"RED - Immediate",zh:"紅色 - 立即",class:"red-bg", color: 'red'},YELLOW:{en:"YELLOW - Delayed",zh:"黃色 - 延遲",class:"yellow-bg", color: 'yellow'},GREEN:{en:"GREEN - Minor",zh:"綠色 - 輕微",class:"green-bg", color: 'green'},BLACK:{en:"BLACK - Deceased / Expectant",zh:"黑色 - 死亡 / 預期",class:"black-bg", color: 'black'}};
+const tg={RED:{en:"RED - Immediate",zh:"紅色 - 立即",class:"red-bg", color: 'red'},YELLOW:{en:"YELLOW - Delayed",zh:"黃色 - 延遲",class:"yellow-bg",color: 'yellow'},GREEN:{en:"GREEN - Minor",zh:"綠色 - 輕微",class:"green-bg",color: 'green'},BLACK:{en:"BLACK - Deceased / Expectant",zh:"黑色 - 死亡 / 預期",class:"black-bg",color: 'black'}};
 
 const buttonTextConfig = {
     "btn-bleed-tourniquet": { full: { en: "Apply Tourniquet", zh: "使用止血帶 → 繼續評估" }, clean: { en: "Apply Tourniquet", zh: "使用止血帶" } },
@@ -1022,10 +1022,10 @@ function formatTime(ms) {
 
 function setDifficulty(level, clickedButton) {
     // Reset selection styles
-    document.getElementById('difficulty-beginner').classList.remove('ring-4', 'ring-blue-400');
-    document.getElementById('difficulty-pro').classList.remove('ring-4', 'ring-blue-400');
-    document.getElementById('difficulty-master').classList.remove('ring-4', 'ring-blue-400');
-    document.getElementById('difficulty-arcade').classList.remove('ring-4', 'ring-indigo-400');
+    document.getElementById('difficulty-beginner').classList.remove('ring-4', 'ring-blue-400', 'ring-green-400');
+    document.getElementById('difficulty-pro').classList.remove('ring-4', 'ring-blue-400', 'ring-yellow-400');
+    document.getElementById('difficulty-master').classList.remove('ring-4', 'ring-blue-400', 'ring-red-400');
+    document.getElementById('difficulty-arcade').classList.remove('ring-4', 'ring-indigo-400', 'ring-gray-500');
 
     difficulty = level;
     
@@ -1034,11 +1034,10 @@ function setDifficulty(level, clickedButton) {
     patientsCompletedInArcade = 0;
     arcadeScoreContainer.classList.add('hidden');
 
-    if (level === 'arcade') {
-         clickedButton.classList.add('ring-4', 'ring-indigo-400');
-    } else {
-         clickedButton.classList.add('ring-4', 'ring-blue-400');
-    }
+    if (level === 'beginner') clickedButton.classList.add('ring-4', 'ring-green-400');
+    if (level === 'pro') clickedButton.classList.add('ring-4', 'ring-yellow-400');
+    if (level === 'master') clickedButton.classList.add('ring-4', 'ring-red-400');
+    if (level === 'arcade') clickedButton.classList.add('ring-4', 'ring-gray-500');
 
     newIncidentBtn.disabled = false;
     sc.classList.remove('hidden');
@@ -1048,13 +1047,15 @@ function setDifficulty(level, clickedButton) {
         difficultyInfo.innerHTML = '<span class="bilingual-en text-green-700 font-bold">Beginner Mode: Buttons are color-coded based on the expected triage result. 2 mins per patient.</span><span class="bilingual-zh block mt-1 text-green-700">初學者模式：按鈕會顯示顏色提示，顏色即為預期的檢傷結果。每位傷患限時 2 分鐘。</span>';
     } else if (level === 'pro') {
         timeLimit = 60000; 
-        difficultyInfo.innerHTML = '<span class="bilingual-en text-gray-700 font-bold">Professional Mode: Buttons are grayscale. Only the final choice buttons are colored. 1 min per patient.</span><span class="bilingual-zh block mt-1 text-gray-700">專業人員模式：步驟按鈕將取消顏色提示（灰階）。只有最終分類按鈕保留顏色。每位傷患限時 1 分鐘。</span>';
+        // Changed text color to Yellow-700
+        difficultyInfo.innerHTML = '<span class="bilingual-en text-yellow-700 font-bold">Professional Mode: Buttons are grayscale. Only the final choice buttons are colored. 1 min per patient.</span><span class="bilingual-zh block mt-1 text-yellow-700">專業人員模式：步驟按鈕將取消顏色提示（灰階）。只有最終分類按鈕保留顏色。每位傷患限時 1 分鐘。</span>';
     } else if (level === 'master') {
         timeLimit = 30000; 
         difficultyInfo.innerHTML = '<span class="bilingual-en text-red-700 font-bold">Master Mode: Buttons are grayscale AND text hints/numbers are removed. Pure knowledge test. 30 sec per patient.</span><span class="bilingual-zh block mt-1 text-red-700">大師級模式：按鈕無顏色且無數字/結果提示。純知識測試。每位傷患限時 30 秒。</span>';
     } else if (level === 'arcade') {
         timeLimit = ARCADE_INITIAL_TIME;
-        difficultyInfo.innerHTML = '<span class="bilingual-en text-indigo-700 font-bold">Arcade Mode: Master rules. Unlimited patients. Time decreases every 5 patients. Game ends when time runs out. Scoring enabled.</span><span class="bilingual-zh block mt-1 text-indigo-700">街機模式：大師級規則。無限病患。每5人時間縮短。時間到即結束。啟用計分。</span>';
+        // Changed text color to Gray-800
+        difficultyInfo.innerHTML = '<span class="bilingual-en text-gray-800 font-bold">Arcade Mode: Master rules. Unlimited patients. Time decreases every 5 patients. Game ends when time runs out. Scoring enabled.</span><span class="bilingual-zh block mt-1 text-gray-800">街機模式：大師級規則。無限病患。每5人時間縮短。時間到即結束。啟用計分。</span>';
     }
     
     applyDifficultyStyles(level);
@@ -1999,10 +2000,10 @@ function resetGame() {
     document.getElementById('new-incident-btn').disabled=true; 
     
     triageCard.classList.remove('time-up-alarm'); 
-    document.getElementById('difficulty-beginner').classList.remove('ring-4', 'ring-blue-400');
-    document.getElementById('difficulty-pro').classList.remove('ring-4', 'ring-blue-400');
-    document.getElementById('difficulty-master').classList.remove('ring-4', 'ring-blue-400');
-    document.getElementById('difficulty-arcade').classList.remove('ring-4', 'ring-indigo-400');
+    document.getElementById('difficulty-beginner').classList.remove('ring-4', 'ring-blue-400', 'ring-green-400');
+    document.getElementById('difficulty-pro').classList.remove('ring-4', 'ring-blue-400', 'ring-yellow-400');
+    document.getElementById('difficulty-master').classList.remove('ring-4', 'ring-blue-400', 'ring-red-400');
+    document.getElementById('difficulty-arcade').classList.remove('ring-4', 'ring-indigo-400', 'ring-gray-500');
     
     // Restart BGM for the menu
     playBGM();
