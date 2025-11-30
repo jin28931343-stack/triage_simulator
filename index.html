@@ -459,20 +459,18 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
 // !!! IMPORTANT FOR OFFLINE USE / DOWNLOAD !!!
-// If you download this file to use on your own website, you must fill in your own Firebase Config below.
-// 若您下載此檔案並想在自己的網站上使用雲端排行榜，請在下方填入您的 Firebase 設定。
-const MY_FIREBASE_CONFIG = null; 
-// Example:
-// const MY_FIREBASE_CONFIG = {
-//   apiKey: "YOUR_API_KEY",
-//   authDomain: "YOUR_PROJECT.firebaseapp.com",
-//   projectId: "YOUR_PROJECT_ID",
-//   storageBucket: "YOUR_PROJECT.appspot.com",
-//   messagingSenderId: "YOUR_ID",
-//   appId: "YOUR_APP_ID"
-// };
+const MY_FIREBASE_CONFIG = {
+   apiKey: "AIzaSyBdhUpfFgmiYnRqm-SjeQv5V43tQ_iqhqU",
+   authDomain: "triage-simulator-50ed6.firebaseapp.com",
+   projectId: "triage-simulator-50ed6",
+   storageBucket: "triage-simulator-50ed6.firebasestorage.app",
+   messagingSenderId: "1051604692940",
+   appId: "1:1051604692940:web:309a17ed280ae0e0c87769",
+   measurementId: "G-3TG1ZP1WY8"
+};
 
 let db, auth, user;
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-triage-app';
@@ -481,9 +479,9 @@ async function initFirebase() {
     try {
         let config = null;
         if (typeof __firebase_config !== 'undefined') {
-            config = JSON.parse(__firebase_config); // Use environment config if available (Preview Mode)
+            config = JSON.parse(__firebase_config); 
         } else if (MY_FIREBASE_CONFIG) {
-            config = MY_FIREBASE_CONFIG; // Use manual config (Standalone Mode)
+            config = MY_FIREBASE_CONFIG; 
         }
 
         if (!config) {
@@ -494,6 +492,7 @@ async function initFirebase() {
         const app = initializeApp(config);
         auth = getAuth(app);
         db = getFirestore(app);
+        const analytics = getAnalytics(app);
 
         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
             await signInWithCustomToken(auth, __initial_auth_token);
