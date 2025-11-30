@@ -34,11 +34,11 @@
             -webkit-user-select: none;
         }
 
-        /* --- NEW: Scale Down for Desktop --- */
+        /* --- Desktop Scale --- */
         @media (min-width: 1024px) {
             body {
-                zoom: 0.75; /* For Chrome/Edge/Safari */
-                -moz-transform: scale(0.75); /* For Firefox */
+                zoom: 0.75; 
+                -moz-transform: scale(0.75); 
                 -moz-transform-origin: center top;
             }
         }
@@ -60,6 +60,34 @@
             position: relative;
             z-index: 10;
         }
+
+        /* --- UPDATED: Arcade HUD Style (Centered) --- */
+        #arcade-game-hud {
+            position: absolute;
+            top: -15px; /* Moved slightly up to overlap border */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%) rotate(2deg); /* Center & Rotate */
+            background: #fbbf24; /* Yellow-400 */
+            border: 3px solid #b45309; /* Amber-700 */
+            color: #78350f; /* Amber-900 */
+            padding: 0.4rem 1.2rem;
+            border-radius: 0.5rem;
+            font-family: 'Roboto', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 0 #92400e;
+            z-index: 50;
+            display: none; /* Hidden by default */
+            transition: transform 0.1s;
+        }
+        @media (min-width: 640px) {
+            #arcade-game-hud {
+                top: -25px;
+                font-size: 1.5rem;
+                padding: 0.5rem 1.5rem;
+            }
+        }
+
         #transition-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background-color: black; opacity: 0; pointer-events: none; z-index: 9999;
@@ -121,14 +149,19 @@
         .back-button:hover { background-color: #4b5563; }
         .back-button:disabled { opacity: 0; pointer-events: none; }
         .jumpstart-section { background-color: #eef2ff; border-left: 4px solid #6366f1; }
+        
+        /* --- UPDATED: Animation to respect centering --- */
         @keyframes scorePop {
-            0% { transform: scale(1); } 50% { transform: scale(1.2); color: #fbbf24; } 100% { transform: scale(1); }
+            0% { transform: translateX(-50%) scale(1) rotate(2deg); } 
+            50% { transform: translateX(-50%) scale(1.4) rotate(0deg); color: #fff; text-shadow: 0 0 5px #b45309; } 
+            100% { transform: translateX(-50%) scale(1) rotate(2deg); }
         }
-        .score-pop { animation: scorePop 0.5s ease-in-out; }
+        .score-pop { animation: scorePop 0.3s ease-in-out; }
+        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
         
-        /* Custom Scrollbar for Leaderboard */
+        /* Custom Scrollbar */
         .leaderboard-scroll::-webkit-scrollbar { width: 6px; }
         .leaderboard-scroll::-webkit-scrollbar-track { background: #fef3c7; }
         .leaderboard-scroll::-webkit-scrollbar-thumb { background: #d97706; border-radius: 3px; }
@@ -139,6 +172,11 @@
 <div id="transition-overlay"></div>
 
 <div class="triage-card">
+    <!-- NEW: Arcade HUD (Centered) -->
+    <div id="arcade-game-hud">
+        <i class="fa-solid fa-trophy"></i> <span id="hud-score">0</span>
+    </div>
+
     <h1 id="main-title" class="text-2xl md:text-3xl font-bold text-center text-gray-900 flex flex-col md:flex-row items-center justify-center gap-4 mb-4">
         <svg width="100" height="60" viewBox="0 0 40 26" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
             <defs>
@@ -169,21 +207,28 @@
             <span class="bilingual-zh block">選擇模式</span>
         </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+            <!-- Images Restored -->
             <button id="difficulty-beginner" onclick="setDifficulty('beginner', this)" class="action-button bg-green-600 hover:bg-green-700 shadow-md border-2 border-green-600 flex flex-col items-center justify-center py-4 h-full">
-                <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h%20(2).jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Beginner" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
+                <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h (2).jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Beginner" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
                 <span class="img-error hidden text-xs text-yellow-200 mb-1">(No Image)</span>
                 <div><span class="bilingual-en text-lg">Beginner</span><span class="bilingual-zh block text-sm">初學者</span></div>
             </button>
+            
+            <!-- Professional (Yellow) -->
             <button id="difficulty-pro" onclick="setDifficulty('pro', this)" class="action-button bg-yellow-600 hover:bg-yellow-700 shadow-md border-2 border-yellow-600 flex flex-col items-center justify-center py-4 h-full">
-                <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h%20(1).jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Professional" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
+                <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h (1).jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Professional" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
                 <span class="img-error hidden text-xs text-white mb-1">(No Image)</span>
                 <div><span class="bilingual-en text-lg">Professional</span><span class="bilingual-zh block text-sm">專業人員</span></div>
             </button>
+            
+            <!-- Master (Red) -->
             <button id="difficulty-master" onclick="setDifficulty('master', this)" class="action-button bg-red-700 hover:bg-red-800 shadow-md border-2 border-red-700 flex flex-col items-center justify-center py-4 h-full">
                 <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h.jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Master" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
                 <span class="img-error hidden text-xs text-white mb-1">(No Image)</span>
                 <div><span class="bilingual-en text-lg">Master</span><span class="bilingual-zh block text-sm">大師級</span></div>
             </button>
+            
+            <!-- Arcade (Black) -->
             <button id="difficulty-arcade" onclick="setDifficulty('arcade', this)" class="action-button bg-gray-900 hover:bg-black shadow-md border-2 border-gray-900 flex flex-col items-center justify-center py-4 h-full">
                 <img src="Stree.jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Arcade" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20" style="image-rendering: pixelated;">
                 <span class="img-error hidden text-xs text-white mb-1">(No Image)</span>
@@ -343,7 +388,10 @@
             <div id="step-conclusion" class="hidden mt-4">
                 <div class="flex flex-col gap-4">
                     <div id="final-classification" class="text-xl md:text-2xl font-bold text-gray-800"></div>
-                    <button id="next-patient-btn" onclick="nextPatient()" class="action-button bg-blue-600 hover:bg-blue-700 text-white" disabled><span class="bilingual-en">Next Patient</span><span class="bilingual-zh block">下一位傷患</span></button>
+                    <button id="next-patient-btn" onclick="nextPatient()" class="action-button bg-blue-600 hover:bg-blue-700 text-white" disabled>
+                        <span class="bilingual-en">Next Patient</span>
+                        <span class="bilingual-zh block">下一位傷患</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -400,7 +448,7 @@
             <h3 class="text-lg md:text-xl font-semibold text-purple-700 mb-3 border-b border-purple-200 pb-2"><i class="fa-solid fa-lungs"></i> <span class="bilingual-en">Airway Statistics</span><span class="bilingual-zh">暢通呼吸道統計</span></h3>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-gray-700 text-center">
                 <div class="flex flex-col"><span class="text-xs md:text-sm font-medium"><span class="bilingual-en">Apneic Cases</span><span class="bilingual-zh block">無呼吸總數</span></span><span id="summary-airway-total" class="text-xl md:text-2xl font-extrabold text-gray-900">0</span></div>
-                <div class="flex flex-col"><span class="text-xs md:text-sm font-medium text-green-700"><span class="bilingual-en">Correctly Opened</span><span class="bilingual-zh block">正確執行</span></span><span id="summary-airway-correct" class="text-xl md:text-2xl font-extrabold text-green-700">0</span></div>
+                <div class="flex flex-col"><span class="text-xs md:text-sm font-medium text-green-700"><span class="bilingual-en">Correctly Opened</span><span class="bilingual-zh block">正確執行</span></span><span id="summary-airway-correct" class="text-xl font-extrabold text-green-700">0</span></div>
                  <div class="flex flex-col"><span class="text-xs md:text-sm font-medium text-red-600"><span class="bilingual-en">Missed (Critical)</span><span class="bilingual-zh block">漏做 (嚴重錯誤)</span></span><span id="summary-airway-missed" class="text-xl md:text-2xl font-extrabold text-red-600">0</span></div>
                 <div class="flex flex-col"><span class="text-xs md:text-sm font-medium text-yellow-600"><span class="bilingual-en">Incorrectly Used</span><span class="bilingual-zh block">誤做 (不需要)</span></span><span id="summary-airway-wrong" class="text-xl md:text-2xl font-extrabold text-yellow-600">0</span></div>
             </div>
@@ -430,6 +478,7 @@
                                     <li>修正按鈕失效錯誤。</li>
                                     <li>修正選取分類後畫面滾動位置。</li>
                                     <li>修正 JumpSTART 暢通呼吸道後畫面滾動位置。</li>
+                                    <li>街機模式新增即時分數顯示板。</li>
                                 </ul>
                             </div>
                             <div>
@@ -459,7 +508,7 @@
              <div class="text-right text-gray-500 w-full sm:w-auto">
                 <div class="mb-1"><div class="font-semibold text-gray-700">作者: 莊進宏</div><div class="text-[10px] text-gray-500">JHUANG JIN HONG</div><div class="font-semibold text-gray-700 mt-1">台南市政府消防局</div></div>
                 <p><span class="font-semibold text-gray-700">Tainan City Fire Bureau</span></p>
-                <p><span class="font-semibold text-gray-700">版本: Online Beta 1141130-E</span></p>
+                <p><span class="font-semibold text-gray-700">版本: Online Beta 1141130-F</span></p>
              </div>
         </footer>
     </div>
@@ -542,7 +591,7 @@ document.addEventListener('click',()=>{ initAudio(); if(!bgmInterval&&!document.
 const tg={RED:{en:"RED - Immediate",zh:"紅色 - 立即",class:"red-bg",color:'red'},YELLOW:{en:"YELLOW - Delayed",zh:"黃色 - 延遲",class:"yellow-bg",color:'yellow'},GREEN:{en:"GREEN - Minor",zh:"綠色 - 輕微",class:"green-bg",color:'green'},BLACK:{en:"BLACK - Deceased / Expectant",zh:"黑色 - 死亡 / 預期",class:"black-bg",color:'black'}};
 const buttonTextConfig={"btn-bleed-tourniquet":{full:{en:"Apply Tourniquet",zh:"使用止血帶 → 繼續評估"},clean:{en:"Apply Tourniquet",zh:"使用止血帶"}},"btn-bleed-none":{full:{en:"No Tourniquet",zh:"不使用止血帶 → 繼續評估"},clean:{en:"No Tourniquet",zh:"不使用止血帶"}},"btn-amb-can":{full:{en:"GREEN",zh:"綠色"},clean:{en:"GREEN",zh:"綠色"}},"btn-amb-cannot":{full:{en:"Assess Further",zh:"繼續評估"},clean:{en:"Assess Further",zh:"繼續評估"}},"btn-resp-absent":{full:{en:"Open Airway",zh:"暢通呼吸道"},clean:{en:"Open Airway",zh:"暢通呼吸道"}},"btn-resp-fast":{full:{en:"Abnormal (>30 or <10)",zh:"過快(>30/min)或過慢(<10/min) → 最終確認"},clean:{en:"Abnormal",zh:"異常"}},"btn-resp-normal":{full:{en:"Normal (10-30/min)",zh:"正常 → 繼續 P"},clean:{en:"Normal",zh:"正常"}},"btn-perf-absent":{full:{en:"Absent Pulse / CRT > 2s",zh:"無脈搏或 CRT > 2秒 → 最終確認"},clean:{en:"Absent / Slow",zh:"無脈搏或 CRT > 2秒"}},"btn-perf-present":{full:{en:"Present Pulse / CRT ≤ 2s",zh:"有脈搏且 CRT ≤ 2秒 → 繼續 M"},clean:{en:"Present / Normal",zh:"有脈搏 / 充填正常"}},"btn-ment-cannot":{full:{en:"Cannot Follow Commands",zh:"無法遵從指令 → 最終確認"},clean:{en:"Cannot Follow",zh:"無法遵從指令"}},"btn-ment-can":{full:{en:"Can Follow Commands",zh:"可遵從指令 → 最終確認"},clean:{en:"Can Follow",zh:"可遵從指令"}},"btn-js-check-pulse":{full:{en:"Check Pulse",zh:"檢查脈搏"},clean:{en:"Check Pulse",zh:"檢查脈搏"}},"btn-js-mark-black-1":{full:{en:"No Breathing → Black",zh:"無呼吸 → 判定黑色"},clean:{en:"No Breathing",zh:"無呼吸"}},"btn-js-rescue-breaths":{full:{en:"Give 5 Rescue Breaths",zh:"給予 5 次吹氣"},clean:{en:"5 Breaths",zh:"給予吹氣"}},"btn-js-mark-black-2":{full:{en:"Mark Deceased (Black)",zh:"判定黑色"},clean:{en:"Black",zh:"黑色"}}};
 
-const pcE=document.getElementById('patient-card'), mT=document.getElementById('main-title'), sc=document.getElementById('status-container'), sd=document.getElementById('status-display'), pnd=document.getElementById('patient-number'), trd=document.getElementById('triage-result'), rrD=document.getElementById('resp-rate'), rrZN=document.getElementById('resp-rate-zh-note'), wtsd=document.getElementById('walk-test-status'), aa=document.getElementById('airway-action'), ame=document.getElementById('airway-message-en'), amz=document.getElementById('airway-message-zh'), npb=document.getElementById('next-patient-btn'), fcd=document.getElementById('final-classification'), scoreSummaryEl=document.getElementById('score-summary'), btnBack=document.getElementById('btn-back-step'), triageCard=document.querySelector('.triage-card'), jsPulseResultDiv=document.getElementById('js-pulse-result'), jsPulseText=document.getElementById('js-pulse-text'), jsBreathResultDiv=document.getElementById('js-breath-result'), jsBreathText=document.getElementById('js-breath-text'), jsPulseOptions=document.getElementById('js-pulse-options'), arcadeScoreContainer=document.getElementById('arcade-score-container'), arcadeFinalScore=document.getElementById('arcade-final-score');
+const pcE=document.getElementById('patient-card'), mT=document.getElementById('main-title'), sc=document.getElementById('status-container'), sd=document.getElementById('status-display'), pnd=document.getElementById('patient-number'), trd=document.getElementById('triage-result'), rrD=document.getElementById('resp-rate'), rrZN=document.getElementById('resp-rate-zh-note'), wtsd=document.getElementById('walk-test-status'), aa=document.getElementById('airway-action'), ame=document.getElementById('airway-message-en'), amz=document.getElementById('airway-message-zh'), npb=document.getElementById('next-patient-btn'), fcd=document.getElementById('final-classification'), scoreSummaryEl=document.getElementById('score-summary'), btnBack=document.getElementById('btn-back-step'), triageCard=document.querySelector('.triage-card'), jsPulseResultDiv=document.getElementById('js-pulse-result'), jsPulseText=document.getElementById('js-pulse-text'), jsBreathResultDiv=document.getElementById('js-breath-result'), jsBreathText=document.getElementById('js-breath-text'), jsPulseOptions=document.getElementById('js-pulse-options'), arcadeScoreContainer=document.getElementById('arcade-score-container'), arcadeFinalScore=document.getElementById('arcade-final-score'), arcadeGameHud=document.getElementById('arcade-game-hud'), hudScore=document.getElementById('hud-score');
 const rc=document.getElementById('resp-container'), pC=document.getElementById('pulse-container'), mC=document.getElementById('mental-container'), timerDisplay=document.getElementById('triage-timer'), difficultyInfo=document.getElementById('difficulty-info'), newIncidentBtn=document.getElementById('new-incident-btn');
 const st={ bleeding:document.getElementById('step-bleeding'), ambulatory:document.getElementById('step-ambulatory'), respiration:document.getElementById('step-respiration'), perfusion:document.getElementById('step-perfusion'), mental:document.getElementById('step-mental'), finalChoice:document.getElementById('step-final-choice'), conclusion:document.getElementById('step-conclusion'), jumpStartPulse:document.getElementById('step-jumpstart-check-pulse'), jumpStartBreaths:document.getElementById('step-jumpstart-rescue-breaths')};
 
@@ -592,7 +641,17 @@ window.startWithEffect = function() {
     playGameStartSound(); stopBGM(); const ol=document.getElementById('transition-overlay'); ol.style.opacity='1'; setTimeout(()=>{ si(); ol.style.opacity='0'; },500);
 }
 
-function si(){ if(!difficulty)return; window.scrollTo(0,0); stopTimer(); stopBGM(); scoreRecords=[]; pc=0; go=false; mT.classList.add('hidden'); sc.classList.add('hidden'); document.getElementById('difficulty-selection').classList.add('hidden'); scoreSummaryEl.classList.add('hidden'); pcE.classList.remove('hidden'); sd.innerHTML=`<span class="bilingual-en">Incident Active</span><span class="bilingual-zh block mt-1">事件啟動</span>`; applyDifficultyStyles(difficulty); nP(); }
+function si(){ if(!difficulty)return; window.scrollTo(0,0); stopTimer(); stopBGM(); scoreRecords=[]; pc=0; go=false; mT.classList.add('hidden'); sc.classList.add('hidden'); document.getElementById('difficulty-selection').classList.add('hidden'); scoreSummaryEl.classList.add('hidden'); pcE.classList.remove('hidden'); sd.innerHTML=`<span class="bilingual-en">Incident Active</span><span class="bilingual-zh block mt-1">事件啟動</span>`; applyDifficultyStyles(difficulty); 
+    // NEW HUD LOGIC
+    if(difficulty==='arcade'){ 
+        arcadeGameHud.style.display='block'; 
+        hudScore.textContent='0'; 
+        arcadeScore=0;
+    } else {
+        arcadeGameHud.style.display='none';
+    }
+    nP(); 
+}
 
 function startTimer(){ stopTimer(); startTime=performance.now(); timerDisplay.textContent=formatTime(timeLimit); timerDisplay.classList.remove('text-red-800'); triageCard.classList.remove('time-up-alarm'); timerInterval=setInterval(()=>{ const el=performance.now()-startTime; let r=timeLimit-el; if(r<0)r=0; timerDisplay.textContent=formatTime(r); if(r===0){ if(difficulty==='arcade'){stopTimer();window.eI();}else{timerDisplay.classList.add('text-red-800');triageCard.classList.add('time-up-alarm');} } },100); }
 function stopTimer(){ if(timerInterval){clearInterval(timerInterval);timerInterval=null;} }
@@ -672,12 +731,33 @@ function nP(){
 window.nextPatient = nP;
 
 window.finalizeTriage = function(k,b,fail){ if(b)b.blur(); Object.values(st).forEach(s=>{if(s)s.classList.add('hidden')});
-    if(fail){ playErrorSound(); scoreRecords.push({triageTimeMs:performance.now()-startTime,correctCategory:cp.correctTriage,chosenCategory:tg[k],isCorrect:false,bleedingPresent:cp.massiveBleeding,tourniquetApplied:currentTourniquetDecision,tourniquetRequired:cp.tourniquetRequired,respRate:cp.respRate,airwayOpened:cp.hasOpenedAirway}); stR(tg[k],false,performance.now()-startTime,fail); return; }
-    st.finalChoice.classList.add('hidden'); const c=tg[k]; let ok=c===cp.correctTriage, cf=null;
-    if(cp.respRate===0&&!cp.hasOpenedAirway){ok=false;cf={en:"PROCEDURAL ERROR: Airway not opened.",zh:"程序錯誤：未執行暢通呼吸道。"};}
-    if(ok)playCorrectSound();else playErrorSound();
-    scoreRecords.push({triageTimeMs:performance.now()-startTime,correctCategory:cp.correctTriage,chosenCategory:c,isCorrect:ok,bleedingPresent:cp.massiveBleeding,tourniquetApplied:currentTourniquetDecision,tourniquetRequired:cp.tourniquetRequired,respRate:cp.respRate,airwayOpened:cp.hasOpenedAirway});
-    stR(c,ok,performance.now()-startTime,cf);
+    let isCorrect = false;
+    const chosenCat = tg[k];
+
+    if(fail){ 
+        isCorrect = false;
+        playErrorSound(); 
+    } else {
+        st.finalChoice.classList.add('hidden'); 
+        let ok = chosenCat===cp.correctTriage;
+        if(cp.respRate===0&&!cp.hasOpenedAirway){ok=false;fail={en:"PROCEDURAL ERROR: Airway not opened.",zh:"程序錯誤：未執行暢通呼吸道。"};}
+        if(ok) playCorrectSound(); else playErrorSound();
+        isCorrect = ok;
+    }
+    
+    // NEW: Update HUD score instantly
+    if(difficulty==='arcade'){
+        const pts = isCorrect ? 100 : -200;
+        arcadeScore += pts;
+        hudScore.textContent = arcadeScore;
+        // Trigger Pop Animation
+        arcadeGameHud.classList.remove('score-pop');
+        void arcadeGameHud.offsetWidth; // trigger reflow
+        arcadeGameHud.classList.add('score-pop');
+    }
+
+    scoreRecords.push({triageTimeMs:performance.now()-startTime,correctCategory:cp.correctTriage,chosenCategory:chosenCat,isCorrect:isCorrect,bleedingPresent:cp.massiveBleeding,tourniquetApplied:currentTourniquetDecision,tourniquetRequired:cp.tourniquetRequired,respRate:cp.respRate,airwayOpened:cp.hasOpenedAirway});
+    stR(chosenCat,isCorrect,performance.now()-startTime,fail);
 }
 
 function stR(c,ok,t,fail){ 
@@ -711,7 +791,25 @@ function stR(c,ok,t,fail){
     fcd.scrollIntoView({behavior:'smooth',block:'center'});
 }
 
-window.eI = function(){ stopTimer(); playBGM(); playVictorySound(); go=true; renderScoreSummary(); if(difficulty==='arcade'){ saveLeaderboard(playerName,arcadeScore); showLeaderboard(); }else{ document.getElementById('leaderboard-container').classList.add('hidden'); } sc.classList.remove('hidden'); sd.innerHTML=`<span class="bilingual-en">Incident Over.</span><span class="bilingual-zh block mt-1">事件結束。共完成 ${scoreRecords.length} 人。</span>`; document.getElementById('new-incident-btn').disabled=true; }
+window.eI = function(){ 
+    stopTimer(); 
+    playBGM(); 
+    playVictorySound(); 
+    go=true; 
+    // Hide HUD when game ends
+    arcadeGameHud.style.display='none';
+    
+    renderScoreSummary(); 
+    if(difficulty==='arcade'){ 
+        saveLeaderboard(playerName,arcadeScore); 
+        showLeaderboard(); 
+    }else{ 
+        document.getElementById('leaderboard-container').classList.add('hidden'); 
+    } 
+    sc.classList.remove('hidden'); 
+    sd.innerHTML=`<span class="bilingual-en">Incident Over.</span><span class="bilingual-zh block mt-1">事件結束。共完成 ${scoreRecords.length} 人。</span>`; 
+    document.getElementById('new-incident-btn').disabled=true; 
+}
 
 // --- LEADERBOARD LOGIC (FIRESTORE) ---
 async function saveLeaderboard(name, score) {
@@ -801,6 +899,10 @@ function renderScoreSummary() {
 window.resetGame = function() {
     window.scrollTo(0,0); stopTimer(); pc=0; scoreRecords=[]; difficulty=null; timerDisplay.textContent='00:00'; arcadeScore=0; patientsCompletedInArcade=0; timeLimit=120000;
     arcadeScoreContainer.classList.add('hidden'); document.getElementById('leaderboard-container').classList.add('hidden');
+    
+    // HIDE HUD on reset
+    arcadeGameHud.style.display='none';
+    
     mT.classList.remove('hidden'); document.getElementById('difficulty-selection').classList.remove('hidden'); scoreSummaryEl.classList.add('hidden'); pcE.classList.add('hidden'); sc.classList.add('hidden'); newIncidentBtn.disabled=true;
     document.getElementById('arcade-name-container').classList.add('hidden'); document.getElementById('player-name').value='';
     triageCard.classList.remove('time-up-alarm');
