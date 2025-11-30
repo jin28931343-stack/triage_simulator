@@ -447,7 +447,12 @@
                  </div>
              </div>
              <div class="text-right text-gray-500 w-full sm:w-auto">
-                <div class="mb-1"><div class="font-semibold text-gray-700">作者: 莊進宏</div><div class="text-[10px] text-gray-500">JHUANG JIN HONG</div><div class="font-semibold text-gray-700 mt-1">台南市政府消防局</div></div>
+                <div class="mb-1">
+                    <div class="font-semibold text-gray-700">作者: 莊進宏</div>
+                    <div class="text-[10px] text-gray-500">JHUANG JIN HONG</div>
+                    <div class="font-semibold text-gray-700 mt-1">台南市政府消防局</div>
+                    <div class="text-[10px] text-gray-500">Tainan City Fire Bureau</div>
+                </div>
                 <p><span class="font-semibold text-gray-700">版本: Online Beta 1141130-E</span></p>
              </div>
         </footer>
@@ -456,20 +461,20 @@
 
 <script type="module">
 // --- FIREBASE CONFIGURATION & INITIALIZATION ---
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
 
 // !!! IMPORTANT FOR OFFLINE USE / DOWNLOAD !!!
 const MY_FIREBASE_CONFIG = {
-   apiKey: "AIzaSyBdhUpfFgmiYnRqm-SjeQv5V43tQ_iqhqU",
-   authDomain: "triage-simulator-50ed6.firebaseapp.com",
-   projectId: "triage-simulator-50ed6",
-   storageBucket: "triage-simulator-50ed6.firebasestorage.app",
-   messagingSenderId: "1051604692940",
-   appId: "1:1051604692940:web:309a17ed280ae0e0c87769",
-   measurementId: "G-3TG1ZP1WY8"
+   apiKey: "AIzaSyCHO5wG6yC6QuvedLUZi9L7TA-l9S5u2yo",
+   authDomain: "triagr-251f7.firebaseapp.com",
+   projectId: "triagr-251f7",
+   storageBucket: "triagr-251f7.firebasestorage.app",
+   messagingSenderId: "1030941934552",
+   appId: "1:1030941934552:web:66e8abc7d5b98f33d228ad",
+   measurementId: "G-YWH1F49PVK"
 };
 
 let db, auth, user;
