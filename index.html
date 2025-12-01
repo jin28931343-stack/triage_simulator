@@ -142,6 +142,27 @@
             background: linear-gradient(to right, #dc2626 0%, #dc2626 33%, #d97706 33%, #d97706 66%, #374151 66%, #374151 100%);
             box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
         }
+        /* Class for Yellow/Red Split Button */
+        .yellow-red-split {
+            background: linear-gradient(to right, #f59e0b 0%, #f59e0b 50%, #ef4444 50%, #ef4444 100%);
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+        }
+        .yellow-red-split:hover:not(:disabled) {
+            background: linear-gradient(to right, #d97706 0%, #d97706 50%, #dc2626 50%, #dc2626 100%);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+        /* New Class for Red/Black Split Button */
+        .red-black-split {
+            background: linear-gradient(to right, #ef4444 0%, #ef4444 50%, #1f2937 50%, #1f2937 100%);
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+        }
+        .red-black-split:hover:not(:disabled) {
+            background: linear-gradient(to right, #dc2626 0%, #dc2626 50%, #111827 50%, #111827 100%);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+
         .back-button {
             background-color: #6b7280; color: white; font-size: 0.875rem; padding: 0.25rem 0.75rem;
             border-radius: 0.375rem; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: background-color 0.2s;
@@ -330,7 +351,11 @@
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3">
                     <!-- Restored original Green Button (Text only, as requested to move images out) -->
-                    <button id="btn-amb-can" onclick="checkAmbulatory(true, this)" class="action-button bg-green-500 hover:bg-green-600 text-white flex-1"><span class="bilingual-en">GREEN</span><span class="bilingual-zh block">綠色</span></button>
+                    <button id="btn-amb-can" onclick="checkAmbulatory(true, this)" class="action-button bg-green-500 hover:bg-green-600 text-white flex-1 flex flex-row items-center justify-center gap-3">
+                        <div class="text-center"><span class="bilingual-en">GREEN</span><span class="bilingual-zh block">綠色</span></div>
+                        <!-- Inserted the requested image -->
+                        <img src="green.png" alt="Green Status" class="h-12 w-auto object-contain rounded">
+                    </button>
                     <!-- Restored original Assess Further Button (Text only) -->
                     <button id="btn-amb-cannot" onclick="checkAmbulatory(false, this)" class="action-button rpm-button flex-1"><span class="bilingual-en">Assess Further</span><span class="bilingual-zh block">繼續評估</span></button>
                 </div>
@@ -354,9 +379,11 @@
                 </div>
                 <p class="mb-3 text-gray-600 text-sm md:text-base"><span class="bilingual-en">Classify the patient's respiration rate:</span><span class="bilingual-zh">請根據上方速率判斷分類：</span></p>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <button id="btn-resp-absent" onclick="checkRespiration(0, this)" class="action-button bg-gray-400 hover:bg-gray-500 text-white"><span class="bilingual-en">Open Airway</span><span class="bilingual-zh block">暢通呼吸道</span></button>
+                    <!-- MODIFIED: Updated class to red-black-split for default state -->
+                    <button id="btn-resp-absent" onclick="checkRespiration(0, this)" class="action-button red-black-split text-white"><span class="bilingual-en">Open Airway</span><span class="bilingual-zh block">暢通呼吸道</span></button>
                     <button id="btn-resp-fast" onclick="checkRespiration(35, this)" class="action-button bg-red-500 hover:bg-red-600 text-white"><span class="bilingual-en">Abnormal (>30 or &lt;10) / min</span><span class="bilingual-zh block">過快(>30/min)或過慢(&lt;10/min) → 最終確認</span></button>
-                    <button id="btn-resp-normal" onclick="checkRespiration(20, this)" class="action-button bg-green-500 hover:bg-green-600 text-white"><span class="bilingual-en">Normal (10-30/min)</span><span class="bilingual-zh block">正常 → 繼續 P</span></button>
+                    <!-- MODIFIED: Updated class to yellow-red-split for default state -->
+                    <button id="btn-resp-normal" onclick="checkRespiration(20, this)" class="action-button yellow-red-split text-white"><span class="bilingual-en">Normal (10-30/min)</span><span class="bilingual-zh block">正常 → 繼續 P</span></button>
                 </div>
                 <div id="airway-action" class="mt-3 p-3 bg-red-100 border-l-4 border-red-500 text-red-700 hidden">
                     <p class="font-bold text-sm md:text-base"><span class="bilingual-en">Intervention: Open Airway Performed.</span></p>
@@ -388,7 +415,8 @@
                 <p class="mb-3 text-gray-600 text-sm md:text-base"><span class="bilingual-en">Assess Radial Pulse / CRT:</span><span class="bilingual-zh">請根據橈動脈脈搏或 CRT 判斷：</span></p>
                 <div class="flex flex-col sm:flex-row gap-3">
                     <button id="btn-perf-absent" onclick="checkPerfusion(true, this)" class="action-button bg-red-500 hover:bg-red-600 text-white flex-1"><span class="bilingual-en">Absent / Slow</span><span class="bilingual-zh block">無脈搏/充填慢</span></button>
-                    <button id="btn-perf-present" onclick="checkPerfusion(false, this)" class="action-button bg-green-500 hover:bg-green-600 text-white flex-1"><span class="bilingual-en">Present Pulse / CRT ≤ 2s</span><span class="bilingual-zh block">有脈搏且 CRT ≤ 2秒 → 繼續 M</span></button>
+                    <!-- MODIFIED: Updated class to yellow-red-split for default state (Step 4 Right Button) -->
+                    <button id="btn-perf-present" onclick="checkPerfusion(false, this)" class="action-button yellow-red-split text-white flex-1"><span class="bilingual-en">Present Pulse / CRT ≤ 2s</span><span class="bilingual-zh block">有脈搏且 CRT ≤ 2秒 → 繼續 M</span></button>
                 </div>
             </div>
             <div id="step-mental" class="hidden">
@@ -399,9 +427,30 @@
                 </div>
                 <p class="mb-3 text-gray-600 text-sm md:text-base"><span class="bilingual-en">Can follow simple commands?</span><span class="bilingual-zh">傷患是否能遵從簡單指令？</span></p>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <button onclick="finalizeTriage('RED', this)" class="action-button red-bg text-white final-triage-button"><span class="bilingual-en">RED</span><span class="bilingual-zh block">紅色 (立即)</span></button>
-                    <button onclick="finalizeTriage('YELLOW', this)" class="action-button yellow-bg text-gray-900 final-triage-button"><span class="bilingual-en">YELLOW</span><span class="bilingual-zh block">黃色 (延遲)</span></button>
-                    <button onclick="finalizeTriage('BLACK', this)" class="action-button black-bg text-white final-triage-button"><span class="bilingual-en">BLACK</span><span class="bilingual-zh block">黑色 (死亡)</span></button>
+                    <!-- FIXED: Added images to buttons matching step-final-choice -->
+                    <button onclick="finalizeTriage('RED', this)" class="action-button red-bg text-white final-triage-button flex flex-row items-center justify-center gap-3">
+                        <div class="text-center">
+                            <span class="bilingual-en">RED</span>
+                            <span class="bilingual-zh block">紅色 (立即)</span>
+                        </div>
+                        <img src="red1.png" alt="Red Status" class="h-12 w-auto object-contain">
+                    </button>
+                    
+                    <button onclick="finalizeTriage('YELLOW', this)" class="action-button yellow-bg text-gray-900 final-triage-button flex flex-row items-center justify-center gap-3">
+                        <div class="text-center">
+                            <span class="bilingual-en">YELLOW</span>
+                            <span class="bilingual-zh block">黃色 (延遲)</span>
+                        </div>
+                        <img src="yellow.png" alt="Yellow Status" class="h-12 w-auto object-contain rounded">
+                    </button>
+                    
+                    <button onclick="finalizeTriage('BLACK', this)" class="action-button black-bg text-white final-triage-button flex flex-row items-center justify-center gap-3">
+                        <div class="text-center">
+                            <span class="bilingual-en">BLACK</span>
+                            <span class="bilingual-zh block">黑色 (死亡)</span>
+                        </div>
+                        <img src="black1.png" alt="Black Status" class="h-12 w-auto object-contain">
+                    </button>
                 </div>
             </div>
             <div id="step-final-choice" class="hidden">
@@ -519,6 +568,13 @@
                     <div id="changelog-content" class="hidden absolute bottom-full left-0 mb-2 w-64 bg-white border border-gray-300 p-4 rounded-lg shadow-xl z-50 text-left transition-all duration-200">
                         <h4 class="font-bold text-gray-800 mb-2 border-b pb-1">更新日誌</h4>
                         <div class="max-h-60 overflow-y-auto space-y-3">
+                            <!-- NEW ENTRY HERE -->
+                            <div>
+                                <p class="font-bold text-blue-600">12/02</p>
+                                <ul class="list-disc pl-4 text-gray-600 space-y-1">
+                                    <li>更換初學者提示按鈕顏色。</li>
+                                </ul>
+                            </div>
                             <div>
                                 <p class="font-bold text-blue-600">12/01 (Update)</p>
                                 <ul class="list-disc pl-4 text-gray-600 space-y-1">
@@ -876,8 +932,10 @@ window.setDifficulty = function(level, clickedButton) {
 };
 
 function applyDifficultyStyles(level) {
-    const allC=['bg-green-500','hover:bg-green-600','bg-red-500','hover:bg-red-600','bg-gray-400','hover:bg-gray-500','bg-yellow-500','hover:bg-yellow-600'];
-    const bCM=[{id:'btn-bleed-tourniquet',c:['bg-gray-600','hover:bg-gray-700']},{id:'btn-bleed-none',c:['bg-gray-600','hover:bg-gray-700']},{id:'btn-amb-can',c:['bg-green-500','hover:bg-green-600']},{id:'btn-amb-cannot',c:[]},{id:'btn-resp-absent',c:['bg-gray-400','hover:bg-gray-500']},{id:'btn-resp-fast',c:['bg-red-500','hover:bg-red-600']},{id:'btn-resp-normal',c:['bg-green-500','hover:bg-green-600']},{id:'btn-perf-absent',c:['bg-red-500','hover:bg-red-600']},{id:'btn-perf-present',c:['bg-green-500','hover:bg-green-600']},{id:'btn-ment-cannot',c:['bg-red-500','hover:bg-red-600']},{id:'btn-ment-can',c:['bg-yellow-500','hover:bg-yellow-600']},{id:'btn-js-check-pulse',c:['bg-green-500','hover:bg-green-600']},{id:'btn-js-mark-black-1',c:['bg-gray-600','hover:bg-gray-700']},{id:'btn-js-rescue-breaths',c:['bg-green-500','hover:bg-green-600']},{id:'btn-js-mark-black-2',c:['bg-gray-600','hover:bg-gray-700']}];
+    // MODIFIED: Added 'red-black-split' to removal list so it can be re-applied or removed
+    const allC=['bg-green-500','hover:bg-green-600','bg-red-500','hover:bg-red-600','bg-gray-400','hover:bg-gray-500','bg-yellow-500','hover:bg-yellow-600','yellow-red-split','red-black-split'];
+    // MODIFIED: Changed btn-resp-normal to use yellow-red-split class, and btn-resp-absent to use red-black-split
+    const bCM=[{id:'btn-bleed-tourniquet',c:['bg-gray-600','hover:bg-gray-700']},{id:'btn-bleed-none',c:['bg-gray-600','hover:bg-gray-700']},{id:'btn-amb-can',c:['bg-green-500','hover:bg-green-600']},{id:'btn-amb-cannot',c:[]},{id:'btn-resp-absent',c:['red-black-split']},{id:'btn-resp-fast',c:['bg-red-500','hover:bg-red-600']},{id:'btn-resp-normal',c:['yellow-red-split']},{id:'btn-perf-absent',c:['bg-red-500','hover:bg-red-600']},{id:'btn-perf-present',c:['yellow-red-split']},{id:'btn-ment-cannot',c:['bg-red-500','hover:bg-red-600']},{id:'btn-ment-can',c:['bg-yellow-500','hover:bg-yellow-600']},{id:'btn-js-check-pulse',c:['bg-green-500','hover:bg-green-600']},{id:'btn-js-mark-black-1',c:['bg-gray-600','hover:bg-gray-700']},{id:'btn-js-rescue-breaths',c:['bg-green-500','hover:bg-green-600']},{id:'btn-js-mark-black-2',c:['bg-gray-600','hover:bg-gray-700']}];
     const uM=(level==='master'||level==='arcade'), uP=(level==='pro');
     Object.values(st).forEach(s=>{ 
         if(!s)return; 
@@ -899,11 +957,10 @@ function applyDifficultyStyles(level) {
             if(bId&&buttonTextConfig[bId]){ 
                 const c=buttonTextConfig[bId], td=uM?c.clean:c.full; 
                 
-                // MODIFIED: Specific logic to keep the image in btn-amb-can
+                // MODIFIED: ADDED IMAGE INJECTION LOGIC FOR GREEN BUTTON (btn-amb-can)
                 if (bId === 'btn-amb-can') {
                     if(!btn.classList.contains('flex')) btn.classList.add('flex', 'flex-row', 'items-center', 'justify-center', 'gap-3');
-                    // Ensure image is preserved
-                    btn.innerHTML = `<div class="text-center"><span class="bilingual-en">${td.en}</span><span class="bilingual-zh block">${td.zh}</span></div><img src="walk.png" alt="Walk" class="h-12 w-auto object-contain rounded" style="image-rendering: pixelated;">`;
+                    btn.innerHTML = `<div class="text-center"><span class="bilingual-en">${td.en}</span><span class="bilingual-zh block">${td.zh}</span></div><img src="green.png" alt="Green Status" class="h-12 w-auto object-contain rounded">`;
                 } else {
                     btn.innerHTML=`<span class="bilingual-en">${td.en}</span><span class="bilingual-zh block">${td.zh}</span>`; 
                 }
