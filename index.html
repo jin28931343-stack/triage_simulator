@@ -305,9 +305,13 @@
         <div class="flex justify-between items-center mb-3">
             <div class="flex items-center gap-3 flex-shrink-0">
                 <h2 class="text-xl md:text-2xl font-bold text-gray-800 flex items-center">
-                    <div>
-                        <span class="bilingual-en">Patient #</span><span id="patient-number">1</span>
+                    <div class="flex flex-col">
+                        <div>
+                            <span class="bilingual-en">Patient #</span><span id="patient-number">1</span>
+                        </div>
                         <span class="bilingual-zh mt-1 block">傷患編號</span>
+                        <!-- Timer moved below here -->
+                        <div id="triage-timer" class="text-lg md:text-xl font-mono text-red-600 font-extrabold mt-1">00:00</div>
                     </div>
                     <!-- ADDED: Male Patient Image inside h2, sized to text height -->
                     <img id="patient-male-img" src="mele.png" class="hidden h-12 w-auto object-contain ml-3" alt="Male Patient">
@@ -317,8 +321,9 @@
                 <!-- ADDED: Child Patient Image -->
                 <img id="patient-child-img" src="children.png" class="hidden h-16 w-auto object-contain" alt="Child Patient">
             </div>
-            <div id="triage-timer" class="text-lg md:text-xl font-mono text-red-600 font-extrabold flex-grow text-right">00:00</div>
-            <div id="triage-result" class="triage-color red-bg hidden flex-shrink-0 ml-2">
+            
+            <!-- Result displayed on the right -->
+            <div id="triage-result" class="triage-color red-bg hidden flex-shrink-0 ml-auto">
                 <span class="bilingual-en text-sm md:text-base">RED</span>
                 <span class="bilingual-zh block text-sm md:text-base">紅色</span>
             </div>
