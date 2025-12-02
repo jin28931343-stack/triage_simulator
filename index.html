@@ -794,6 +794,13 @@
                         <h4 class="font-bold text-gray-800 mb-2 border-b pb-1">更新日誌</h4>
                         <div class="max-h-60 overflow-y-auto space-y-4 pr-1">
                             <div>
+                                <p class="font-bold text-blue-600">12/3 (Fix)</p>
+                                <ul class="list-disc pl-4 text-gray-600 space-y-1">
+                                    <li>修正手機跳出畫面後音樂消失問題。</li>
+                                    <li>增加觸控喚醒音效機制。</li>
+                                </ul>
+                            </div>
+                            <div>
                                 <p class="font-bold text-blue-600">12/2</p>
                                 <ul class="list-disc pl-4 text-gray-600 space-y-1">
                                     <li>更改初學者按鈕顏色。</li>
@@ -852,7 +859,7 @@
                 <div class="text-[10px] text-gray-500 font-bold tracking-wider uppercase mb-1">JHUANG JIN HONG</div>
                 <div class="font-bold text-gray-900">台南市政府消防局</div>
                 <div class="text-[10px] text-gray-500 font-bold mb-1">Tainan City Fire Bureau</div>
-                <div class="text-gray-600 mt-1 font-mono">版本: Online Beta 1141203</div>
+                <div class="text-gray-600 mt-1 font-mono">版本: Online Beta 1141203b</div>
              </div>
         </footer>
     </div>
@@ -916,6 +923,41 @@ let audioCtx=null, bgmInterval=null;
 let isMuted = false;
 let currentMusicStyle = 'synthwave'; 
 
+// --- AUDIO RESUME LOGIC (MOBILE FIX) ---
+// Add touch listener to resume AudioContext on user interaction
+document.addEventListener('touchstart', function() {
+    if (audioCtx && audioCtx.state === 'suspended' && !isMuted) {
+        audioCtx.resume();
+    }
+}, {passive: true});
+
+document.addEventListener('click', function() {
+    if (audioCtx && audioCtx.state === 'suspended' && !isMuted) {
+        audioCtx.resume();
+    }
+});
+
+// Handle Visibility Change (Resume on tab switch back)
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        // Tab is hidden
+        if(audioCtx && audioCtx.state === 'running') {
+            audioCtx.suspend();
+        }
+        stopBGM(); // Stop the loop to prevent stacking or errors
+    } else {
+        // Tab is visible again
+        if (audioCtx && audioCtx.state === 'suspended' && !isMuted) {
+            audioCtx.resume();
+        }
+        // Restart BGM if we are in a game state where music should play
+        if (!isMuted && difficulty !== null && !go) {
+             // Only restart if game is active (go is false) and not muted
+             if(!bgmInterval) playBGM();
+        }
+    }
+});
+
 window.toggleAudio = function() {
     isMuted = !isMuted;
     const btnIcon = document.getElementById('audio-icon');
@@ -950,42 +992,48 @@ function initAudio(){ if(!audioCtx){ audioCtx=new(window.AudioContext||window.we
 // --- SOUND FUNCTIONS (Existing) ---
 function playSynthSound(freq, time, dur, type='sawtooth', vol=0.1, attack=0.01, decay=0.1, filterFreq=2000) {
     if(isMuted || !audioCtx) return;
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    const filter = audioCtx.createBiquadFilter();
-    osc.type = type; osc.frequency.value = freq;
-    filter.type = 'lowpass'; filter.Q.value = 2; filter.frequency.setValueAtTime(filterFreq, time);
-    filter.frequency.exponentialRampToValueAtTime(filterFreq * 0.1, time + dur); 
-    gain.gain.setValueAtTime(0, time);
-    gain.gain.linearRampToValueAtTime(vol, time + attack);
-    gain.gain.exponentialRampToValueAtTime(0.001, time + dur + decay);
-    osc.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
-    osc.start(time); osc.stop(time + dur + decay + 0.1);
+    try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+        osc.type = type; osc.frequency.value = freq;
+        filter.type = 'lowpass'; filter.Q.value = 2; filter.frequency.setValueAtTime(filterFreq, time);
+        filter.frequency.exponentialRampToValueAtTime(filterFreq * 0.1, time + dur); 
+        gain.gain.setValueAtTime(0, time);
+        gain.gain.linearRampToValueAtTime(vol, time + attack);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + dur + decay);
+        osc.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(time); osc.stop(time + dur + decay + 0.1);
+    } catch(e) { console.warn("Audio error", e); }
 }
 
 function playKick(time) {
     if(isMuted || !audioCtx) return;
-    const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-    osc.frequency.setValueAtTime(150, time); osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.5);
-    gain.gain.setValueAtTime(0.8, time); gain.gain.exponentialRampToValueAtTime(0.001, time + 0.5);
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.start(time); osc.stop(time + 0.5);
+    try {
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.frequency.setValueAtTime(150, time); osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.5);
+        gain.gain.setValueAtTime(0.8, time); gain.gain.exponentialRampToValueAtTime(0.001, time + 0.5);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(time); osc.stop(time + 0.5);
+    } catch(e) { console.warn("Audio error", e); }
 }
 
 function playSnare(time) {
     if(isMuted || !audioCtx) return;
-    const noise = audioCtx.createBufferSource();
-    const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 1, audioCtx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < audioCtx.sampleRate; i++) { data[i] = Math.random() * 2 - 1; }
-    noise.buffer = buffer;
-    const noiseFilter = audioCtx.createBiquadFilter(); noiseFilter.type = 'highpass'; noiseFilter.frequency.value = 1000;
-    const noiseGain = audioCtx.createGain(); noiseGain.gain.setValueAtTime(0.3, time); noiseGain.gain.exponentialRampToValueAtTime(0.01, time + 0.2);
-    noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(audioCtx.destination);
-    const osc = audioCtx.createOscillator(); osc.type = 'triangle'; osc.frequency.setValueAtTime(250, time);
-    const oscGain = audioCtx.createGain(); oscGain.gain.setValueAtTime(0.1, time); oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
-    osc.connect(oscGain); oscGain.connect(audioCtx.destination);
-    noise.start(time); osc.start(time); noise.stop(time + 0.2); osc.stop(time + 0.2);
+    try {
+        const noise = audioCtx.createBufferSource();
+        const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 1, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < audioCtx.sampleRate; i++) { data[i] = Math.random() * 2 - 1; }
+        noise.buffer = buffer;
+        const noiseFilter = audioCtx.createBiquadFilter(); noiseFilter.type = 'highpass'; noiseFilter.frequency.value = 1000;
+        const noiseGain = audioCtx.createGain(); noiseGain.gain.setValueAtTime(0.3, time); noiseGain.gain.exponentialRampToValueAtTime(0.01, time + 0.2);
+        noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(audioCtx.destination);
+        const osc = audioCtx.createOscillator(); osc.type = 'triangle'; osc.frequency.setValueAtTime(250, time);
+        const oscGain = audioCtx.createGain(); oscGain.gain.setValueAtTime(0.1, time); oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
+        osc.connect(oscGain); oscGain.connect(audioCtx.destination);
+        noise.start(time); osc.start(time); noise.stop(time + 0.2); osc.stop(time + 0.2);
+    } catch(e) { console.warn("Audio error", e); }
 }
 
 // BGM Logic (Simplified for integration)
@@ -996,6 +1044,7 @@ function playBGM(){
     const BPM = 105; const stepTime = (60 / BPM) / 4; 
     bgmInterval = setInterval(() => {
         if(isMuted) return; if(audioCtx.state === 'suspended') audioCtx.resume();
+        // Lookahead to schedule notes
         while (nextStepTime < audioCtx.currentTime + 0.5) {
             playSynthwaveSequence(currentStep, nextStepTime, stepTime);
             nextStepTime += stepTime; currentStep++;
