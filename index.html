@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- SEO Optimization Start: Title & Meta Tags -->
-    <title>START Triage Simulator | 檢傷分類模擬器 | 台南市政府消防局 EMT 訓練工具|START 檢傷|jumpSTART Triage </title>
+    <title>START Triage Simulator | 檢傷分類模擬器 | 台南市政府消防局 EMT 訓練工具</title>
     
     <!-- 核心描述：包含所有關鍵字，自然融入句子中 -->
-    <meta name="description" content="由台南市政府消防局開發的專業線上 Triage Simulator (檢傷分類模擬器)。專為 EMT 救護技術員設計，涵蓋 START 檢傷、jumpSTART 兒童檢傷流程、大量傷病患情境模擬及止血帶操作。台南消防訓練首選工具，提升檢傷精準度。">
+    <meta name="description" content="台南市政府消防局 Triage Simulator (檢傷分類模擬器)。專為 EMT 救護技術員設計，涵蓋 START 檢傷、jumpSTART 兒童檢傷流程、大量傷病患情境模擬及止血帶操作。台南消防，提升檢傷精準度。">
     
     <!-- 關鍵字標籤：精準命中搜尋需求 -->
     <meta name="keywords" content="Triage, Triage simulator, EMT, START, jumpSTART, 台南消防, 檢傷分類模擬器, START檢傷, jumpSTART檢傷, 台南市政府消防局, 大量傷病患, 救護技術員, 災難醫療">
@@ -624,7 +624,7 @@
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3">
                     <button id="btn-amb-can" onclick="checkAmbulatory(true, this)" class="action-button bg-green-500 hover:bg-green-600 text-white flex-1 flex flex-row items-center justify-center gap-3">
-                        <div class="text-center"><span class="bilingual-en">GREEN</span><span class="bilingual-zh block">綠色</span></div>
+                        <div class="text-center"><span class="bilingual-en">Minor</span><span class="bilingual-zh block">輕傷</span></div>
                         <img src="green.png" alt="Green Status" class="h-12 w-auto object-contain rounded">
                     </button>
                     <button id="btn-amb-cannot" onclick="checkAmbulatory(false, this)" class="action-button rpm-button flex-1"><span class="bilingual-en">Assess Further</span><span class="bilingual-zh block">繼續評估</span></button>
@@ -691,15 +691,15 @@
                 <p class="mb-3 text-gray-600 text-sm md:text-base"><span class="bilingual-en">Can follow simple commands?</span><span class="bilingual-zh">傷患是否能遵從簡單指令？</span></p>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <button onclick="finalizeTriage('RED', this)" class="action-button red-bg text-white final-triage-button flex flex-row items-center justify-center gap-3">
-                        <div class="text-center"><span class="bilingual-en">RED</span><span class="bilingual-zh block">紅色 (立即)</span></div>
+                        <div class="text-center"><span class="bilingual-en">Immediately</span><span class="bilingual-zh block">危急</span></div>
                         <img src="red1.png" alt="Red Status" class="h-12 w-auto object-contain">
                     </button>
                     <button onclick="finalizeTriage('YELLOW', this)" class="action-button yellow-bg text-gray-900 final-triage-button flex flex-row items-center justify-center gap-3">
-                        <div class="text-center"><span class="bilingual-en">YELLOW</span><span class="bilingual-zh block">黃色 (延遲)</span></div>
+                        <div class="text-center"><span class="bilingual-en">Delayed</span><span class="bilingual-zh block">次緊急</span></div>
                         <img src="yellow.png" alt="Yellow Status" class="h-12 w-auto object-contain rounded">
                     </button>
                     <button onclick="finalizeTriage('BLACK', this)" class="action-button black-bg text-white final-triage-button flex flex-row items-center justify-center gap-3">
-                        <div class="text-center"><span class="bilingual-en">BLACK</span><span class="bilingual-zh block">黑色 (死亡)</span></div>
+                        <div class="text-center"><span class="bilingual-en">Deceased</span><span class="bilingual-zh block">死亡</span></div>
                         <img src="black1.png" alt="Black Status" class="h-12 w-auto object-contain">
                     </button>
                 </div>
@@ -709,15 +709,15 @@
                 <p class="mb-3 text-gray-600 text-sm md:text-base"><span class="bilingual-en">Determine final category:</span><span class="bilingual-zh">請確認傷患的最終分類：</span></p>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <button onclick="finalizeTriage('RED', this)" class="action-button red-bg text-white final-triage-button flex flex-row items-center justify-center gap-3">
-                        <div class="text-center"><span class="bilingual-en">RED</span><span class="bilingual-zh block">紅色 (立即)</span></div>
+                        <div class="text-center"><span class="bilingual-en">Immediately</span><span class="bilingual-zh block">危急</span></div>
                         <img src="red1.png" alt="Red Status" class="h-12 w-auto object-contain">
                     </button>
                     <button onclick="finalizeTriage('YELLOW', this)" class="action-button yellow-bg text-gray-900 final-triage-button flex flex-row items-center justify-center gap-3">
-                        <div class="text-center"><span class="bilingual-en">YELLOW</span><span class="bilingual-zh block">黃色 (延遲)</span></div>
+                        <div class="text-center"><span class="bilingual-en">Delayed</span><span class="bilingual-zh block">次緊急</span></div>
                         <img src="yellow.png" alt="Yellow Status" class="h-12 w-auto object-contain rounded">
                     </button>
                     <button onclick="finalizeTriage('BLACK', this)" class="action-button black-bg text-white final-triage-button flex flex-row items-center justify-center gap-3">
-                        <div class="text-center"><span class="bilingual-en">BLACK</span><span class="bilingual-zh block">黑色 (死亡)</span></div>
+                        <div class="text-center"><span class="bilingual-en">Deceased</span><span class="bilingual-zh block">死亡</span></div>
                         <img src="black1.png" alt="Black Status" class="h-12 w-auto object-contain">
                     </button>
                 </div>
@@ -1118,8 +1118,8 @@ function playErrorSound(){ if(isMuted||!audioCtx) return; const o=audioCtx.creat
 function playGameStartSound(){ if(isMuted||!audioCtx) return; const o=audioCtx.createOscillator(),g=audioCtx.createGain(); o.type='triangle'; o.frequency.setValueAtTime(220,audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(880,audioCtx.currentTime+0.6); g.gain.setValueAtTime(0.1,audioCtx.currentTime); g.gain.linearRampToValueAtTime(0,audioCtx.currentTime+0.6); o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.6); }
 
 // --- DOM REFERENCES ---
-const tg={RED:{en:"RED - Immediate",zh:"紅色 - 立即",class:"red-bg",color:'red'},YELLOW:{en:"YELLOW - Delayed",zh:"黃色 - 延遲",class:"yellow-bg",color:'yellow'},GREEN:{en:"GREEN - Minor",zh:"綠色 - 輕微",class:"green-bg",color:'green'},BLACK:{en:"BLACK - Deceased / Expectant",zh:"黑色 - 死亡 / 預期",class:"black-bg",color:'black'}};
-const buttonTextConfig={"btn-bleed-tourniquet":{full:{en:"Apply Tourniquet",zh:"使用止血帶 → 繼續評估"},clean:{en:"Apply Tourniquet",zh:"使用止血帶"}},"btn-bleed-none":{full:{en:"No Tourniquet",zh:"不使用止血帶 → 繼續評估"},clean:{en:"No Tourniquet",zh:"不使用止血帶"}},"btn-amb-can":{full:{en:"GREEN",zh:"綠色"},clean:{en:"GREEN",zh:"綠色"}},"btn-amb-cannot":{full:{en:"Assess Further",zh:"繼續評估"},clean:{en:"Assess Further",zh:"繼續評估"}},"btn-resp-absent":{full:{en:"Open Airway",zh:"暢通呼吸道"},clean:{en:"Open Airway",zh:"暢通呼吸道"}},"btn-resp-fast":{full:{en:"Abnormal (>30 or <10)",zh:"過快(>30/min)或過慢(<10/min) → 最終確認"},clean:{en:"Abnormal",zh:"異常"}},"btn-resp-normal":{full:{en:"Normal (10-30/min)",zh:"正常 → 繼續 P"},clean:{en:"Normal",zh:"正常"}},"btn-perf-absent":{full:{en:"Absent Pulse / CRT > 2s",zh:"無脈搏或 CRT > 2秒 → 最終確認"},clean:{en:"Absent / Slow",zh:"無脈搏/充填慢"}},"btn-perf-present":{full:{en:"Present Pulse / CRT ≤ 2s",zh:"有脈搏且 CRT ≤ 2秒 → 繼續 M"},clean:{en:"Present / Normal",zh:"有脈搏 / 充填正常"}},"btn-ment-cannot":{full:{en:"Cannot Follow Commands",zh:"無法遵從指令 → 最終確認"},clean:{en:"Cannot Follow",zh:"無法遵從指令"}},"btn-ment-can":{full:{en:"Can Follow Commands",zh:"可遵從指令 → 最終確認"},clean:{en:"Can Follow",zh:"可遵從指令"}},"btn-js-check-pulse":{full:{en:"Check Pulse",zh:"檢查脈搏"},clean:{en:"Check Pulse",zh:"檢查脈搏"}},"btn-js-mark-black-1":{full:{en:"No Breathing → Black",zh:"無呼吸 → 判定黑色"},clean:{en:"No Breathing",zh:"無呼吸"}},"btn-js-rescue-breaths":{full:{en:"Give 5 Rescue Breaths",zh:"給予 5 次吹氣"},clean:{en:"5 Breaths",zh:"給予吹氣"}},"btn-js-mark-black-2":{full:{en:"Mark Deceased (Black)",zh:"判定黑色"},clean:{en:"Black",zh:"黑色"}}};
+const tg={RED:{en:"Immediately",zh:"危急",class:"red-bg",color:'red'},YELLOW:{en:"Delayed",zh:"次緊急",class:"yellow-bg",color:'yellow'},GREEN:{en:"GREEN - Minor",zh:"綠色 - 輕傷",class:"green-bg",color:'green'},BLACK:{en:"BLACK - Deceased / Expectant",zh:"黑色 - 死亡 / 預期",class:"black-bg",color:'black'}};
+const buttonTextConfig={"btn-bleed-tourniquet":{full:{en:"Apply Tourniquet",zh:"使用止血帶 → 繼續評估"},clean:{en:"Apply Tourniquet",zh:"使用止血帶"}},"btn-bleed-none":{full:{en:"No Tourniquet",zh:"不使用止血帶 → 繼續評估"},clean:{en:"No Tourniquet",zh:"不使用止血帶"}},"btn-amb-can":{full:{en:"Minor",zh:"輕傷"},clean:{en:"Minor",zh:"輕傷"}},"btn-amb-cannot":{full:{en:"Assess Further",zh:"繼續評估"},clean:{en:"Assess Further",zh:"繼續評估"}},"btn-resp-absent":{full:{en:"Open Airway",zh:"暢通呼吸道"},clean:{en:"Open Airway",zh:"暢通呼吸道"}},"btn-resp-fast":{full:{en:"Abnormal (>30 or <10)",zh:"過快(>30/min)或過慢(<10/min) → 最終確認"},clean:{en:"Abnormal",zh:"異常"}},"btn-resp-normal":{full:{en:"Normal (10-30/min)",zh:"正常 → 繼續 P"},clean:{en:"Normal",zh:"正常"}},"btn-perf-absent":{full:{en:"Absent Pulse / CRT > 2s",zh:"無脈搏或 CRT > 2秒 → 最終確認"},clean:{en:"Absent / Slow",zh:"無脈搏/充填慢"}},"btn-perf-present":{full:{en:"Present Pulse / CRT ≤ 2s",zh:"有脈搏且 CRT ≤ 2秒 → 繼續 M"},clean:{en:"Present / Normal",zh:"有脈搏 / 充填正常"}},"btn-ment-cannot":{full:{en:"Cannot Follow Commands",zh:"無法遵從指令 → 最終確認"},clean:{en:"Cannot Follow",zh:"無法遵從指令"}},"btn-ment-can":{full:{en:"Can Follow Commands",zh:"可遵從指令 → 最終確認"},clean:{en:"Can Follow",zh:"可遵從指令"}},"btn-js-check-pulse":{full:{en:"Check Pulse",zh:"檢查脈搏"},clean:{en:"Check Pulse",zh:"檢查脈搏"}},"btn-js-mark-black-1":{full:{en:"No Breathing → Black",zh:"無呼吸 → 判定黑色"},clean:{en:"No Breathing",zh:"無呼吸"}},"btn-js-rescue-breaths":{full:{en:"Give 5 Rescue Breaths",zh:"給予 5 次吹氣"},clean:{en:"5 Breaths",zh:"給予吹氣"}},"btn-js-mark-black-2":{full:{en:"Mark Deceased (Black)",zh:"判定黑色"},clean:{en:"Black",zh:"黑色"}}};
 
 const pcE=document.getElementById('patient-card'), mT=document.getElementById('main-title'), sc=document.getElementById('status-container'), sd=document.getElementById('status-display'), pnd=document.getElementById('patient-number'), trd=document.getElementById('triage-result'), rrD=document.getElementById('resp-rate'), rrZN=document.getElementById('resp-rate-zh-note'), wtsd=document.getElementById('walk-test-status'), aa=document.getElementById('airway-action'), ame=document.getElementById('airway-message-en'), amz=document.getElementById('airway-message-zh'), npb=document.getElementById('next-patient-btn'), fcd=document.getElementById('final-classification'), scoreSummaryEl=document.getElementById('score-summary'), btnBack=document.getElementById('btn-back-step'), triageCard=document.querySelector('.triage-card');
 const rc=document.getElementById('resp-container'), pC=document.getElementById('pulse-container'), mC=document.getElementById('mental-container'), timerDisplay=document.getElementById('triage-timer'), difficultyInfo=document.getElementById('difficulty-info'), newIncidentBtn=document.getElementById('new-incident-btn');
@@ -1675,4 +1675,3 @@ window.toggleChangeLog=()=>{const c=document.getElementById('changelog-content')
 </script>
 </body>
 </html>
-
