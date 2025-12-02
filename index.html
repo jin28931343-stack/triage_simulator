@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>START Triage Simulator | 檢傷分類模擬器 (特效版)</title>
+    <title>START Triage Simulator | 檢傷分類模擬器 (特效音效版)</title>
     <meta name="description" content="免費線上大量傷病患檢傷分類模擬器。包含翻轉特效標題畫面。">
     <meta name="author" content="莊進宏 (JHUANG JIN HONG) - 台南市政府消防局">
 
@@ -709,6 +709,14 @@
                     <div id="changelog-content" class="hidden absolute bottom-full left-0 mb-2 w-64 bg-white border border-gray-300 p-4 rounded-lg shadow-xl z-50 text-left transition-all duration-200">
                         <h4 class="font-bold text-gray-800 mb-2 border-b pb-1">更新日誌</h4>
                         <div class="max-h-60 overflow-y-auto space-y-3">
+                             <!-- NEW LOG ENTRY -->
+                             <div>
+                                <p class="font-bold text-blue-600">12/03 (Audio & FX Update)</p>
+                                <ul class="list-disc pl-4 text-gray-600 space-y-1">
+                                    <li>新增「止血帶」困綁音效 (Zip/Binding Sound)。</li>
+                                    <li>優化止血帶使用時的視覺特效。</li>
+                                </ul>
+                            </div>
                              <div>
                                 <p class="font-bold text-blue-600">12/03 (Audio Update)</p>
                                 <ul class="list-disc pl-4 text-gray-600 space-y-1">
@@ -729,22 +737,6 @@
                                     <li>更換初學者提示按鈕顏色。</li>
                                 </ul>
                             </div>
-                            <div>
-                                <p class="font-bold text-blue-600">12/01 (Update)</p>
-                                <ul class="list-disc pl-4 text-gray-600 space-y-1">
-                                    <li>更新音樂風格。</li>
-                                    <li>增加音樂開關。</li>
-                                    <li>增加圖示。</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <p class="font-bold text-blue-600">11/30</p>
-                                <ul class="list-disc pl-4 text-gray-600 space-y-1">
-                                    <li>新增雲端排行榜功能。</li>
-                                    <li>修正按鈕失效錯誤。</li>
-                                    <li>修正選取分類後畫面滾動位置。</li>
-                                </ul>
-                            </div>
                         </div>
                         <button onclick="toggleChangeLog()" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
                     </div>
@@ -753,7 +745,7 @@
              <div class="text-right text-gray-500 w-full sm:w-auto">
                 <div class="mb-1"><div class="font-semibold text-gray-700">作者: 莊進宏</div><div class="font-bold text-gray-700 text-[10px]">JHUANG JIN HONG</div><div class="font-semibold text-gray-700 mt-1">台南市政府消防局</div></div>
                 <p><span class="font-semibold text-gray-700">Tainan City Fire Bureau</span></p>
-                <p><span class="font-semibold text-gray-700">版本: Online Beta 1141203</span></p>
+                <p><span class="font-semibold text-gray-700">版本: Online Beta 1141203b</span></p>
              </div>
         </footer>
     </div>
@@ -1194,6 +1186,61 @@ function playGameStartSound(){
     const o=audioCtx.createOscillator(),g=audioCtx.createGain(); o.type='triangle'; o.frequency.setValueAtTime(220,audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(880,audioCtx.currentTime+0.6); g.gain.setValueAtTime(0.1,audioCtx.currentTime); g.gain.linearRampToValueAtTime(0,audioCtx.currentTime+0.6); o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.6); 
 }
 
+// --- NEW SOUND: Tourniquet Binding (Zip + Ratchet) ---
+function playTourniquetSound() {
+    if(isMuted || !audioCtx) return;
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    
+    const t = audioCtx.currentTime;
+
+    // 1. The "Zip" sound (Velcro/Strap tightening)
+    // Create white noise
+    const bufferSize = audioCtx.sampleRate * 0.6;
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.5;
+    }
+
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = buffer;
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.Q.value = 1; // Wide band
+    // Sweep up frequency to simulate "zip" motion
+    filter.frequency.setValueAtTime(800, t);
+    filter.frequency.exponentialRampToValueAtTime(2500, t + 0.3);
+
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(0.8, t + 0.05); // Attack
+    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.4); // Decay
+
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    noise.start(t);
+    noise.stop(t + 0.5);
+
+    // 2. A low "Thud" to represent pressure/locking
+    const osc = audioCtx.createOscillator();
+    const oscGain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(100, t + 0.2); // Starts slightly after zip
+    osc.frequency.exponentialRampToValueAtTime(40, t + 0.5); // Pitch down
+
+    oscGain.gain.setValueAtTime(0, t + 0.2);
+    oscGain.gain.linearRampToValueAtTime(0.5, t + 0.25);
+    oscGain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
+
+    osc.connect(oscGain);
+    oscGain.connect(audioCtx.destination);
+    osc.start(t + 0.2);
+    osc.stop(t + 0.6);
+}
+
 // MODIFIED: Start BGM on first click regardless of current page
 document.addEventListener('click',()=>{ initAudio(); if(!bgmInterval && !isMuted) playBGM(); }, {once:true});
 
@@ -1431,6 +1478,10 @@ window.checkBleeding = function(tq, b) {
     buttons.forEach(btn => btn.disabled = true);
     currentTourniquetDecision = tq;
     if (tq) {
+        // --- PLAY SOUND EFFECT ---
+        playTourniquetSound();
+        
+        // --- VISUAL EFFECT ---
         const animImg = document.createElement('img');
         animImg.src = "tone.png"; 
         animImg.style.position = "fixed";
@@ -1442,10 +1493,13 @@ window.checkBleeding = function(tq, b) {
         animImg.style.transition = "transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease-in 0.5s"; 
         animImg.style.opacity = "1";
         animImg.style.pointerEvents = "none"; 
-        animImg.className = "shadow-2xl rounded-xl"; 
+        animImg.className = "shadow-2xl rounded-xl border-4 border-gray-800"; // Added border
         document.body.appendChild(animImg);
         requestAnimationFrame(() => {
-            animImg.style.transform = "translate(-50%, -50%) scale(1)";
+            animImg.style.transform = "translate(-50%, -50%) scale(1.1)"; // Scale up
+            setTimeout(() => {
+                 animImg.style.transform = "translate(-50%, -50%) scale(1.0)"; // Snap tight
+            }, 300);
         });
         setTimeout(() => {
             animImg.style.opacity = "0";
@@ -1533,7 +1587,7 @@ function stR(c,ok,t,fail){
             <span class="bilingual-zh block">✅ 正確：分類為 ${c.zh.split('(')[0]}。(用時: ${dt})</span>`; 
     }
     else { 
-        ft=`<span class="bilingual-en block">INCORRECT: Correct is ${cp.correctTriage.en.split(' - ')[0]}. You chose ${c.en.split(' - ')[0]}. (Time: ${dt})</span>
+        ft=`<span class="bilingual-en block">INCORRECT: Correct is ${cp.correctTriage.en.split(' - ')[0]}. (Time: ${dt})</span>
             <span class="bilingual-zh block">❌ 錯誤：正確分類是 ${cp.correctTriage.zh.split('(')[0]}。您選擇了 ${c.zh.split('(')[0]}。(用時: ${dt})</span>`; 
     }
     
