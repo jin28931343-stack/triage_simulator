@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>START Triage Simulator | 檢傷分類模擬器 (連線版)</title>
-    <meta name="description" content="免費線上大量傷病患檢傷分類模擬器。專為 EMT、救護技術員、消防員設計。包含連線排行榜功能。">
+    <title>START Triage Simulator | 檢傷分類模擬器 (特效版)</title>
+    <meta name="description" content="免費線上大量傷病患檢傷分類模擬器。包含翻轉特效標題畫面。">
     <meta name="author" content="莊進宏 (JHUANG JIN HONG) - 台南市政府消防局">
 
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&family=Noto+Sans+TC:wght&display=swap" rel="stylesheet">
@@ -32,6 +32,7 @@
             font-size: 16px; 
             user-select: none;
             -webkit-user-select: none;
+            overflow-x: hidden; /* Prevent scroll during animations */
         }
 
         /* --- Desktop Scale --- */
@@ -61,15 +62,88 @@
             z-index: 10;
         }
 
+        /* --- FLIP CARD STYLES --- */
+        .flip-card {
+            background-color: transparent;
+            perspective: 1000px;
+            cursor: pointer;
+            height: 180px; /* Fixed height for consistency */
+        }
+        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            top: 0;
+            left: 0;
+        }
+
+        .flip-card-front {
+            z-index: 2;
+        }
+
+        .flip-card-back {
+            transform: rotateY(180deg);
+            z-index: 1;
+            /* Border for the back side */
+            border: 4px solid white;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+        }
+
+        .ready-pulse {
+            animation: pulse-ready 1s infinite;
+        }
+        @keyframes pulse-ready {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* --- ANIMATION TO CENTER --- */
+        .card-clone-animating {
+            position: fixed !important;
+            z-index: 9999 !important;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+            border: 4px solid white;
+        }
+
+        @keyframes flash-white {
+            0%, 100% { filter: brightness(1); box-shadow: 0 0 0 rgba(255,255,255,0); }
+            50% { filter: brightness(2); box-shadow: 0 0 50px 20px rgba(255,255,255,0.8); }
+        }
+
         /* --- Arcade HUD Style (Centered) --- */
         #arcade-game-hud {
             position: absolute;
-            top: -15px; /* Moved slightly up to overlap border */
-            left: 50%; /* Center horizontally */
-            transform: translateX(-50%) rotate(2deg); /* Center & Rotate */
-            background: #fbbf24; /* Yellow-400 */
-            border: 3px solid #b45309; /* Amber-700 */
-            color: #78350f; /* Amber-900 */
+            top: -15px; 
+            left: 50%; 
+            transform: translateX(-50%) rotate(2deg); 
+            background: #fbbf24; 
+            border: 3px solid #b45309; 
+            color: #78350f; 
             padding: 0.4rem 1.2rem;
             border-radius: 0.5rem;
             font-family: 'Roboto', monospace;
@@ -77,7 +151,7 @@
             font-size: 1.2rem;
             box-shadow: 0 4px 0 #92400e;
             z-index: 50;
-            display: none; /* Hidden by default */
+            display: none; 
             transition: transform 0.1s;
         }
         @media (min-width: 640px) {
@@ -90,7 +164,7 @@
 
         #transition-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: black; opacity: 0; pointer-events: none; z-index: 9999;
+            background-color: black; opacity: 0; pointer-events: none; z-index: 9998;
             transition: opacity 0.8s ease-in-out;
         }
         .time-up-alarm {
@@ -134,7 +208,7 @@
             font-size: 1.4rem; font-weight: 700; color: var(--color-gray);
             border-bottom: 2px solid #e5e7eb; padding-bottom: 0.5rem; margin-bottom: 1rem;
         }
-        /* MODIFIED: Removed text-shadow */
+        
         .rpm-button {
             background: linear-gradient(to right, #ef4444 0%, #ef4444 33%, #f59e0b 33%, #f59e0b 66%, #4b5563 66%, #4b5563 100%);
             color: white; 
@@ -144,7 +218,7 @@
             background: linear-gradient(to right, #dc2626 0%, #dc2626 33%, #d97706 33%, #d97706 66%, #374151 66%, #374151 100%);
             box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
         }
-        /* Class for Yellow/Red Split Button */
+        
         .yellow-red-split {
             background: linear-gradient(to right, #f59e0b 0%, #f59e0b 50%, #ef4444 50%, #ef4444 100%);
             color: white;
@@ -154,7 +228,7 @@
             background: linear-gradient(to right, #d97706 0%, #d97706 50%, #dc2626 50%, #dc2626 100%);
             box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
         }
-        /* New Class for Red/Black Split Button */
+        
         .red-black-split {
             background: linear-gradient(to right, #ef4444 0%, #ef4444 50%, #1f2937 50%, #1f2937 100%);
             color: white;
@@ -173,7 +247,6 @@
         .back-button:disabled { opacity: 0; pointer-events: none; }
         .jumpstart-section { background-color: #eef2ff; border-left: 4px solid #6366f1; }
         
-        /* --- Animation to respect centering --- */
         @keyframes scorePop {
             0% { transform: translateX(-50%) scale(1) rotate(2deg); } 
             50% { transform: translateX(-50%) scale(1.4) rotate(0deg); color: #fff; text-shadow: 0 0 5px #b45309; } 
@@ -184,7 +257,6 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
         
-        /* Custom Scrollbar */
         .leaderboard-scroll::-webkit-scrollbar { width: 6px; }
         .leaderboard-scroll::-webkit-scrollbar-track { background: #fef3c7; }
         .leaderboard-scroll::-webkit-scrollbar-thumb { background: #d97706; border-radius: 3px; }
@@ -232,44 +304,88 @@
     <section id="difficulty-selection" class="flex flex-col gap-4 p-3 rounded-lg border border-gray-200">
         <h2 class="text-lg md:text-xl font-bold text-gray-700 text-center">
             <span class="bilingual-en">Select Mode</span>
-            <span class="bilingual-zh block">選擇模式</span>
+            <span class="bilingual-zh block">選擇模式 (Click Card to Start)</span>
         </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-            <!-- Images Restored -->
-            <button id="difficulty-beginner" onclick="setDifficulty('beginner', this)" class="action-button bg-green-600 hover:bg-green-700 shadow-md border-2 border-green-600 flex flex-col items-center justify-center py-4 h-full">
-                <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h (2).jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Beginner" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
-                <span class="img-error hidden text-xs text-yellow-200 mb-1">(No Image)</span>
-                <div><span class="bilingual-en text-lg">Beginner</span><span class="bilingual-zh block text-sm">初學者</span></div>
-            </button>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             
-            <!-- Professional (Yellow) -->
-            <button id="difficulty-pro" onclick="setDifficulty('pro', this)" class="action-button bg-yellow-600 hover:bg-yellow-700 shadow-md border-2 border-yellow-600 flex flex-col items-center justify-center py-4 h-full">
-                <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h (1).jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Professional" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
-                <span class="img-error hidden text-xs text-white mb-1">(No Image)</span>
-                <div><span class="bilingual-en text-lg">Professional</span><span class="bilingual-zh block text-sm">專業人員</span></div>
-            </button>
-            
-            <!-- Master (Red) -->
-            <button id="difficulty-master" onclick="setDifficulty('master', this)" class="action-button bg-red-700 hover:bg-red-800 shadow-md border-2 border-red-700 flex flex-col items-center justify-center py-4 h-full">
-                <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h.jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Master" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
-                <span class="img-error hidden text-xs text-white mb-1">(No Image)</span>
-                <div><span class="bilingual-en text-lg">Master</span><span class="bilingual-zh block text-sm">大師級</span></div>
-            </button>
-            
-            <!-- Arcade (Black) -->
-            <button id="difficulty-arcade" onclick="setDifficulty('arcade', this)" class="action-button bg-gray-900 hover:bg-black shadow-md border-2 border-gray-900 flex flex-col items-center justify-center py-4 h-full">
-                <img src="Stree.jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Arcade" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20" style="image-rendering: pixelated;">
-                <span class="img-error hidden text-xs text-white mb-1">(No Image)</span>
-                <div><span class="bilingual-en text-lg font-bold">Arcade</span><span class="bilingual-zh block text-sm font-bold">街機模式</span></div>
-            </button>
+            <!-- Beginner Card -->
+            <div class="flip-card" onclick="onCardClick('beginner', this)">
+                <div class="flip-card-inner">
+                    <!-- Front -->
+                    <div class="flip-card-front bg-green-600 border-2 border-green-600 text-white shadow-md">
+                        <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h (2).jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Beginner" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
+                        <span class="img-error hidden text-xs text-yellow-200 mb-1">(No Image)</span>
+                        <div><span class="bilingual-en text-lg">Beginner</span><span class="bilingual-zh block text-sm">初學者</span></div>
+                    </div>
+                    <!-- Back -->
+                    <div class="flip-card-back bg-green-700 border-green-300">
+                        <h1 class="text-3xl font-black text-white ready-pulse tracking-widest">READY?</h1>
+                        <p class="text-green-100 text-sm mt-2">Click again!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Professional Card -->
+            <div class="flip-card" onclick="onCardClick('pro', this)">
+                <div class="flip-card-inner">
+                    <!-- Front -->
+                    <div class="flip-card-front bg-yellow-600 border-2 border-yellow-600 text-white shadow-md">
+                        <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h (1).jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Professional" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
+                        <span class="img-error hidden text-xs text-white mb-1">(No Image)</span>
+                        <div><span class="bilingual-en text-lg">Professional</span><span class="bilingual-zh block text-sm">專業人員</span></div>
+                    </div>
+                    <!-- Back -->
+                    <div class="flip-card-back bg-yellow-700 border-yellow-300">
+                        <h1 class="text-3xl font-black text-white ready-pulse tracking-widest">READY?</h1>
+                        <p class="text-yellow-100 text-sm mt-2">Click again!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Master Card -->
+            <div class="flip-card" onclick="onCardClick('master', this)">
+                <div class="flip-card-inner">
+                    <!-- Front -->
+                    <div class="flip-card-front bg-red-700 border-2 border-red-700 text-white shadow-md">
+                        <img src="Gemini_Generated_Image_qo3hgnqo3hgnqo3h.jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Master" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20">
+                        <span class="img-error hidden text-xs text-white mb-1">(No Image)</span>
+                        <div><span class="bilingual-en text-lg">Master</span><span class="bilingual-zh block text-sm">大師級</span></div>
+                    </div>
+                    <!-- Back -->
+                    <div class="flip-card-back bg-red-900 border-red-400">
+                        <h1 class="text-3xl font-black text-white ready-pulse tracking-widest">READY?</h1>
+                        <p class="text-red-200 text-sm mt-2">Click again!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arcade Card -->
+            <div class="flip-card" onclick="onCardClick('arcade', this)">
+                <div class="flip-card-inner">
+                    <!-- Front -->
+                    <div class="flip-card-front bg-gray-900 border-2 border-gray-900 text-white shadow-md hover:bg-black">
+                        <img src="Stree.jpg" onerror="this.style.display='none'; this.parentElement.querySelector('.img-error').classList.remove('hidden')" alt="Arcade" class="w-24 h-24 mb-2 object-cover rounded-md border-2 border-white/50 shadow-sm bg-white/20" style="image-rendering: pixelated;">
+                        <span class="img-error hidden text-xs text-white mb-1">(No Image)</span>
+                        <div><span class="bilingual-en text-lg font-bold">Arcade</span><span class="bilingual-zh block text-sm font-bold">街機模式</span></div>
+                    </div>
+                    <!-- Back -->
+                    <div class="flip-card-back bg-black border-gray-500">
+                        <h1 class="text-3xl font-black text-yellow-400 ready-pulse tracking-widest font-mono">READY?</h1>
+                        <p class="text-gray-400 text-sm mt-2">Insert Coin<br>(Click again)</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
-        <p id="difficulty-info" class="text-xs md:text-sm text-center text-gray-500 mt-2">
+
+        <p id="difficulty-info" class="text-xs md:text-sm text-center text-gray-500 mt-2 min-h-[3rem]">
             <span class="bilingual-en">Please select a mode to start.</span>
-            <span class="bilingual-zh block">請選擇模式以開始。</span>
+            <span class="bilingual-zh block">請點擊卡片選擇模式。</span>
         </p>
 
         <!-- Arcade Name Input -->
-        <div id="arcade-name-container" class="hidden mt-4 p-4 bg-gray-100 border-2 border-gray-400 rounded-lg transition-all animate-fade-in">
+        <div id="arcade-name-container" class="hidden mt-2 p-4 bg-gray-100 border-2 border-gray-400 rounded-lg transition-all animate-fade-in">
             <label for="player-name" class="block text-gray-800 font-bold mb-2 text-center text-lg">
                 <i class="fa-solid fa-id-card"></i> <span class="bilingual-zh">請輸入救護人員姓名</span>
             </label>
@@ -288,12 +404,13 @@
         </div>
     </section>
 
-    <!-- Game Status -->
+    <!-- Game Status (Hidden initially, shown after animation) -->
     <div id="status-container" class="bg-gray-100 p-3 rounded-lg shadow-inner flex flex-col sm:flex-row justify-between items-center gap-3 hidden"> 
         <div id="status-display" class="text-lg md:text-xl font-bold text-gray-800 text-center sm:text-left">
             <span class="bilingual-en">Click "New Incident" to start.</span>
             <span class="bilingual-zh block mt-1">點擊「新事件」開始。</span>
         </div>
+        <!-- Note: This button is technically not needed for the start flow now, but kept for logic compatibility -->
         <button id="new-incident-btn" onclick="startWithEffect()" class="action-button bg-blue-600 hover:bg-blue-700 text-white shadow-md w-full sm:w-auto" disabled> 
             <span class="bilingual-en">New Incident</span>
             <span class="bilingual-zh block">新事件</span>
@@ -585,7 +702,13 @@
                     <div id="changelog-content" class="hidden absolute bottom-full left-0 mb-2 w-64 bg-white border border-gray-300 p-4 rounded-lg shadow-xl z-50 text-left transition-all duration-200">
                         <h4 class="font-bold text-gray-800 mb-2 border-b pb-1">更新日誌</h4>
                         <div class="max-h-60 overflow-y-auto space-y-3">
-                            <!-- NEW ENTRY HERE -->
+                             <div>
+                                <p class="font-bold text-blue-600">12/03 (FX Update)</p>
+                                <ul class="list-disc pl-4 text-gray-600 space-y-1">
+                                    <li>更新標題畫面互動特效。</li>
+                                    <li>點擊卡片翻轉確認開始。</li>
+                                </ul>
+                            </div>
                             <div>
                                 <p class="font-bold text-blue-600">12/02</p>
                                 <ul class="list-disc pl-4 text-gray-600 space-y-1">
@@ -608,25 +731,6 @@
                                     <li>修正選取分類後畫面滾動位置。</li>
                                 </ul>
                             </div>
-                            <div>
-                                <p class="font-bold text-blue-600">11/29 (Arcade Update)</p>
-                                <ul class="list-disc pl-4 text-gray-600 space-y-1">
-                                    <li>新增「街機模式」(Arcade Mode)。</li>
-                                    <li>街機模式無人數限制，時間動態縮短。</li>
-                                    <li>新增街機模式計分系統。</li>
-                                    <li>修正手機版捲動問題。</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <p class="font-bold text-blue-600">11/28</p>
-                                <ul class="list-disc pl-4 text-gray-600 space-y-1">
-                                    <li>新增JumpSTART檢傷法。</li>
-                                    <li>新增交界處出血及大出血傷患。</li>
-                                    <li>優化設定修正BUG。</li>
-                                    <li>結算畫面新增暢通呼吸道。</li>
-                                    <li>新增參考文獻資料。</li>
-                                </ul>
-                            </div>
                         </div>
                         <button onclick="toggleChangeLog()" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
                     </div>
@@ -635,7 +739,7 @@
              <div class="text-right text-gray-500 w-full sm:w-auto">
                 <div class="mb-1"><div class="font-semibold text-gray-700">作者: 莊進宏</div><div class="font-bold text-gray-700 text-[10px]">JHUANG JIN HONG</div><div class="font-semibold text-gray-700 mt-1">台南市政府消防局</div></div>
                 <p><span class="font-semibold text-gray-700">Tainan City Fire Bureau</span></p>
-                <p><span class="font-semibold text-gray-700">版本: Online Beta 1141202</span></p>
+                <p><span class="font-semibold text-gray-700">版本: Online Beta 1141203</span></p>
              </div>
         </footer>
     </div>
@@ -702,6 +806,8 @@ const TOTAL_PATIENTS_STANDARD = 15;
 let pc=0, cp={}, go=true, difficulty=null, scoreRecords=[], timerInterval=null, startTime=0, stepHistory=[], currentTourniquetDecision=false, timeLimit=120000;
 let arcadeScore=0, patientsCompletedInArcade=0, playerName="Player";
 const ARCADE_INITIAL_TIME=60000, ARCADE_TIME_DROP=10000, ARCADE_DROP_INTERVAL=5, ARCADE_MIN_TIME=5000;
+// NEW: Track selected mode state
+let selectedMode = null;
 
 // Audio Context
 let audioCtx=null, bgmInterval=null;
@@ -730,8 +836,6 @@ window.toggleAudio = function() {
 function initAudio(){ if(!audioCtx){ audioCtx=new(window.AudioContext||window.webkitAudioContext)(); } if(audioCtx.state==='suspended' && !isMuted) audioCtx.resume(); }
 
 // --- "VAST OSCILLATOR" SYNTHWAVE ENGINE ---
-
-// Generic Synth Function
 function playSynthSound(freq, time, dur, type='sawtooth', vol=0.1, attack=0.01, decay=0.1, filterFreq=2000) {
     if(isMuted || !audioCtx) return;
     const osc = audioCtx.createOscillator();
@@ -930,20 +1034,97 @@ const st={ bleeding:document.getElementById('step-bleeding'), ambulatory:documen
 
 function formatTime(ms){ const s=Math.max(0,Math.floor(ms/1000)),m=Math.floor(s/60),sec=s%60; return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`; }
 
+// --- NEW CARD CLICK HANDLER ---
+window.onCardClick = function(mode, cardEl) {
+    // If user clicks "READY?" (flipped card)
+    if (selectedMode === mode && cardEl.classList.contains('flipped')) {
+        // Arcade Name Validation
+        if (mode === 'arcade') {
+            const nameInput = document.getElementById('player-name');
+            if (!nameInput.value.trim()) {
+                nameInput.focus();
+                // Shake/Error effect
+                nameInput.classList.add('ring-4', 'ring-red-500', 'bg-red-50');
+                setTimeout(() => nameInput.classList.remove('ring-4', 'ring-red-500', 'bg-red-50'), 500);
+                return; // Stop here, don't start
+            }
+        }
+
+        // --- START GAME SEQUENCE ---
+        playGameStartSound();
+        
+        // 1. Flip back to front
+        cardEl.classList.remove('flipped');
+        
+        // 2. Clone the front face for animation
+        const frontFace = cardEl.querySelector('.flip-card-front');
+        const clone = frontFace.cloneNode(true);
+        const rect = frontFace.getBoundingClientRect();
+        
+        clone.style.left = rect.left + 'px';
+        clone.style.top = rect.top + 'px';
+        clone.style.width = rect.width + 'px';
+        clone.style.height = rect.height + 'px';
+        clone.classList.add('card-clone-animating');
+        
+        // Remove transform/transition inherited styles that might conflict
+        clone.style.transform = ''; 
+        
+        document.body.appendChild(clone);
+        
+        // 3. Animate clone to center
+        requestAnimationFrame(() => {
+            clone.style.left = '50%';
+            clone.style.top = '50%';
+            clone.style.transform = 'translate(-50%, -50%) scale(1.5)';
+            clone.style.animation = 'flash-white 0.8s ease-in-out'; // Flash effect
+            
+            // Wait for animation to finish then start game
+            setTimeout(() => {
+                clone.style.opacity = '0';
+                clone.style.transform = 'translate(-50%, -50%) scale(3)'; // Zoom out
+                setTimeout(() => {
+                    clone.remove();
+                    startWithEffect();
+                }, 200);
+            }, 800);
+        });
+        
+        return;
+    }
+
+    // Standard Selection (First Click)
+    // Reset others
+    document.querySelectorAll('.flip-card').forEach(c => {
+        if (c !== cardEl) c.classList.remove('flipped');
+    });
+
+    // Flip this one
+    cardEl.classList.add('flipped');
+    selectedMode = mode;
+    
+    // Update global difficulty and UI text
+    setDifficulty(mode, null); 
+}
+
+// Modified setDifficulty to handle UI text/logic but skip button styling
 window.setDifficulty = function(level, clickedButton) {
-    document.querySelectorAll('#difficulty-selection button').forEach(b=>b.classList.remove('ring-4','ring-blue-400','ring-green-400','ring-yellow-400','ring-red-400','ring-indigo-400','ring-gray-500'));
     difficulty=level; arcadeScore=0; patientsCompletedInArcade=0; arcadeScoreContainer.classList.add('hidden');
-    if(level==='beginner') clickedButton.classList.add('ring-4','ring-green-400');
-    if(level==='pro') clickedButton.classList.add('ring-4','ring-yellow-400');
-    if(level==='master') clickedButton.classList.add('ring-4','ring-red-400');
-    if(level==='arcade') clickedButton.classList.add('ring-4','ring-gray-500');
-    newIncidentBtn.disabled=false; sc.classList.remove('hidden');
+    
+    // Logic for Name Input Visibility
     const nc=document.getElementById('arcade-name-container');
-    if(level==='arcade'){ nc.classList.remove('hidden'); setTimeout(()=>document.getElementById('player-name').focus(),100); } else { nc.classList.add('hidden'); }
+    if(level==='arcade'){ 
+        nc.classList.remove('hidden'); 
+        setTimeout(()=>document.getElementById('player-name').focus(), 300); // Focus after flip
+    } else { 
+        nc.classList.add('hidden'); 
+    }
+
     if(level==='beginner'){ timeLimit=120000; difficultyInfo.innerHTML='<span class="bilingual-en text-green-700 font-bold">Beginner Mode: Buttons are color-coded based on the expected triage result. 2 mins per patient.</span><span class="bilingual-zh block mt-1 text-green-700">初學者模式：按鈕會顯示顏色提示，顏色即為預期的檢傷結果。每位傷患限時 2 分鐘。</span>'; }
     else if(level==='pro'){ timeLimit=60000; difficultyInfo.innerHTML='<span class="bilingual-en text-yellow-700 font-bold">Professional Mode: Buttons are grayscale. Only the final choice buttons are colored. 1 min per patient.</span><span class="bilingual-zh block mt-1 text-yellow-700">專業人員模式：步驟按鈕將取消顏色提示（灰階）。只有最終分類按鈕保留顏色。每位傷患限時 1 分鐘。</span>'; }
     else if(level==='master'){ timeLimit=30000; difficultyInfo.innerHTML='<span class="bilingual-en text-red-700 font-bold">Master Mode: Buttons are grayscale AND text hints/numbers are removed. Pure knowledge test. 30 sec per patient.</span><span class="bilingual-zh block mt-1 text-red-700">大師級模式：按鈕無顏色且無數字/結果提示。純知識測試。每位傷患限時 30 秒。</span>'; }
     else if(level==='arcade'){ timeLimit=ARCADE_INITIAL_TIME; difficultyInfo.innerHTML='<span class="bilingual-en text-gray-800 font-bold">Arcade Mode: Master rules. Unlimited patients. Time decreases every 5 patients. Game ends when time runs out. Scoring enabled.</span><span class="bilingual-zh block mt-1 text-gray-800">街機模式：大師級規則。無限病患。每5人時間縮短。時間到即結束。啟用計分。</span>'; }
+    
     applyDifficultyStyles(level); 
     if(!isMuted) playBGM();
 };
@@ -1012,7 +1193,11 @@ window.goBack = function() {
 
 window.startWithEffect = function() {
     if(difficulty==='arcade'){ const ni=document.getElementById('player-name'), v=ni.value.trim(); if(!v){ alert("請輸入救護人員姓名以開始街機模式！"); ni.focus(); ni.classList.add('border-red-500','ring-2','ring-red-200'); setTimeout(()=>ni.classList.remove('border-red-500','ring-2','ring-red-200'),2000); return; } playerName=v; }
-    playGameStartSound(); 
+    
+    // Play Start Sound if it wasn't triggered by card (e.g. if someone used console or bypass)
+    // But since card triggers it, this is backup or sync
+    // playGameStartSound(); 
+    
     // MODIFIED: Removed stopBGM() here to allow music to continue
     const ol=document.getElementById('transition-overlay'); ol.style.opacity='1'; setTimeout(()=>{ si(); ol.style.opacity='0'; },500);
 }
@@ -1364,10 +1549,13 @@ window.resetGame = function() {
     // HIDE HUD on reset
     arcadeGameHud.style.display='none';
     
+    // Reset selections and flips
+    selectedMode = null;
+    document.querySelectorAll('.flip-card').forEach(c => c.classList.remove('flipped'));
+
     mT.classList.remove('hidden'); document.getElementById('difficulty-selection').classList.remove('hidden'); scoreSummaryEl.classList.add('hidden'); pcE.classList.add('hidden'); sc.classList.add('hidden'); newIncidentBtn.disabled=true;
     document.getElementById('arcade-name-container').classList.add('hidden'); document.getElementById('player-name').value='';
     triageCard.classList.remove('time-up-alarm');
-    document.querySelectorAll('#difficulty-selection button').forEach(b=>b.classList.remove('ring-4','ring-blue-400','ring-green-400','ring-yellow-400','ring-red-400','ring-indigo-400','ring-gray-500'));
     
     // Play BGM only if not muted
     if(!isMuted) playBGM();
