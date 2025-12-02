@@ -303,10 +303,20 @@
     <!-- Patient Card -->
     <div id="patient-card" class="bg-white p-3 md:p-4 rounded-lg border-2 border-gray-200 hidden">
         <div class="flex justify-between items-center mb-3">
-            <h2 class="text-xl md:text-2xl font-bold text-gray-800 flex-shrink-0">
-                <span class="bilingual-en">Patient #</span><span id="patient-number">1</span>
-                <span class="bilingual-zh mt-1 block">傷患編號</span>
-            </h2>
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <h2 class="text-xl md:text-2xl font-bold text-gray-800 flex items-center">
+                    <div>
+                        <span class="bilingual-en">Patient #</span><span id="patient-number">1</span>
+                        <span class="bilingual-zh mt-1 block">傷患編號</span>
+                    </div>
+                    <!-- ADDED: Male Patient Image inside h2, sized to text height -->
+                    <img id="patient-male-img" src="mele.png" class="hidden h-12 w-auto object-contain ml-3" alt="Male Patient">
+                </h2>
+                <!-- ADDED: Female Patient Image -->
+                <img id="patient-gender-img" src="femele.png" class="hidden h-16 w-auto object-contain" alt="Female Patient">
+                <!-- ADDED: Child Patient Image -->
+                <img id="patient-child-img" src="children.png" class="hidden h-16 w-auto object-contain" alt="Child Patient">
+            </div>
             <div id="triage-timer" class="text-lg md:text-xl font-mono text-red-600 font-extrabold flex-grow text-right">00:00</div>
             <div id="triage-result" class="triage-color red-bg hidden flex-shrink-0 ml-2">
                 <span class="bilingual-en text-sm md:text-base">RED</span>
@@ -1048,6 +1058,32 @@ function gp(){
 function spU(){
     trd.classList.add('hidden'); npb.disabled=true; pnd.textContent=cp.id;
     document.getElementById('patient-context').innerHTML=`<span class="bilingual-en">Gender: ${cp.gender.en}, Age: ${cp.age}</span><span class="bilingual-zh block mt-1">性別: ${cp.gender.zh}, 年齡: ${cp.age}</span><div class="mt-2 pt-2 border-t border-yellow-300"><span class="font-bold bilingual-en">Injury: ${cp.injury.en}</span><span class="block mt-1 bilingual-zh">傷情: ${cp.injury.zh}</span></div>`;
+    
+    // --- UPDATED IMAGE LOGIC ---
+    const pGi = document.getElementById('patient-gender-img');
+    const pCi = document.getElementById('patient-child-img');
+    const pMi = document.getElementById('patient-male-img'); // New image element
+
+    if (cp.isPediatric) {
+        // If child (1-8), show child image ONLY, hide others regardless of gender
+        pCi.classList.remove('hidden');
+        pGi.classList.add('hidden');
+        pMi.classList.add('hidden'); // Hide male image
+    } else {
+        // If NOT child, hide child image
+        pCi.classList.add('hidden');
+        // Show female image only if gender is female
+        if (cp.gender.en === 'Female') {
+            pGi.classList.remove('hidden');
+            pMi.classList.add('hidden'); // Hide male image
+        } else {
+            // Gender is Male
+            pGi.classList.add('hidden');
+            pMi.classList.remove('hidden'); // Show male image
+        }
+    }
+    // ---------------------------
+
     const stc='text-gray-900';
     wtsd.innerHTML=cp.canWalk?`<span class="bilingual-en ${stc} font-bold">Can Walk</span><span class="bilingual-zh block">能走動</span>`:`<span class="bilingual-en ${stc} font-bold">Cannot Walk</span><span class="bilingual-zh block">無法走動</span>`;
     rrZN.textContent=''; if(cp.respRate===0){rrD.textContent='Absent';rrZN.textContent='（無呼吸）';}else{rrD.textContent=cp.respRate;}
