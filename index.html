@@ -794,6 +794,30 @@
                         <h4 class="font-bold text-gray-800 mb-2 border-b pb-1">更新日誌</h4>
                         <div class="max-h-60 overflow-y-auto space-y-4 pr-1">
                             <div>
+                                <p class="font-bold text-blue-600">12/4 (JumpSTART Update)</p>
+                                <ul class="list-disc pl-4 text-gray-600 space-y-1">
+                                    <li>新增 2 名特定 JumpSTART 兒童傷患案例 (5歲/7歲)。</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p class="font-bold text-blue-600">12/4 (Arcade Update)</p>
+                                <ul class="list-disc pl-4 text-gray-600 space-y-1">
+                                    <li>新增 5 名綠色可行走成人傷患 (Case 30-34)。</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p class="font-bold text-blue-600">12/3 (JumpSTART Update)</p>
+                                <ul class="list-disc pl-4 text-gray-600 space-y-1">
+                                    <li>新增 8 名 JumpSTART 兒童傷患案例 (綠2/黃3/紅2/黑1)。</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p class="font-bold text-blue-600">12/3 (New Patients)</p>
+                                <ul class="list-disc pl-4 text-gray-600 space-y-1">
+                                    <li>新增 9 名特定傷患案例 (綠2/黃4/紅2/黑1)。</li>
+                                </ul>
+                            </div>
+                            <div>
                                 <p class="font-bold text-blue-600">12/3 (Fix)</p>
                                 <ul class="list-disc pl-4 text-gray-600 space-y-1">
                                     <li>修正手機跳出畫面後音樂消失問題。</li>
@@ -827,26 +851,6 @@
                                     <li>增加雲端排行榜。</li>
                                 </ul>
                             </div>
-                            <div>
-                                <p class="font-bold text-blue-600">11/29</p>
-                                <ul class="list-disc pl-4 text-gray-600 space-y-1">
-                                    <li>新增問卷。</li>
-                                    <li>修正無法行走傷患不會出現綠色分類選項。</li>
-                                    <li>新增音樂音效。</li>
-                                    <li>新增重大更新日誌。</li>
-                                    <li>新增圖示。</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <p class="font-bold text-blue-600">11/28</p>
-                                <ul class="list-disc pl-4 text-gray-600 space-y-1">
-                                    <li>新增 JumpSTART 檢傷法。</li>
-                                    <li>新增交界處出血及大出血傷患。</li>
-                                    <li>優化設定修正 BUG。</li>
-                                    <li>結算畫面新增暢通呼吸道。</li>
-                                    <li>新增參考文獻資料。</li>
-                                </ul>
-                            </div>
                         </div>
                         <button onclick="toggleChangeLog()" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
                     </div>
@@ -859,7 +863,7 @@
                 <div class="text-[10px] text-gray-500 font-bold tracking-wider uppercase mb-1">JHUANG JIN HONG</div>
                 <div class="font-bold text-gray-900">台南市政府消防局</div>
                 <div class="text-[10px] text-gray-500 font-bold mb-1">Tainan City Fire Bureau</div>
-                <div class="text-gray-600 mt-1 font-mono">版本: Online Beta 1141203b</div>
+                <div class="text-gray-600 mt-1 font-mono">版本: Online Beta 1141204b</div>
              </div>
         </footer>
     </div>
@@ -1350,7 +1354,9 @@ function stopTimer(){ if(timerInterval){clearInterval(timerInterval);timerInterv
 function pushHistory(id){ stepHistory.push(id); if(stepHistory.length>0)btnBack.classList.remove('hidden'); }
 
 function gp(){
-    pc++; const s=Math.floor(Math.random()*13);
+    pc++; 
+    // Increased range to include new cases (0-29, total 30 cases) -> Now 37 (added 2)
+    const s=Math.floor(Math.random()*37);
     let g,a,cW=false,rr=0,pp=true,cO=true,fc=null,bleeding=false,tqReq=false,isPed=false,jsPulse=false,jsRescue=false,airwayRes=false,selAb=null,injuryText={en:"",zh:""};
     const gs=[{en:"Male",zh:"男性"},{en:"Female",zh:"女性"}]; g=gs[Math.floor(Math.random()*gs.length)]; a=Math.floor(Math.random()*50)+15; jsPulse=Math.random()<0.5; jsRescue=Math.random()<0.5; airwayRes=(Math.random()<0.5);
     switch(s){
@@ -1361,12 +1367,49 @@ function gp(){
         case 4: cW=false;rr=15;pp=true;cO=false;fc=tg.RED;injuryText={en:"Confused, head injury",zh:"意識混亂，頭部受傷"};break;
         case 5: cW=false;rr=15;pp=true;cO=true;fc=tg.YELLOW;injuryText={en:"Broken leg, in pain",zh:"腿部骨折，疼痛"};break;
         case 6: cW=false;rr=20;pp=false;cO=true;fc=tg.RED;bleeding=true;tqReq=true;injuryText={en:"Severed leg, massive spurting blood",zh:"腿部斷裂，大量噴濺出血"};break;
-        case 7: cW=false;rr=32;pp=false;cO=true;fc=tg.RED;bleeding=true;tqReq=true;injuryText={en:"Open arm fracture, active bleeding",zh:"手開放性骨折，傷口持續出血"};selAb={en:"Weak/Irregular",zh:"橈動脈微弱不規則"};break;
+        case 7: cW=false;rr=32;pp=false;cO=true;fc=tg.RED;bleeding=true;tqReq=true;injuryText={en:"Open left arm fracture, continuous massive bleeding",zh:"左手臂開放性骨折,持續大出血"};selAb={en:"Weak/Irregular",zh:"橈動脈微弱不規則"};break;
         case 8: cW=false;rr=4;pp=false;cO=false;fc=tg.RED;bleeding=true;tqReq=true;injuryText={en:"Pants soaked with blood, active bleeding",zh:"雙腳褲子滲血，持續出血"};selAb={en:"Absent",zh:"橈動脈摸不到"};break;
         case 9: cW=false;rr=36;pp=false;cO=true;fc=tg.RED;bleeding=true;tqReq=false;injuryText={en:"Massive neck bleeding",zh:"頸部大出血，噴濺式"};selAb={en:"Weak/Irregular",zh:"橈動脈微弱不規則"};break;
         case 10: isPed=true;a=Math.floor(Math.random()*8)+1;cW=false;rr=42;pp=true;cO=true;fc=tg.YELLOW;injuryText={en:"Child, abrasions, crying",zh:"兒童，擦傷，哭鬧"};break;
         case 11: isPed=true;a=Math.floor(Math.random()*8)+1;cW=false;rr=12;pp=false;cO=false;fc=tg.RED;injuryText={en:"Child, quiet, shallow breathing",zh:"兒童，安靜，呼吸淺快"};break;
         case 12: isPed=true;a=Math.floor(Math.random()*8)+1;cW=false;rr=0; const aw=Math.random()<0.3, hp=Math.random()<0.5, bw=Math.random()<0.5; fc=aw?tg.RED:(hp?(bw?tg.RED:tg.BLACK):tg.BLACK); injuryText={en:"Child, motionless, blue lips",zh:"兒童，無動作，嘴唇發紫"}; airwayRes=aw; jsPulse=hp; jsRescue=bw; break;
+
+        // --- NEW CASES 13-21 START HERE ---
+        case 13: g={en:"Male",zh:"男性"}; a=16; cW=true; rr=18; pp=true; cO=true; fc=tg.GREEN; injuryText={en:"Limb abrasions & lacerations",zh:"肢體擦傷及撕裂傷"}; break;
+        case 14: g={en:"Female",zh:"女性"}; a=35; cW=true; rr=18; pp=true; cO=true; fc=tg.GREEN; injuryText={en:"Facial abrasions",zh:"臉部擦傷"}; break;
+        case 15: g={en:"Male",zh:"男性"}; cW=false; rr=20; pp=true; cO=true; fc=tg.YELLOW; injuryText={en:"Deformed right toe",zh:"右腳趾頭變形"}; break;
+        case 16: g={en:"Male",zh:"男性"}; cW=false; rr=22; pp=true; cO=true; fc=tg.YELLOW; injuryText={en:"Dizziness",zh:"眩暈"}; break;
+        case 17: g={en:"Female",zh:"女性"}; cW=false; rr=18; pp=true; cO=true; fc=tg.YELLOW; injuryText={en:"Weakness in both legs",zh:"雙腳無力"}; break;
+        case 18: g={en:"Female",zh:"女性"}; cW=false; rr=20; pp=true; cO=true; fc=tg.YELLOW; injuryText={en:"Eyes cannot open",zh:"眼睛睜不開"}; break;
+        case 19: g={en:"Female",zh:"女性"}; cW=false; rr=36; pp=false; cO=false; fc=tg.RED; injuryText={en:"Asymmetrical chest rise",zh:"胸部起伏不對稱"}; selAb={en:"Absent",zh:"橈動脈摸不到"}; break;
+        case 20: g={en:"Female",zh:"女性"}; cW=false; rr=24; pp=false; cO=true; fc=tg.RED; bleeding=true; tqReq=true; injuryText={en:"Massive arm bleeding, pale/clammy",zh:"右手臂大量出血，臉色蒼白濕冷"}; selAb={en:"Weak",zh:"橈動脈微弱"}; break;
+        case 21: cW=false; rr=0; airwayRes=false; pp=false; cO=false; fc=tg.BLACK; injuryText={en:"Head deformity",zh:"頭部變形"}; break;
+        
+        // --- NEW CASES 22-29 (JUMPSTART) START HERE ---
+        case 22: isPed=true; g={en:"Male",zh:"男性"}; a=Math.floor(Math.random()*8)+1; cW=true; rr=25; pp=true; cO=true; fc=tg.GREEN; injuryText={en:"Frightened, multiple limb hematomas",zh:"受到驚嚇，肢體多處血腫"}; break;
+        case 23: isPed=true; g={en:"Male",zh:"男性"}; a=Math.floor(Math.random()*8)+1; cW=true; rr=22; pp=true; cO=true; fc=tg.GREEN; injuryText={en:"Frightened, multiple limb hematomas",zh:"受到驚嚇，肢體多處血腫"}; break;
+        case 24: isPed=true; g={en:"Female",zh:"女性"}; a=Math.floor(Math.random()*8)+1; cW=false; rr=30; pp=true; cO=true; fc=tg.YELLOW; injuryText={en:"Crying, fussy",zh:"哭鬧"}; break;
+        case 25: isPed=true; g={en:"Male",zh:"男性"}; a=Math.floor(Math.random()*8)+1; cW=false; rr=28; pp=true; cO=true; fc=tg.YELLOW; injuryText={en:"Right ankle deformity",zh:"右腳踝變形"}; break;
+        case 26: isPed=true; g={en:"Male",zh:"男性"}; a=Math.floor(Math.random()*8)+1; cW=false; rr=25; pp=true; cO=true; fc=tg.YELLOW; injuryText={en:"Pain in both feet",zh:"雙腳疼痛"}; break;
+        case 27: isPed=true; g={en:"Male",zh:"男性"}; a=2; cW=false; rr=24; pp=false; cO=false; fc=tg.RED; injuryText={en:"Apathetic, lethargic",zh:"神情冷漠、昏睡"}; selAb={en:"Absent",zh:"橈動脈摸不到"}; break;
+        case 28: isPed=true; g={en:"Female",zh:"女性"}; a=4; cW=false; rr=0; airwayRes=true; pp=true; cO=false; fc=tg.RED; injuryText={en:"Facial laceration, hematoma",zh:"臉部撕裂傷、血腫"}; selAb={en:"Weak",zh:"橈動脈微弱"}; break;
+        case 29: isPed=true; g={en:"Male",zh:"男性"}; a=7; cW=false; rr=0; airwayRes=false; pp=false; cO=false; fc=tg.BLACK; injuryText={en:"Deformity of right arm and leg",zh:"右手右腳變形"}; jsPulse=false; break;
+
+        // --- NEW CASES 30-34 (Arcade Extras) ---
+        // Green 3: Male, 18yo+, Walking, Minor head injury
+        case 30: g={en:"Male",zh:"男性"}; a=Math.floor(Math.random()*40)+18; cW=true; rr=Math.floor(Math.random()*12)+12; pp=true; cO=true; fc=tg.GREEN; injuryText={en:"Minor head laceration, conscious",zh:"頭部輕微撕裂傷，意識清楚"}; break;
+        // Green 4: Female, 20yo+, Walking, Arm fracture
+        case 31: g={en:"Female",zh:"女性"}; a=Math.floor(Math.random()*30)+20; cW=true; rr=Math.floor(Math.random()*10)+14; pp=true; cO=true; fc=tg.GREEN; injuryText={en:"Closed arm fracture",zh:"手臂閉鎖性骨折"}; break;
+        // Green 5: Male, 12yo+, Walking, Abrasion
+        case 32: g={en:"Male",zh:"男性"}; a=Math.floor(Math.random()*5)+12; cW=true; rr=Math.floor(Math.random()*10)+18; pp=true; cO=true; fc=tg.GREEN; injuryText={en:"Multiple limb abrasions",zh:"四肢多處擦傷"}; break;
+        // Green 6: Female, 20yo+, Walking, Sprain
+        case 33: g={en:"Female",zh:"女性"}; a=Math.floor(Math.random()*20)+20; cW=true; rr=Math.floor(Math.random()*8)+12; pp=true; cO=true; fc=tg.GREEN; injuryText={en:"Ankle sprain, walking with limp",zh:"腳踝扭傷，跛行"}; break;
+        // Green 7: Male, 40yo+, Walking, Contusion
+        case 34: g={en:"Male",zh:"男性"}; a=Math.floor(Math.random()*20)+40; cW=true; rr=Math.floor(Math.random()*10)+16; pp=true; cO=true; fc=tg.GREEN; injuryText={en:"Chest wall contusion, breathing okay",zh:"胸壁挫傷，呼吸正常"}; break;
+
+        // --- NEW CASES 35-36 (Specific JumpSTART Red) ---
+        case 35: isPed=true; a=5; cW=false; rr=42; pp=true; cO=false; fc=tg.RED; bleeding=true; tqReq=true; injuryText={en:"Double leg amputation, massive bleeding",zh:"雙腳截肢，地上一攤血，臉色蒼白"}; selAb={en:"Weak",zh:"橈動脈弱"}; break;
+        case 36: isPed=true; a=7; cW=false; rr=6; pp=false; cO=false; fc=tg.RED; bleeding=true; tqReq=false; injuryText={en:"Massive groin hemorrhage",zh:"右大腿上方腹股溝大出血"}; selAb={en:"Absent",zh:"橈動脈摸不到"}; break;
     }
     if(!selAb) selAb=[{en:"Absent",zh:"橈動脈摸不到"},{en:"Weak/Irregular",zh:"橈動脈微弱不規則"}][Math.floor(Math.random()*2)];
     cp={id:pc,gender:g,age:a,canWalk:cW,respRate:rr,pulsePresent:pp,canObey:cO,airwayResponse:airwayRes,correctTriage:fc,abnormalPulse:selAb,massiveBleeding:bleeding,injury:injuryText,hasOpenedAirway:false,tourniquetRequired:tqReq,isPediatric:isPed,jsHasPulse:jsPulse,jsRescueEffective:jsRescue};
