@@ -673,7 +673,11 @@
                         <p id="js-pulse-text" class="font-bold text-lg mb-3 text-center"></p>
                         <div class="flex gap-3 hidden" id="js-pulse-options">
                             <button id="btn-js-rescue-breaths" onclick="onRescueBreaths(this)" class="action-button bg-green-600 hover:bg-green-700 text-white flex-1"><span class="bilingual-en">Give 5 Rescue Breaths</span><span class="bilingual-zh block">給予 5 次吹氣</span></button>
-                            <button id="btn-js-mark-black-2" onclick="onMarkBlackFinal(this)" class="action-button bg-gray-600 hover:bg-gray-700 text-white flex-1"><span class="bilingual-en">Mark Deceased (Black)</span><span class="bilingual-zh block">判定黑色</span></button>
+                            <!-- 修改處：加入圖片與調整文字結構 -->
+                            <button id="btn-js-mark-black-2" onclick="onMarkBlackFinal(this)" class="action-button bg-gray-600 hover:bg-gray-700 text-white flex-1 flex flex-row items-center justify-center gap-3">
+                                <div class="text-center"><span class="bilingual-en">Deceased</span><span class="bilingual-zh block">死亡</span></div>
+                                <img src="black.png" alt="Black Status" class="h-12 w-auto object-contain">
+                            </button>
                         </div>
                         <div id="js-breath-result" class="hidden mt-3 p-3 border-l-4"><p id="js-breath-text" class="font-bold text-lg"></p></div>
                     </div>
@@ -1226,7 +1230,7 @@ const tg={RED:{en:"Immediately",zh:"危急",class:"red-bg",color:'red'},YELLOW:{
 // Updated Button Text Config for the JumpSTART Black button
 const buttonTextConfig={"btn-bleed-tourniquet":{full:{en:"Apply Tourniquet",zh:"使用止血帶 → 繼續評估"},clean:{en:"Apply Tourniquet",zh:"使用止血帶"}},"btn-bleed-none":{full:{en:"No Tourniquet",zh:"不使用止血帶 → 繼續評估"},clean:{en:"No Tourniquet",zh:"不使用止血帶"}},"btn-amb-can":{full:{en:"Minor",zh:"輕傷"},clean:{en:"Minor",zh:"輕傷"}},"btn-amb-cannot":{full:{en:"Assess Further",zh:"繼續評估"},clean:{en:"Assess Further",zh:"繼續評估"}},"btn-resp-absent":{full:{en:"Open Airway",zh:"暢通呼吸道"},clean:{en:"Open Airway",zh:"暢通呼吸道"}},"btn-resp-fast":{full:{en:"Abnormal (>30 or <10)",zh:"過快(>30/min)或過慢(<10/min) → 最終確認"},clean:{en:"Abnormal",zh:"異常"}},"btn-resp-normal":{full:{en:"Normal (10-30/min)",zh:"正常 → 繼續 P"},clean:{en:"Normal",zh:"正常"}},"btn-perf-absent":{full:{en:"Absent Pulse / CRT > 2s",zh:"無脈搏或 CRT > 2秒 → 最終確認"},clean:{en:"Absent / Slow",zh:"無脈搏/充填慢"}},"btn-perf-present":{full:{en:"Present Pulse / CRT ≤ 2s",zh:"有脈搏且 CRT ≤ 2秒 → 繼續 M"},clean:{en:"Present / Normal",zh:"有脈搏 / 充填正常"}},"btn-ment-cannot":{full:{en:"Cannot Follow Commands",zh:"無法遵從指令 → 最終確認"},clean:{en:"Cannot Follow",zh:"無法遵從指令"}},"btn-ment-can":{full:{en:"Can Follow Commands",zh:"可遵從指令 → 最終確認"},clean:{en:"Can Follow",zh:"可遵從指令"}},"btn-js-check-pulse":{full:{en:"Check Pulse",zh:"檢查脈搏"},clean:{en:"Check Pulse",zh:"檢查脈搏"}},
 "btn-js-mark-black-1":{full:{en:"Deceased",zh:"死亡"},clean:{en:"Deceased",zh:"死亡"}}, // UPDATED HERE
-"btn-js-rescue-breaths":{full:{en:"Give 5 Rescue Breaths",zh:"給予 5 次吹氣"},clean:{en:"5 Breaths",zh:"給予吹氣"}},"btn-js-mark-black-2":{full:{en:"Mark Deceased (Black)",zh:"判定黑色"},clean:{en:"Black",zh:"黑色"}}};
+"btn-js-rescue-breaths":{full:{en:"Give 5 Rescue Breaths",zh:"給予 5 次吹氣"},clean:{en:"5 Breaths",zh:"給予吹氣"}},"btn-js-mark-black-2":{full:{en:"Deceased",zh:"死亡"},clean:{en:"Deceased",zh:"死亡"}}};
 
 const pcE=document.getElementById('patient-card'), mT=document.getElementById('main-title'), sc=document.getElementById('status-container'), sd=document.getElementById('status-display'), pnd=document.getElementById('patient-number'), trd=document.getElementById('triage-result'), rrD=document.getElementById('resp-rate'), rrZN=document.getElementById('resp-rate-zh-note'), wtsd=document.getElementById('walk-test-status'), aa=document.getElementById('airway-action'), ame=document.getElementById('airway-message-en'), amz=document.getElementById('airway-message-zh'), npb=document.getElementById('next-patient-btn'), fcd=document.getElementById('final-classification'), scoreSummaryEl=document.getElementById('score-summary'), btnBack=document.getElementById('btn-back-step'), triageCard=document.querySelector('.triage-card');
 const rc=document.getElementById('resp-container'), pC=document.getElementById('pulse-container'), mC=document.getElementById('mental-container'), timerDisplay=document.getElementById('triage-timer'), difficultyInfo=document.getElementById('difficulty-info'), newIncidentBtn=document.getElementById('new-incident-btn');
@@ -1468,17 +1472,18 @@ function applyDifficultyStyles(level) {
         if(!s)return; 
         s.querySelectorAll('.action-button:not(.rpm-button)').forEach(btn=>{ 
             const bId=btn.id; btn.classList.remove(...allC,'pro-mode-button'); 
-            const isEx=(btn.classList.contains('final-triage-button')||bId==='btn-amb-can'||bId==='btn-js-mark-black-1'); // Added exception for js-black button
+            // 修改處：將 btn-js-mark-black-2 加入例外清單
+            const isEx=(btn.classList.contains('final-triage-button')||bId==='btn-amb-can'||bId==='btn-js-mark-black-1'||bId==='btn-js-mark-black-2'); 
             if(!isEx){ if(uP||uM) btn.classList.add('pro-mode-button'); else { const ce=bCM.find(e=>e.id===bId); if(ce) btn.classList.add(...ce.c); } } 
             else { 
                 if(bId==='btn-amb-can') btn.classList.add('bg-green-500','hover:bg-green-600'); 
-                else if(bId==='btn-js-mark-black-1') btn.classList.add('bg-gray-600','hover:bg-gray-700'); // Ensure color stays
+                else if(bId==='btn-js-mark-black-1'||bId==='btn-js-mark-black-2') btn.classList.add('bg-gray-600','hover:bg-gray-700'); 
             } 
             if(bId&&buttonTextConfig[bId]){ const c=buttonTextConfig[bId], td=uM?c.clean:c.full; 
                 if (bId === 'btn-amb-can') {
                     if(!btn.classList.contains('flex')) btn.classList.add('flex', 'flex-row', 'items-center', 'justify-center', 'gap-3');
                     btn.innerHTML = `<div class="text-center"><span class="bilingual-en">${td.en}</span><span class="bilingual-zh block">${td.zh}</span></div><img src="green.png" alt="Green Status" class="h-12 w-auto object-contain rounded">`;
-                } else if (bId === 'btn-js-mark-black-1') {
+                } else if (bId === 'btn-js-mark-black-1' || bId === 'btn-js-mark-black-2') { // 修改處：這裡也加入 btn-js-mark-black-2
                     if(!btn.classList.contains('flex')) btn.classList.add('flex', 'flex-row', 'items-center', 'justify-center', 'gap-3');
                     btn.innerHTML = `<div class="text-center"><span class="bilingual-en">${td.en}</span><span class="bilingual-zh block">${td.zh}</span></div><img src="black.png" alt="Black Status" class="h-12 w-auto object-contain">`;
                 } else { btn.innerHTML=`<span class="bilingual-en">${td.en}</span><span class="bilingual-zh block">${td.zh}</span>`; }
