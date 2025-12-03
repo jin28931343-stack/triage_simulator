@@ -1805,7 +1805,52 @@ window.resetGame = function() {
 }
 window.toggleQRCode=()=>{const c=document.getElementById('qrcode-display'),d=document.getElementById('qrcode');if(c.classList.contains('hidden')){c.classList.remove('hidden');d.innerHTML="";new QRCode(d,{text:window.location.href,width:128,height:128});}else{c.classList.add('hidden');}};
 window.toggleChangeLog=()=>{const c=document.getElementById('changelog-content');c.classList.toggle('hidden');};
+    // --- MOBILE OPTIMIZATION: REMOVE TOUCH DELAY & IMPROVE RESPONSE ---
+// 請將此段程式碼貼於 <script> 標籤內的最後方
+
+(function applyMobileOptimizations() {
+    // 1. 強制 Viewport 優化 (防止縮放與 300ms 延遲)
+    // 注意：這會禁止使用者手勢縮放網頁，對於 App 體驗較佳
+    const viewportMeta = document.querySelector('meta[name="viewport"]');
+    if (viewportMeta) {
+        viewportMeta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+    }
+
+    // 2. 注入 CSS 優化 (硬體加速與觸控反應)
+    const style = document.createElement('style');
+    style.textContent = `
+        * {
+            -webkit-tap-highlight-color: transparent; /* 移除點擊時的灰色背景塊 */
+        }
+        button, a, input, select, .action-button, .flip-card, .triage-card {
+            touch-action: manipulation; /* 核心代碼：移除 300ms 點擊延遲 */
+            cursor: pointer;
+        }
+        /* 增加按鈕點擊時的立即回饋感 (Snappy Effect) */
+        .action-button:active, button:active {
+            transform: scale(0.96) !important;
+            transition: transform 0.05s ease-out !important;
+        }
+    `;
+    document.head.appendChild(style);
+
+    // 3. iOS Active State Hack (讓 iOS Safari 支援 :active 樣式)
+    document.addEventListener('touchstart', function(){}, {passive: true});
+
+    // 4. 防止雙擊縮放 (Double-Tap Zoom Prevention)
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function (event) {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, { passive: false });
+
+    console.log("Mobile Touch Optimizations Applied (Touch Delay Removed)");
+})();
 </script>
 </body>
 </html>
+
 
