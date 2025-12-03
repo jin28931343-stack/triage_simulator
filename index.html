@@ -660,7 +660,14 @@
                     <div class="mb-3"><p class="font-bold text-indigo-800">JumpSTART (Child): Still no breathing.</p></div>
                     <div class="flex gap-3">
                         <button id="btn-js-check-pulse" onclick="onCheckPulse(this)" class="action-button bg-indigo-600 hover:bg-indigo-700 text-white flex-1"><span class="bilingual-en">Check Pulse</span><span class="bilingual-zh block">檢查脈搏</span></button>
-                        <button id="btn-js-mark-black-1" onclick="onMarkBlackSkip(this)" class="action-button bg-gray-600 hover:bg-gray-700 text-white flex-1"><span class="bilingual-en">No Breathing → Black</span><span class="bilingual-zh block">無呼吸 → 判定黑色</span></button>
+                        <!-- Updated Button Structure Here -->
+                        <button id="btn-js-mark-black-1" onclick="onMarkBlackSkip(this)" class="action-button bg-gray-600 hover:bg-gray-700 text-white flex-1 flex flex-row items-center justify-center gap-3">
+                            <div class="text-center">
+                                <span class="bilingual-en">Deceased</span>
+                                <span class="bilingual-zh block">死亡</span>
+                            </div>
+                            <img src="black.png" alt="Black Status" class="h-12 w-auto object-contain">
+                        </button>
                     </div>
                     <div id="js-pulse-result" class="hidden mt-3 p-3 bg-white border border-gray-200 rounded shadow-sm">
                         <p id="js-pulse-text" class="font-bold text-lg mb-3 text-center"></p>
@@ -839,6 +846,7 @@
                             <div>
                                 <p class="font-bold text-blue-600">12/4 (JumpSTART Update)</p>
                                 <ul class="list-disc pl-4 text-gray-600 space-y-1">
+                                    <li>修正 JumpSTART 黑色判定按鈕文字與圖片。</li>
                                     <li>新增 2 名特定 JumpSTART 兒童傷患案例 (5歲/7歲)。</li>
                                 </ul>
                             </div>
@@ -1119,7 +1127,10 @@ function playGameStartSound(){ if(isMuted||!audioCtx) return; const o=audioCtx.c
 
 // --- DOM REFERENCES ---
 const tg={RED:{en:"Immediately",zh:"危急",class:"red-bg",color:'red'},YELLOW:{en:"Delayed",zh:"次緊急",class:"yellow-bg",color:'yellow'},GREEN:{en:"Minor",zh:"輕傷",class:"green-bg",color:'green'},BLACK:{en:"Deceased - Deceased / Expectant",zh:"死亡",class:"black-bg",color:'black'}};
-const buttonTextConfig={"btn-bleed-tourniquet":{full:{en:"Apply Tourniquet",zh:"使用止血帶 → 繼續評估"},clean:{en:"Apply Tourniquet",zh:"使用止血帶"}},"btn-bleed-none":{full:{en:"No Tourniquet",zh:"不使用止血帶 → 繼續評估"},clean:{en:"No Tourniquet",zh:"不使用止血帶"}},"btn-amb-can":{full:{en:"Minor",zh:"輕傷"},clean:{en:"Minor",zh:"輕傷"}},"btn-amb-cannot":{full:{en:"Assess Further",zh:"繼續評估"},clean:{en:"Assess Further",zh:"繼續評估"}},"btn-resp-absent":{full:{en:"Open Airway",zh:"暢通呼吸道"},clean:{en:"Open Airway",zh:"暢通呼吸道"}},"btn-resp-fast":{full:{en:"Abnormal (>30 or <10)",zh:"過快(>30/min)或過慢(<10/min) → 最終確認"},clean:{en:"Abnormal",zh:"異常"}},"btn-resp-normal":{full:{en:"Normal (10-30/min)",zh:"正常 → 繼續 P"},clean:{en:"Normal",zh:"正常"}},"btn-perf-absent":{full:{en:"Absent Pulse / CRT > 2s",zh:"無脈搏或 CRT > 2秒 → 最終確認"},clean:{en:"Absent / Slow",zh:"無脈搏/充填慢"}},"btn-perf-present":{full:{en:"Present Pulse / CRT ≤ 2s",zh:"有脈搏且 CRT ≤ 2秒 → 繼續 M"},clean:{en:"Present / Normal",zh:"有脈搏 / 充填正常"}},"btn-ment-cannot":{full:{en:"Cannot Follow Commands",zh:"無法遵從指令 → 最終確認"},clean:{en:"Cannot Follow",zh:"無法遵從指令"}},"btn-ment-can":{full:{en:"Can Follow Commands",zh:"可遵從指令 → 最終確認"},clean:{en:"Can Follow",zh:"可遵從指令"}},"btn-js-check-pulse":{full:{en:"Check Pulse",zh:"檢查脈搏"},clean:{en:"Check Pulse",zh:"檢查脈搏"}},"btn-js-mark-black-1":{full:{en:"No Breathing → Black",zh:"無呼吸 → 判定黑色"},clean:{en:"No Breathing",zh:"無呼吸"}},"btn-js-rescue-breaths":{full:{en:"Give 5 Rescue Breaths",zh:"給予 5 次吹氣"},clean:{en:"5 Breaths",zh:"給予吹氣"}},"btn-js-mark-black-2":{full:{en:"Mark Deceased (Black)",zh:"判定黑色"},clean:{en:"Black",zh:"黑色"}}};
+// Updated Button Text Config for the JumpSTART Black button
+const buttonTextConfig={"btn-bleed-tourniquet":{full:{en:"Apply Tourniquet",zh:"使用止血帶 → 繼續評估"},clean:{en:"Apply Tourniquet",zh:"使用止血帶"}},"btn-bleed-none":{full:{en:"No Tourniquet",zh:"不使用止血帶 → 繼續評估"},clean:{en:"No Tourniquet",zh:"不使用止血帶"}},"btn-amb-can":{full:{en:"Minor",zh:"輕傷"},clean:{en:"Minor",zh:"輕傷"}},"btn-amb-cannot":{full:{en:"Assess Further",zh:"繼續評估"},clean:{en:"Assess Further",zh:"繼續評估"}},"btn-resp-absent":{full:{en:"Open Airway",zh:"暢通呼吸道"},clean:{en:"Open Airway",zh:"暢通呼吸道"}},"btn-resp-fast":{full:{en:"Abnormal (>30 or <10)",zh:"過快(>30/min)或過慢(<10/min) → 最終確認"},clean:{en:"Abnormal",zh:"異常"}},"btn-resp-normal":{full:{en:"Normal (10-30/min)",zh:"正常 → 繼續 P"},clean:{en:"Normal",zh:"正常"}},"btn-perf-absent":{full:{en:"Absent Pulse / CRT > 2s",zh:"無脈搏或 CRT > 2秒 → 最終確認"},clean:{en:"Absent / Slow",zh:"無脈搏/充填慢"}},"btn-perf-present":{full:{en:"Present Pulse / CRT ≤ 2s",zh:"有脈搏且 CRT ≤ 2秒 → 繼續 M"},clean:{en:"Present / Normal",zh:"有脈搏 / 充填正常"}},"btn-ment-cannot":{full:{en:"Cannot Follow Commands",zh:"無法遵從指令 → 最終確認"},clean:{en:"Cannot Follow",zh:"無法遵從指令"}},"btn-ment-can":{full:{en:"Can Follow Commands",zh:"可遵從指令 → 最終確認"},clean:{en:"Can Follow",zh:"可遵從指令"}},"btn-js-check-pulse":{full:{en:"Check Pulse",zh:"檢查脈搏"},clean:{en:"Check Pulse",zh:"檢查脈搏"}},
+"btn-js-mark-black-1":{full:{en:"Deceased",zh:"死亡"},clean:{en:"Deceased",zh:"死亡"}}, // UPDATED HERE
+"btn-js-rescue-breaths":{full:{en:"Give 5 Rescue Breaths",zh:"給予 5 次吹氣"},clean:{en:"5 Breaths",zh:"給予吹氣"}},"btn-js-mark-black-2":{full:{en:"Mark Deceased (Black)",zh:"判定黑色"},clean:{en:"Black",zh:"黑色"}}};
 
 const pcE=document.getElementById('patient-card'), mT=document.getElementById('main-title'), sc=document.getElementById('status-container'), sd=document.getElementById('status-display'), pnd=document.getElementById('patient-number'), trd=document.getElementById('triage-result'), rrD=document.getElementById('resp-rate'), rrZN=document.getElementById('resp-rate-zh-note'), wtsd=document.getElementById('walk-test-status'), aa=document.getElementById('airway-action'), ame=document.getElementById('airway-message-en'), amz=document.getElementById('airway-message-zh'), npb=document.getElementById('next-patient-btn'), fcd=document.getElementById('final-classification'), scoreSummaryEl=document.getElementById('score-summary'), btnBack=document.getElementById('btn-back-step'), triageCard=document.querySelector('.triage-card');
 const rc=document.getElementById('resp-container'), pC=document.getElementById('pulse-container'), mC=document.getElementById('mental-container'), timerDisplay=document.getElementById('triage-timer'), difficultyInfo=document.getElementById('difficulty-info'), newIncidentBtn=document.getElementById('new-incident-btn');
@@ -1220,7 +1231,7 @@ function tq_checkPositionValidity(percent) {
 
 function tq_updateProgress() {
     if (!tq_isApplying) return;
-    tq_progress += 1.5;
+    tq_progress += 0.375; // Slower progress (50% slower again, was 0.75)
     tqProgressBar.style.width = `${Math.min(tq_progress, 100)}%`;
     if (tq_progress > 5) {
         tqDevice.style.transform = `translate(-50%, -50%) scaleX(${1 - (tq_progress * 0.001)})`;
@@ -1348,12 +1359,19 @@ function applyDifficultyStyles(level) {
         if(!s)return; 
         s.querySelectorAll('.action-button:not(.rpm-button)').forEach(btn=>{ 
             const bId=btn.id; btn.classList.remove(...allC,'pro-mode-button'); 
-            const isEx=(btn.classList.contains('final-triage-button')||bId==='btn-amb-can'); 
-            if(!isEx){ if(uP||uM) btn.classList.add('pro-mode-button'); else { const ce=bCM.find(e=>e.id===bId); if(ce) btn.classList.add(...ce.c); } } else { if(bId==='btn-amb-can') btn.classList.add('bg-green-500','hover:bg-green-600'); } 
+            const isEx=(btn.classList.contains('final-triage-button')||bId==='btn-amb-can'||bId==='btn-js-mark-black-1'); // Added exception for js-black button
+            if(!isEx){ if(uP||uM) btn.classList.add('pro-mode-button'); else { const ce=bCM.find(e=>e.id===bId); if(ce) btn.classList.add(...ce.c); } } 
+            else { 
+                if(bId==='btn-amb-can') btn.classList.add('bg-green-500','hover:bg-green-600'); 
+                else if(bId==='btn-js-mark-black-1') btn.classList.add('bg-gray-600','hover:bg-gray-700'); // Ensure color stays
+            } 
             if(bId&&buttonTextConfig[bId]){ const c=buttonTextConfig[bId], td=uM?c.clean:c.full; 
                 if (bId === 'btn-amb-can') {
                     if(!btn.classList.contains('flex')) btn.classList.add('flex', 'flex-row', 'items-center', 'justify-center', 'gap-3');
                     btn.innerHTML = `<div class="text-center"><span class="bilingual-en">${td.en}</span><span class="bilingual-zh block">${td.zh}</span></div><img src="green.png" alt="Green Status" class="h-12 w-auto object-contain rounded">`;
+                } else if (bId === 'btn-js-mark-black-1') {
+                    if(!btn.classList.contains('flex')) btn.classList.add('flex', 'flex-row', 'items-center', 'justify-center', 'gap-3');
+                    btn.innerHTML = `<div class="text-center"><span class="bilingual-en">${td.en}</span><span class="bilingual-zh block">${td.zh}</span></div><img src="black.png" alt="Black Status" class="h-12 w-auto object-contain">`;
                 } else { btn.innerHTML=`<span class="bilingual-en">${td.en}</span><span class="bilingual-zh block">${td.zh}</span>`; }
             } 
         });
