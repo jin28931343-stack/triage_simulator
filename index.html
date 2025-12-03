@@ -844,35 +844,10 @@
                         <h4 class="font-bold text-gray-800 mb-2 border-b pb-1">更新日誌</h4>
                         <div class="max-h-60 overflow-y-auto space-y-4 pr-1">
                             <div>
-                                <p class="font-bold text-blue-600">12/4 (JumpSTART Update)</p>
+                                <p class="font-bold text-blue-600">12/3</p>
                                 <ul class="list-disc pl-4 text-gray-600 space-y-1">
-                                    <li>修正 JumpSTART 黑色判定按鈕文字與圖片。</li>
-                                    <li>新增 2 名特定 JumpSTART 兒童傷患案例 (5歲/7歲)。</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <p class="font-bold text-blue-600">12/4 (Arcade Update)</p>
-                                <ul class="list-disc pl-4 text-gray-600 space-y-1">
-                                    <li>新增 5 名綠色可行走成人傷患 (Case 30-34)。</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <p class="font-bold text-blue-600">12/3 (JumpSTART Update)</p>
-                                <ul class="list-disc pl-4 text-gray-600 space-y-1">
-                                    <li>新增 8 名 JumpSTART 兒童傷患案例 (綠2/黃3/紅2/黑1)。</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <p class="font-bold text-blue-600">12/3 (New Patients)</p>
-                                <ul class="list-disc pl-4 text-gray-600 space-y-1">
-                                    <li>新增 9 名特定傷患案例 (綠2/黃4/紅2/黑1)。</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <p class="font-bold text-blue-600">12/3 (Fix)</p>
-                                <ul class="list-disc pl-4 text-gray-600 space-y-1">
-                                    <li>修正手機跳出畫面後音樂消失問題。</li>
-                                    <li>增加觸控喚醒音效機制。</li>
+                                    <li>更新檢傷分類顏色中英文說明。</li>
+                                    <li>增加隨機傷患資料庫 (START檢傷14名, jumpSTART檢傷10名)。</li>
                                 </ul>
                             </div>
                             <div>
@@ -900,6 +875,26 @@
                                 <ul class="list-disc pl-4 text-gray-600 space-y-1">
                                     <li>新增街機模式。</li>
                                     <li>增加雲端排行榜。</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p class="font-bold text-blue-600">11/29</p>
+                                <ul class="list-disc pl-4 text-gray-600 space-y-1">
+                                    <li>新增問卷。</li>
+                                    <li>修正無法行走傷患不會出現綠色分類選項。</li>
+                                    <li>新增音樂音效。</li>
+                                    <li>新增重大更新日誌。</li>
+                                    <li>新增圖示。</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p class="font-bold text-blue-600">11/28</p>
+                                <ul class="list-disc pl-4 text-gray-600 space-y-1">
+                                    <li>新增jumpSTART檢傷法。</li>
+                                    <li>新增交界處出血及大出血傷患。</li>
+                                    <li>優化設定修正BUG。</li>
+                                    <li>結算畫面新增暢通呼吸道。</li>
+                                    <li>新增參考文獻資料。</li>
                                 </ul>
                             </div>
                         </div>
@@ -968,6 +963,7 @@ async function initFirebase() {
 initFirebase();
 
 // --- VARIABLES & AUDIO ---
+// --- VARIABLES & AUDIO ---
 const TOTAL_PATIENTS_STANDARD = 15;
 let pc=0, cp={}, go=true, difficulty=null, scoreRecords=[], timerInterval=null, startTime=0, stepHistory=[], currentTourniquetDecision=false, timeLimit=120000;
 let arcadeScore=0, patientsCompletedInArcade=0, playerName="Player";
@@ -976,7 +972,7 @@ let selectedMode = null;
 
 let audioCtx=null, bgmInterval=null;
 let isMuted = false;
-let currentMusicStyle = 'synthwave'; 
+let currentMusicStyle = 'synthwave'; // styles: 'synthwave', 'epic', 'heroic'
 
 // --- AUDIO RESUME LOGIC (MOBILE FIX) ---
 // Add touch listener to resume AudioContext on user interaction
@@ -1028,23 +1024,37 @@ window.toggleAudio = function() {
 }
 
 window.toggleMusicStyle = function() {
-    currentMusicStyle = (currentMusicStyle === 'synthwave') ? 'epic' : 'synthwave';
     const btn = document.getElementById('music-style-btn');
-    if (currentMusicStyle === 'epic') {
+    
+    // Cycle styles: synthwave -> epic -> heroic -> synthwave
+    if (currentMusicStyle === 'synthwave') {
+        currentMusicStyle = 'epic';
         btn.innerHTML = '<i class="fa-solid fa-hat-wizard text-yellow-300 text-xl"></i>'; 
-        btn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700', 'border-indigo-400');
-        btn.classList.add('bg-red-700', 'hover:bg-red-800', 'border-red-400');
+        btn.className = 'bg-red-700/90 backdrop-blur rounded-full p-3 shadow-lg border-2 border-red-400 hover:bg-red-800 transition-all duration-200 group active:scale-95 w-12 h-12 flex items-center justify-center';
+        btn.title = "Epic Orchestral Mode";
+    } else if (currentMusicStyle === 'epic') {
+        currentMusicStyle = 'heroic';
+        btn.innerHTML = '<i class="fa-solid fa-star text-yellow-100 text-xl"></i>'; 
+        btn.className = 'bg-yellow-600/90 backdrop-blur rounded-full p-3 shadow-lg border-2 border-yellow-300 hover:bg-yellow-700 transition-all duration-200 group active:scale-95 w-12 h-12 flex items-center justify-center';
+        btn.title = "Heroic (Might+U) Mode";
     } else {
+        currentMusicStyle = 'synthwave';
         btn.innerHTML = '<i class="fa-solid fa-music text-white text-xl"></i>'; 
-        btn.classList.remove('bg-red-700', 'hover:bg-red-800', 'border-red-400');
-        btn.classList.add('bg-indigo-600', 'hover:bg-indigo-700', 'border-indigo-400');
+        btn.className = 'bg-indigo-600/90 backdrop-blur rounded-full p-3 shadow-lg border-2 border-indigo-400 hover:bg-indigo-700 transition-all duration-200 group active:scale-95 w-12 h-12 flex items-center justify-center';
+        btn.title = "Synthwave Mode";
     }
-    if (!isMuted) { initAudio(); if (!bgmInterval) playBGM(); }
+    
+    // Restart music if playing
+    if (!isMuted && difficulty !== null && !go) { 
+        initAudio(); 
+        stopBGM();
+        playBGM(); 
+    }
 }
 
 function initAudio(){ if(!audioCtx){ audioCtx=new(window.AudioContext||window.webkitAudioContext)(); } if(audioCtx.state==='suspended' && !isMuted) audioCtx.resume(); }
 
-// --- SOUND FUNCTIONS (Existing) ---
+// --- SOUND FUNCTIONS ---
 function playSynthSound(freq, time, dur, type='sawtooth', vol=0.1, attack=0.01, decay=0.1, filterFreq=2000) {
     if(isMuted || !audioCtx) return;
     try {
@@ -1091,21 +1101,41 @@ function playSnare(time) {
     } catch(e) { console.warn("Audio error", e); }
 }
 
-// BGM Logic (Simplified for integration)
-let nextStepTime = 0; let currentStep = 0; const STEPS_PER_LOOP_SYNTH = 32; 
+// BGM Logic (Dispatcher)
+let nextStepTime = 0; let currentStep = 0; 
+const STEPS_PER_LOOP_SYNTH = 32; 
+const STEPS_PER_LOOP_HEROIC = 64; 
+
 function playBGM(){ 
     if(isMuted) return; initAudio(); if(bgmInterval) return; 
     nextStepTime = audioCtx.currentTime + 0.1; currentStep = 0;
-    const BPM = 105; const stepTime = (60 / BPM) / 4; 
+    
+    // Adjust BPM based on style
+    let BPM = 105;
+    if (currentMusicStyle === 'heroic') BPM = 80; // Slower, more emotional
+    if (currentMusicStyle === 'epic') BPM = 120;  // Faster, intense
+    
+    const stepTime = (60 / BPM) / 4; 
+
     bgmInterval = setInterval(() => {
         if(isMuted) return; if(audioCtx.state === 'suspended') audioCtx.resume();
-        // Lookahead to schedule notes
+        // Lookahead
         while (nextStepTime < audioCtx.currentTime + 0.5) {
-            playSynthwaveSequence(currentStep, nextStepTime, stepTime);
+            if (currentMusicStyle === 'heroic') {
+                playHeroicSequence(currentStep, nextStepTime, stepTime);
+            } else if (currentMusicStyle === 'epic') {
+                playEpicSequence(currentStep, nextStepTime, stepTime);
+            } else {
+                playSynthwaveSequence(currentStep, nextStepTime, stepTime);
+            }
             nextStepTime += stepTime; currentStep++;
         }
     }, 100); 
 }
+
+function stopBGM(){ if(bgmInterval){ clearInterval(bgmInterval); bgmInterval=null; } }
+
+// 1. SYNTHWAVE SEQUENCE (Existing)
 function playSynthwaveSequence(step, time, stepTime) {
     const barStep = step % 16; const loopStep = step % STEPS_PER_LOOP_SYNTH;
     if (barStep % 4 === 0) playKick(time);
@@ -1119,7 +1149,73 @@ function playSynthwaveSequence(step, time, stepTime) {
     const arpNotes = [261.63, 311.13, 392.00, 523.25];
     if (step % 2 === 0) { const arpNote = arpNotes[(step / 2) % 4]; playSynthSound(arpNote, time, 0.1, 'square', 0.04, 0.01, 0.1, 1500); }
 }
-function stopBGM(){ if(bgmInterval){ clearInterval(bgmInterval); bgmInterval=null; } }
+
+// 2. EPIC SEQUENCE (Placeholder/Simple Orchestral)
+function playEpicSequence(step, time, stepTime) {
+    const loopStep = step % 32;
+    if (loopStep % 8 === 0) playKick(time);
+    if (loopStep % 16 === 12) playSnare(time); // Sparse drums
+    // Deep drone
+    if (loopStep === 0 || loopStep === 16) {
+        playSynthSound(55.00, time, stepTime * 8, 'sawtooth', 0.2, 0.5, 0.5, 400); // Low A
+    }
+    // Marching staccato
+    if (step % 2 === 0) {
+        playSynthSound(220.00, time, 0.1, 'sawtooth', 0.1, 0.01, 0.05, 800);
+    }
+}
+
+// 3. HEROIC SEQUENCE (Might + U Inspired)
+// Emotion, Slow Build, Piano-like Arps + Swelling Strings
+function playHeroicSequence(step, time, stepTime) {
+    const loopStep = step % STEPS_PER_LOOP_HEROIC; // 64 steps loop
+    
+    // --- Drums (Cinematic/Soft) ---
+    // Kick on beat 1 of every bar (every 16 steps)
+    if (loopStep % 16 === 0) {
+        // Deep Soft Kick
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.frequency.setValueAtTime(80, time); osc.frequency.exponentialRampToValueAtTime(30, time + 0.8);
+        gain.gain.setValueAtTime(0.5, time); gain.gain.exponentialRampToValueAtTime(0.01, time + 0.8);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(time); osc.stop(time + 0.8);
+    }
+    
+    // --- Chord Progression (Emotional) ---
+    // 0-16: F Major (F-A-C)
+    // 16-32: G Major (G-B-D)
+    // 32-48: E Minor (E-G-B) or C Major
+    // 48-64: A Minor (A-C-E)
+    let chordRoot = 174.61; // F3
+    if (loopStep >= 16 && loopStep < 32) chordRoot = 196.00; // G3
+    else if (loopStep >= 32 && loopStep < 48) chordRoot = 164.81; // E3
+    else if (loopStep >= 48) chordRoot = 220.00; // A3
+
+    // Swelling Strings (Pad) - Play every 16 steps (Start of bar)
+    if (loopStep % 16 === 0) {
+        // Play root and 5th
+        playSynthSound(chordRoot, time, stepTime * 14, 'sawtooth', 0.1, 1.0, 1.0, 800); // Slow attack
+        playSynthSound(chordRoot * 1.5, time, stepTime * 14, 'sawtooth', 0.08, 1.0, 1.0, 800);
+    }
+
+    // --- Piano/Harp Arpeggio (Double Time feel) ---
+    // Playing 1-5-8-5 pattern
+    const arpPattern = [1, 1.5, 2, 1.5]; // Root, 5th, Octave, 5th
+    if (step % 2 === 0) {
+        const noteIdx = (step / 2) % 4;
+        const noteFreq = chordRoot * 2 * arpPattern[noteIdx]; // Up an octave
+        // Piano-ish sound (Sine/Triangle mixed)
+        playSynthSound(noteFreq, time, 0.4, 'triangle', 0.1, 0.02, 0.3, 2000); 
+    }
+    
+    // --- Heroic Melody (High) ---
+    // Sparse, soaring notes
+    if (loopStep === 0) playSynthSound(698.46, time, 1.5, 'sine', 0.15, 0.1, 1.0); // F5
+    if (loopStep === 14) playSynthSound(783.99, time, 1.5, 'sine', 0.15, 0.1, 1.0); // G5
+    if (loopStep === 32) playSynthSound(659.25, time, 1.5, 'sine', 0.15, 0.1, 1.0); // E5
+    if (loopStep === 48) playSynthSound(880.00, time, 1.5, 'sine', 0.15, 0.1, 1.0); // A5
+}
+
 function playVictorySound(){ if(isMuted||!audioCtx) return; playCorrectSound(); } 
 function playCorrectSound(){ if(isMuted||!audioCtx) return; const o=audioCtx.createOscillator(),g=audioCtx.createGain(); o.type='sine'; o.frequency.setValueAtTime(523.25,audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(783.99,audioCtx.currentTime+0.1); g.gain.setValueAtTime(0.1,audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01,audioCtx.currentTime+0.3); o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.3); }
 function playErrorSound(){ if(isMuted||!audioCtx) return; const o=audioCtx.createOscillator(),g=audioCtx.createGain(); o.type='sawtooth'; o.frequency.setValueAtTime(150,audioCtx.currentTime); o.frequency.linearRampToValueAtTime(80,audioCtx.currentTime+0.4); g.gain.setValueAtTime(0.2,audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01,audioCtx.currentTime+0.4); o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.4); }
