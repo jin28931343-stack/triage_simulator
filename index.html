@@ -1335,7 +1335,7 @@ function tq_updateProgress() {
     
     // --- 修改處 1: 加快 25% ---
     // 原本是 0.375，乘以 1.25 約為 0.46875，取 0.47
-    tq_progress += 0.47; 
+    tq_progress += 0.6; 
     
     tqProgressBar.style.width = `${Math.min(tq_progress, 100)}%`;
     if (tq_progress > 5) {
