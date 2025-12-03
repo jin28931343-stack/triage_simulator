@@ -1137,6 +1137,7 @@ const rc=document.getElementById('resp-container'), pC=document.getElementById('
 const st={ bleeding:document.getElementById('step-bleeding'), ambulatory:document.getElementById('step-ambulatory'), respiration:document.getElementById('step-respiration'), perfusion:document.getElementById('step-perfusion'), mental:document.getElementById('step-mental'), finalChoice:document.getElementById('step-final-choice'), conclusion:document.getElementById('step-conclusion'), jumpStartPulse:document.getElementById('step-jumpstart-check-pulse'), jumpStartBreaths:document.getElementById('step-jumpstart-rescue-breaths')};
 
 // --- TOURNIQUET LOGIC ---
+// --- TOURNIQUET LOGIC ---
 const tqModal = document.getElementById('tourniquet-modal');
 const tqBackdrop = document.getElementById('tourniquet-backdrop');
 const tqArm = document.getElementById('tq-arm');
@@ -1231,11 +1232,20 @@ function tq_checkPositionValidity(percent) {
 
 function tq_updateProgress() {
     if (!tq_isApplying) return;
-    tq_progress += 0.375; // Slower progress (50% slower again, was 0.75)
+    
+    // --- 修改處 1: 加快 25% ---
+    // 原本是 0.375，乘以 1.25 約為 0.46875，取 0.47
+    tq_progress += 0.47; 
+    
     tqProgressBar.style.width = `${Math.min(tq_progress, 100)}%`;
     if (tq_progress > 5) {
         tqDevice.style.transform = `translate(-50%, -50%) scaleX(${1 - (tq_progress * 0.001)})`;
-        const rotation = tq_progress * 8.1;
+        
+        // --- 修改處 2: 保持旋轉動畫視覺速度不變 ---
+        // 進度變快了，每單位進度的旋轉角度必須變小，才能維持同樣的旋轉角速度
+        // 原本係數 8.1 / 1.25 = 6.48
+        const rotation = tq_progress * 6.48;
+        
         tqWindlass.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
         if (!tq_isLocked) {
             tq_isLocked = true;
@@ -1276,7 +1286,11 @@ function tq_completeTourniquet() {
     tqWoundInner.classList.remove('animate-pulse');
     tqWound.style.opacity = '0.5'; tqWound.style.filter = 'grayscale(50%)';
     tqBloodDripsContainer.style.opacity = '0'; tqBloodDripsContainer.style.display = 'none';
-    tqWindlass.style.transform = 'translate(-50%, -50%) rotate(810deg)';
+    
+    // --- 修改處 3: 修正最終角度 ---
+    // 100 * 6.48 = 648度，確保動畫結束時角度一致
+    tqWindlass.style.transform = 'translate(-50%, -50%) rotate(648deg)';
+    
     tqInstruction.textContent = "已成功止血";
     
     // Close modal and proceed after delay
@@ -1313,7 +1327,6 @@ const tqStopApply = (e) => {
     tq_isApplying = false; tq_stopBindSound(); cancelAnimationFrame(tq_animationFrame);
     if (tq_progress > 0) tqInstruction.textContent = "壓力不足，請繼續按住";
 };
-
 // --- GAME LOGIC (Main) ---
 function formatTime(ms){ const s=Math.max(0,Math.floor(ms/1000)),m=Math.floor(s/60),sec=s%60; return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`; }
 
