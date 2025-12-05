@@ -918,14 +918,39 @@
              <div class="text-right">
                 <div class="font-bold text-gray-900">作者: 莊進宏</div>
                 <div class="text-[10px] text-gray-500 font-bold tracking-wider uppercase mb-1">JHUANG JIN HONG</div>
-                <div class="font-bold text-gray-900">台南市政府消防局</div>
+                <div class="font-bold text-gray-900">臺南市政府消防局</div>
                 <div class="text-[10px] text-gray-500 font-bold mb-1">Tainan City Fire Bureau</div>
                 <div class="text-gray-600 mt-1 font-mono">版本: START 1.0.1</div>
              </div>
         </footer>
     </div>
 </div>
+<!-- Service Worker Registration -->
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./service-worker.js')
+                .then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                })
+                .catch(err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+        });
+    }
+</script>
 
+### 3. 如何使用與測試
+
+1.  **檔案位置**：確保 `service-worker.js` 與您的 HTML 檔案位於**同一個目錄**下，且所有圖片檔案（如 `mele.png`, `red1.png` 等）也都存在於該目錄中。
+2.  **HTTPS 限制**：Service Worker 通常只能在 **HTTPS** 環境或 **localhost** (本機測試) 下運作。如果您直接雙擊打開 HTML 檔案 (`file://` 協議)，Service Worker **不會運作**。
+    * **本機測試建議**：使用 VS Code 的 "Live Server" 擴充功能，或使用 Python 指令 `python -m http.server` 來啟動一個簡易伺服器。
+3.  **確認是否成功**：
+    * 使用 Chrome 瀏覽器打開網頁。
+    * 按 `F12` 打開開發者工具。
+    * 切換到 **Application (應用程式)** 分頁。
+    * 在左側選單點擊 **Service Workers**，您應該會看到 `service-worker.js` 顯示為 "Activated and is running"。
+    * 勾選 "Offline" (離線) 模式並重新整理網頁，如果網頁能正常顯示且圖片都在，代表 PWA/離線功能已成功啟用。
 <script type="module">
 // --- FIREBASE CONFIGURATION ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
@@ -1800,13 +1825,29 @@ window.eI = function(){
 async function saveLeaderboard(name, score) {
     if (db && user) { try { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard'), { name: name, score: score, date: new Date().toLocaleDateString(), timestamp: Date.now() }); console.log("Score saved."); } catch (e) { console.error("Error saving:", e); } }
     let lb = JSON.parse(localStorage.getItem('triage_arcade_lb') || '[]'); lb.push({ name: name, score: score, date: new Date().toLocaleDateString() }); lb.sort((a, b) => b.score - a.score); localStorage.setItem('triage_arcade_lb', JSON.stringify(lb.slice(0, 100)));
+ // 2. 檢查網路並嘗試上傳雲端 (Firestore)
+    if (navigator.onLine && db && user) { 
+        try { 
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard'), { 
+                name: name, 
+                score: score, 
+                date: new Date().toLocaleDateString(), 
+                timestamp: Date.now() 
+            }); 
+            console.log("Score uploaded to cloud."); 
+        } catch (e) { 
+            console.error("Cloud upload failed, saved locally only:", e); 
+        } 
+    } else {
+        console.log("Offline: Score saved locally.");
+    }
 }
 
 async function showLeaderboard(limitVal = 100) {
     const listEl = document.getElementById('leaderboard-list'); const container = document.getElementById('leaderboard-container'); const titleEl = document.getElementById('leaderboard-title');
     container.classList.remove('hidden'); listEl.innerHTML = '<li class="text-center text-gray-500"><i class="fa-solid fa-spinner fa-spin"></i> 正在讀取排行榜...</li>';
     let lbData = []; let isOnline = false;
-    if (db && user) { try { const snapshot = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard')); snapshot.forEach(doc => lbData.push(doc.data())); isOnline = true; } catch (e) { console.error("Error fetching:", e); } }
+    if (navigator.onLine &&db && user) { try { const snapshot = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard')); snapshot.forEach(doc => lbData.push(doc.data())); isOnline = true; } catch (e) { console.error("Error fetching:", e); } }
     if (isOnline) { titleEl.innerHTML = '<i class="fa-solid fa-globe text-blue-600"></i> <span class="bilingual-zh text-blue-800">世界排行榜 (Online)</span>'; } else { lbData = JSON.parse(localStorage.getItem('triage_arcade_lb') || '[]'); titleEl.innerHTML = '<i class="fa-solid fa-folder-open text-gray-600"></i> <span class="bilingual-zh text-gray-800">本機排行榜 (Local)</span>'; }
     lbData.sort((a, b) => b.score - a.score); lbData = lbData.slice(0, limitVal); 
     if (lbData.length === 0) { listEl.innerHTML = '<li class="text-center text-gray-500">尚無紀錄。</li>'; } else { listEl.innerHTML = lbData.map((entry, i) => {
