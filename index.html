@@ -1097,34 +1097,162 @@ function playSnare(time) {
     } catch(e) { console.warn("Audio error", e); }
 }
 
-// BGM Logic (Simplified for integration)
-let nextStepTime = 0; let currentStep = 0; const STEPS_PER_LOOP_SYNTH = 32; 
-function playBGM(){ 
-    if(isMuted) return; initAudio(); if(bgmInterval) return; 
-    nextStepTime = audioCtx.currentTime + 0.1; currentStep = 0;
-    const BPM = 105; const stepTime = (60 / BPM) / 4; 
+// --- AUDIO SEQUENCER LOGIC (FIXED & EXPANDED) ---
+
+// 1. 補回遺失的變數宣告 (非常重要，缺少這兩行會導致程式崩潰)
+let nextStepTime = 0; 
+let currentStep = 0;
+
+// 定義不同風格的循環長度
+const STEPS_PER_LOOP_SYNTH = 32;
+const STEPS_PER_LOOP_EPIC = 64;
+const STEPS_PER_LOOP_8BIT = 16;
+
+// 修改切換按鈕邏輯，擴充為三種風格循環
+window.toggleMusicStyle = function() {
+    const btn = document.getElementById('music-style-btn');
+    
+    // 循環切換風格
+    if (currentMusicStyle === 'synthwave') {
+        currentMusicStyle = 'epic';
+        btn.innerHTML = '<i class="fa-solid fa-hat-wizard text-yellow-300 text-xl"></i>';
+        btn.className = "rounded-full p-3 shadow-lg border-2 transition-all duration-200 group active:scale-95 w-12 h-12 flex items-center justify-center bg-red-800 hover:bg-red-900 border-red-500";
+        btn.title = "Current: Epic Orchestral";
+    } else if (currentMusicStyle === 'epic') {
+        currentMusicStyle = '8bit';
+        btn.innerHTML = '<i class="fa-solid fa-gamepad text-green-400 text-xl"></i>';
+        btn.className = "rounded-full p-3 shadow-lg border-2 transition-all duration-200 group active:scale-95 w-12 h-12 flex items-center justify-center bg-gray-900 hover:bg-black border-green-500";
+        btn.title = "Current: 8-Bit Arcade";
+    } else {
+        currentMusicStyle = 'synthwave';
+        btn.innerHTML = '<i class="fa-solid fa-music text-white text-xl"></i>';
+        btn.className = "rounded-full p-3 shadow-lg border-2 transition-all duration-200 group active:scale-95 w-12 h-12 flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 border-indigo-400";
+        btn.title = "Current: Synthwave";
+    }
+
+    // 如果目前正在播放，重啟 BGM 以應用新的 BPM 和序列
+    if (!isMuted && bgmInterval) { 
+        stopBGM(); 
+        initAudio(); 
+        playBGM(); 
+    }
+}
+
+// 修改後的主播放函式
+function playBGM() { 
+    if(isMuted) return; 
+    initAudio(); 
+    if(bgmInterval) return; 
+
+    // 重置時間與步數
+    nextStepTime = audioCtx.currentTime + 0.1; 
+    currentStep = 0;
+
+    // 根據風格設定 BPM
+    let BPM = 105;
+    if (currentMusicStyle === 'epic') BPM = 85; 
+    if (currentMusicStyle === '8bit') BPM = 140; 
+
+    let stepTime = (60 / BPM) / 4; 
+
     bgmInterval = setInterval(() => {
-        if(isMuted) return; if(audioCtx.state === 'suspended') audioCtx.resume();
-        // Lookahead to schedule notes
+        if(isMuted) return; 
+        if(audioCtx.state === 'suspended') audioCtx.resume();
+        
+        // 排程音符
         while (nextStepTime < audioCtx.currentTime + 0.5) {
-            playSynthwaveSequence(currentStep, nextStepTime, stepTime);
-            nextStepTime += stepTime; currentStep++;
+            if (currentMusicStyle === 'epic') {
+                playEpicSequence(currentStep, nextStepTime, stepTime);
+            } else if (currentMusicStyle === '8bit') {
+                play8BitSequence(currentStep, nextStepTime, stepTime);
+            } else {
+                playSynthwaveSequence(currentStep, nextStepTime, stepTime);
+            }
+            nextStepTime += stepTime; 
+            currentStep++;
         }
     }, 100); 
 }
+
+// 1. Synthwave 風格
 function playSynthwaveSequence(step, time, stepTime) {
     const barStep = step % 16; const loopStep = step % STEPS_PER_LOOP_SYNTH;
     if (barStep % 4 === 0) playKick(time);
     if (barStep === 4 || barStep === 12) playSnare(time);
+    
     let bassNote = 65.41;
     if (loopStep >= 8 && loopStep < 16) bassNote = 51.91; 
     else if (loopStep >= 16 && loopStep < 24) bassNote = 43.65; 
     else if (loopStep >= 24 && loopStep < 32) bassNote = 48.99; 
+    
     let bassVol = 0.15; if (barStep % 4 === 0) bassVol = 0.05;
     playSynthSound(bassNote, time, stepTime * 0.8, 'sawtooth', bassVol, 0.02, 0.05, 600);
+    
     const arpNotes = [261.63, 311.13, 392.00, 523.25];
     if (step % 2 === 0) { const arpNote = arpNotes[(step / 2) % 4]; playSynthSound(arpNote, time, 0.1, 'square', 0.04, 0.01, 0.1, 1500); }
 }
+
+// 2. Epic Orchestral 風格
+function playEpicSequence(step, time, stepTime) {
+    const barStep = step % 16;
+    const loopStep = step % STEPS_PER_LOOP_EPIC;
+
+    if (barStep === 0 || barStep === 10 || barStep === 14) {
+        playSynthSound(55, time, 0.3, 'sine', 0.6, 0.01, 0.3, 100); 
+        playKick(time);
+    }
+    
+    if (barStep === 8) {
+        playSnare(time);
+        playSynthSound(110, time, 0.2, 'triangle', 0.3, 0.01, 0.1, 800); 
+    }
+
+    if (barStep === 0) {
+        let chord = [130.81, 196.00]; 
+        if (loopStep >= 16 && loopStep < 32) chord = [116.54, 174.61]; 
+        else if (loopStep >= 32 && loopStep < 48) chord = [103.83, 155.56]; 
+        else if (loopStep >= 48) chord = [116.54, 174.61]; 
+        
+        chord.forEach(freq => {
+            playSynthSound(freq, time, stepTime * 16, 'sawtooth', 0.15, 0.5, 1.0, 800);
+        });
+    }
+
+    if (step % 2 === 0) {
+        let note = 523.25; 
+        if (loopStep >= 16 && loopStep < 32) note = 466.16; 
+        else if (loopStep >= 32 && loopStep < 48) note = 415.30; 
+        else if (loopStep >= 48) note = 466.16; 
+        
+        let vol = 0.05 + Math.random() * 0.05;
+        playSynthSound(note, time, 0.1, 'sawtooth', vol, 0.01, 0.1, 2000);
+    }
+}
+
+// 3. 8-Bit Arcade 風格 (修正 'white' type 錯誤)
+function play8BitSequence(step, time, stepTime) {
+    const barStep = step % 8;
+    const loopStep = step % STEPS_PER_LOOP_8BIT;
+
+    let bassNote = 110.00; 
+    if (loopStep >= 8) bassNote = 98.00; 
+    
+    if (step % 2 === 0) {
+        playSynthSound(bassNote, time, 0.1, 'triangle', 0.3, 0.01, 0.1, 3000);
+    }
+
+    if (barStep === 0) playSynthSound(100, time, 0.05, 'square', 0.2, 0.01, 0.1, 100); 
+    
+    // 修正：使用 playSnare 代替 'white' type (會導致錯誤)
+    if (barStep === 4) playSnare(time); 
+
+    const arpBase = (loopStep < 8) ? 440.00 : 392.00; 
+    const intervals = [1, 1.25, 1.5, 2]; 
+    const arpFreq = arpBase * intervals[step % 4];
+    
+    playSynthSound(arpFreq, time, 0.08, 'square', 0.1, 0.01, 0.05, 5000); 
+}
+
 function stopBGM(){ if(bgmInterval){ clearInterval(bgmInterval); bgmInterval=null; } }
 function playVictorySound(){ if(isMuted||!audioCtx) return; playCorrectSound(); } 
 function playCorrectSound(){ if(isMuted||!audioCtx) return; const o=audioCtx.createOscillator(),g=audioCtx.createGain(); o.type='sine'; o.frequency.setValueAtTime(523.25,audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(783.99,audioCtx.currentTime+0.1); g.gain.setValueAtTime(0.1,audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01,audioCtx.currentTime+0.3); o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.3); }
