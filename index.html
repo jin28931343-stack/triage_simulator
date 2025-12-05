@@ -6,6 +6,8 @@
     
     <!-- SEO Optimization Start: Title & Meta Tags -->
     <title>START Triage Simulator | 檢傷分類模擬器 | 台南市政府消防局 EMT 訓練工具</title>
+    <link rel="icon" type="image/jpeg" href="Triage_dolls.png">
+    <link rel="apple-touch-icon" href="Triage_dolls.png">
     <link rel="manifest" href="manifest.json">
     <!-- 核心描述：包含所有關鍵字，自然融入句子中 -->
     <meta name="description" content="台南市政府消防局 Triage Simulator (檢傷分類模擬器)。專為 EMT 救護技術員設計，涵蓋 START 檢傷、jumpSTART 兒童檢傷流程、大量傷病患情境模擬及止血帶操作。台南消防，提升檢傷精準度。">
@@ -64,9 +66,18 @@
             --color-green: #10b981;
             --color-gray: #4b5563;
         }
-        body {
+       body {
             font-family: 'Roboto', 'Noto Sans TC', sans-serif;
-            background-color: var(--color-black);
+            
+            /* --- 修改開始：設定背景圖片 --- */
+            background-image: url('Triage_dolls.png');
+            background-size: cover;       /* 讓圖片填滿整個螢幕 */
+            background-position: center;  /* 圖片置中對齊 */
+            background-attachment: fixed; /* 背景固定，不隨頁面捲動 */
+            background-repeat: no-repeat; /* 不重複圖片 */
+            background-color: var(--color-black); /* 圖片載入前的預備底色 */
+            /* --- 修改結束 --- */
+
             min-height: 100vh;
             display: flex;
             justify-content: center;
