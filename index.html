@@ -69,13 +69,7 @@
        body {
             font-family: 'Roboto', 'Noto Sans TC', sans-serif;
             
-            /* --- 修改開始：設定背景圖片 --- */
-            background-image: url('Triage_dolls.png');
-            background-size: cover;       /* 讓圖片填滿整個螢幕 */
-            background-position: center;  /* 圖片置中對齊 */
-            background-attachment: fixed; /* 背景固定，不隨頁面捲動 */
-            background-repeat: no-repeat; /* 不重複圖片 */
-            background-color: var(--color-black); /* 圖片載入前的預備底色 */
+             background-color:  transparent;    /* 改為透明,讓下層背景透出來*/
             /* --- 修改結束 --- */
 
             min-height: 100vh;
@@ -89,6 +83,20 @@
             overflow-x: hidden;
         }
 
+       /* --- 修改 B：新增獨立背景圖層的樣式 --- */
+        #fixed-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200vw;
+            height: 200vh;
+            z-index: -1; /* 確保背景在最底層 */
+            background-image: url('Triage_dolls.png');
+            background-size: 50% 50%; /* 寬度%，高度50% (剛好切成四塊) */
+            background-position: center; /* 從開始排列 */
+            background-repeat: repeat; /* 重複圖片以填滿 2x2 的格子 */
+            background-color: var(--color-black);
+        }
         /* --- Desktop Scale --- */
         @media (min-width: 1024px) {
             body {
@@ -355,7 +363,7 @@
     </style>
 </head>
 <body oncontextmenu="return false;" onselectstart="return false;">
-
+<div id="fixed-bg"></div>
 <!-- Audio Control Group -->
 <div class="fixed top-4 left-4 z-[9999] flex flex-col gap-2">
     <!-- Volume Toggle -->
@@ -1889,4 +1897,3 @@ window.toggleChangeLog=()=>{const c=document.getElementById('changelog-content')
 </script>
 </body>
 </html>
-
