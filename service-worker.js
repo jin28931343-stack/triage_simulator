@@ -4,7 +4,7 @@ const CACHE_NAME = 'triage-simulator-v1.0.2';
 // 1. 本地核心資源 (這些一定要成功，否則不讓安裝)
 const LOCAL_ASSETS = [
   './', 
-  './V1.0.1Date11412050404.html', // 建議明確指定 HTML 檔名，避免路徑誤判
+  './index.html', // 建議明確指定 HTML 檔名，避免路徑誤判
   './Gemini_Generated_Image_qo3hgnqo3hgnqo3h (2).jpg',
   './Gemini_Generated_Image_qo3hgnqo3hgnqo3h (1).jpg',
   './Gemini_Generated_Image_qo3hgnqo3hgnqo3h.jpg',
@@ -107,4 +107,5 @@ self.addEventListener('activate', (event) => {
       );
     }).then(() => self.clients.claim()) // 讓 SW 立即控制所有頁面
   );
+
 });
