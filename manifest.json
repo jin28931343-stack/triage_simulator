@@ -1,0 +1,21 @@
+{
+  "name": "START 檢傷分類模擬器",
+  "short_name": "檢傷模擬",
+  "start_url": "./V1.0.1Date11412050404.html",
+  "display": "standalone",
+  "background_color": "#1f2937",
+  "theme_color": "#1f2937",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "red1.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "red1.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
