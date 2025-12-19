@@ -1,7 +1,7 @@
 {
   "name": "START 檢傷分類模擬器",
   "short_name": "檢傷模擬",
-  "start_url": "index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#1f2937",
   "theme_color": "#1f2937",
@@ -19,3 +19,4 @@
     }
   ]
 }
+
