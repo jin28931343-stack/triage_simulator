@@ -522,13 +522,13 @@ function gp() {
         // 新增 3 名黑色 (Black) - 暢通呼吸道後仍無呼吸
         case 50: cW = false; rr = 0; airwayRes = false; pp = false; cO = false; fc = tg.BLACK; injuryText = { en: "Massive head crush injury", zh: "頭部嚴重壓砸傷" }; break;
         case 51: cW = false; rr = 0; airwayRes = false; pp = false; cO = false; 
-        fc = tg.BLACK; injuryText = { en: "Torso transection, no signs of life", zh: "軀幹斷裂，無生命徵象" };
+        fc = tg.BLACK; injuryText = { en: "Cyanosis", zh: "膚色發紺" };
         isObviousDeath = true;//設定為明顯死亡
         break;
         case 52: cW = false; rr = 0; airwayRes = false; pp = false; cO = false; fc = tg.BLACK; injuryText = { en: "Cardiac arrest, traumatic", zh: "創傷性心搏停止" }; break;
         case 53: cW = false; rr = 0; airwayRes = false; pp = false; cO = false;
         fc = tg.BLACK;
-        injuryText = { en: "Decapitation", zh: "頭頸分離" };
+        injuryText = { en: "Patient found lying supine on the ground, unresponsive.", zh: "躺在地上無反應" };
         isObviousDeath = true;//設定為明顯死亡
         break;
     }
@@ -777,4 +777,5 @@ window.resetGame = function () {
     document.getElementById('arcade-name-container').classList.add('hidden'); document.getElementById('player-name').value = ''; triageCard.classList.remove('time-up-alarm'); document.getElementById('music-style-btn').classList.add('hidden'); if (!isMuted) playBGM();
 }
 window.toggleQRCode = () => { const c = document.getElementById('qrcode-display'), d = document.getElementById('qrcode'); if (c.classList.contains('hidden')) { c.classList.remove('hidden'); d.innerHTML = ""; new QRCode(d, { text: window.location.href, width: 128, height: 128 }); } else { c.classList.add('hidden'); } };
+
 window.toggleChangeLog = () => { const c = document.getElementById('changelog-content'); c.classList.toggle('hidden'); };
