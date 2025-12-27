@@ -1,5 +1,5 @@
 // 更新版本號，強制瀏覽器重新安裝 Service Worker
-const CACHE_NAME = 'triage-simulator-v1.0.3'; // 版本號更新
+const CACHE_NAME = 'triage-simulator-v1.1.0'; // 版本號更新
 
 // 1. 本地核心資源 (這些一定要成功，否則不讓安裝)
 const LOCAL_ASSETS = [
@@ -109,3 +109,4 @@ self.addEventListener('activate', (event) => {
     }).then(() => self.clients.claim()) // 讓 SW 立即控制所有頁面
   );
 });
+
