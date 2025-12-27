@@ -315,10 +315,7 @@ function formatTime(ms) { const s = Math.max(0, Math.floor(ms / 1000)), m = Math
 
 window.onCardClick = function (mode, cardEl) {
     if (selectedMode === mode && cardEl.classList.contains('flipped')) {
-        if (mode === 'arcade') {
-            const nameInput = document.getElementById('player-name');
-            if (!nameInput.value.trim()) { nameInput.focus(); nameInput.classList.add('ring-4', 'ring-red-500', 'bg-red-50'); setTimeout(() => nameInput.classList.remove('ring-4', 'ring-red-500', 'bg-red-50'), 500); return; }
-        }
+
         playGameStartSound(); cardEl.classList.remove('flipped');
         const frontFace = cardEl.querySelector('.flip-card-front');
         const clone = frontFace.cloneNode(true);
@@ -338,8 +335,7 @@ window.onCardClick = function (mode, cardEl) {
 window.setDifficulty = function (level, clickedButton) {
     difficulty = level; arcadeScore = 0; patientsCompletedInArcade = 0; document.getElementById('arcade-score-container').classList.add('hidden');
     document.getElementById('music-style-btn').classList.remove('hidden');
-    const nc = document.getElementById('arcade-name-container');
-    if (level === 'arcade') { nc.classList.remove('hidden'); setTimeout(() => document.getElementById('player-name').focus(), 300); } else { nc.classList.add('hidden'); }
+
     if (level === 'beginner') { timeLimit = 120000; difficultyInfo.innerHTML = '<span class="bilingual-en text-green-700 font-bold">Beginner Mode: Color-coded. 2 mins/patient.</span><span class="bilingual-zh block mt-1 text-green-700">初學者模式：按鈕顏色提示。限時2分鐘。</span>'; }
     else if (level === 'pro') { timeLimit = 60000; difficultyInfo.innerHTML = '<span class="bilingual-en text-yellow-700 font-bold">Professional Mode: Grayscale. 1 min/patient.</span><span class="bilingual-zh block mt-1 text-yellow-700">專業人員模式：灰階按鈕。限時1分鐘。</span>'; }
     else if (level === 'master') { timeLimit = 30000; difficultyInfo.innerHTML = '<span class="bilingual-en text-red-700 font-bold">Master Mode: No hints. 30 sec/patient.</span><span class="bilingual-zh block mt-1 text-red-700">大師級模式：無提示。限時30秒。</span>'; }
@@ -419,7 +415,7 @@ window.goBack = function () {
 }
 
 window.startWithEffect = function () {
-    if (difficulty === 'arcade') { const ni = document.getElementById('player-name'), v = ni.value.trim(); if (!v) { alert("請輸入救護人員姓名以開始街機模式！"); ni.focus(); ni.classList.add('border-red-500', 'ring-2', 'ring-red-200'); setTimeout(() => ni.classList.remove('border-red-500', 'ring-2', 'ring-red-200'), 2000); return; } playerName = v; }
+    if (difficulty === 'arcade') { playerName = "player"; }
     const ol = document.getElementById('transition-overlay'); ol.style.opacity = '1'; setTimeout(() => { si(); ol.style.opacity = '0'; }, 500);
 }
 

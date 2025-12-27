@@ -264,18 +264,6 @@
                 <span class="bilingual-zh block">請點擊卡片選擇模式。</span>
             </p>
 
-            <div id="arcade-name-container"
-                class="hidden mt-2 p-4 bg-gray-100 border-2 border-gray-400 rounded-lg transition-all animate-fade-in">
-                <label for="player-name" class="block text-gray-800 font-bold mb-2 text-center text-lg">
-                    <i class="fa-solid fa-id-card"></i> <span class="bilingual-zh">請輸入救護人員姓名</span>
-                </label>
-                <input type="text" id="player-name"
-                    class="w-full p-3 border-2 border-gray-300 rounded-lg text-center font-bold text-xl text-gray-800 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-200 focus:outline-none placeholder-gray-400"
-                    placeholder="姓名 / Name" maxlength="15">
-                <p class="text-xs text-center text-gray-500 mt-2">Score will be recorded on the online leaderboard. /
-                    分數將記錄於雲端排行榜。</p>
-            </div>
-
             <div class="mt-2 pt-4 border-t border-gray-200 flex flex-col items-center">
                 <button onclick="toggleQRCode()"
                     class="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-2 px-4 py-2 rounded hover:bg-blue-50 transition">
@@ -338,15 +326,16 @@
                     <span id="walk-test-status" class="block mt-1">N/A</span>
                 </div>
                 <div id="resp-container" class="stat-box flex flex-col items-center justify-center hidden">
-                    <div class="flex items-baseline"><span class="bilingual-en">Respiration Rate (R.R)/[呼吸次數/分]: </span><span
-                            id="resp-rate" class="font-mono">N/A</span> / min</div>
+                    <div class="flex items-baseline"><span class="bilingual-en">Respiration Rate (R.R)/[呼吸次數/分]:
+                        </span><span id="resp-rate" class="font-mono">N/A</span> / min</div>
                     <div id="resp-rate-zh-note" class="text-sm font-normal mt-1 text-gray-500"></div>
                 </div>
                 <div id="pulse-container" class="stat-box hidden">
                     <span class="bilingual-en">Radial Pulse (P)[橈動脈]: </span><span id="pulse-status">N/A</span>
                 </div>
                 <div id="mental-container" class="stat-box col-span-1 sm:col-span-2 hidden">
-                    <span class="bilingual-en">Mental Status (M)[意識狀態]: </span><span id="mental-status-display">N/A</span>
+                    <span class="bilingual-en">Mental Status (M)[意識狀態]: </span><span
+                        id="mental-status-display">N/A</span>
                 </div>
             </div>
 
@@ -727,7 +716,7 @@
                                     <ul class="list-disc pl-4 text-gray-600 space-y-1">
                                         <li>新增2名jumpSTART傷患案例。</li>
                                         <li>更新jumpSTART按鈕圖片。</li>
-                                         <li>取消排行榜。</li>
+                                        <li>取消排行榜。</li>
                                     </ul>
                                     <p class="font-bold text-blue-600">12/5 (Update)</p>
                                     <ul class="list-disc pl-4 text-gray-600 space-y-1">
