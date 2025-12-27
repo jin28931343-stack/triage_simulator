@@ -606,7 +606,9 @@ function spU() {
 
     const stc = 'text-gray-900';
     wtsd.innerHTML = cp.canWalk ? `<span class="bilingual-en ${stc} font-bold">Can Walk</span><span class="bilingual-zh block">能走動</span>` : `<span class="bilingual-en ${stc} font-bold">Cannot Walk</span><span class="bilingual-zh block">無法走動</span>`;
-    rrZN.textContent = ''; if (cp.respRate === 0) { rrD.textContent = 'Absent'; rrZN.textContent = '（無呼吸）'; } else { rrD.textContent = cp.respRate; }
+    rrZN.textContent = ''; if (cp.respRate === 0) {
+        rrD.textContent = 'Absent'; rrZN.innerHTML = '<span class="text-xl font-bold text-gray-800">（無呼吸）</span>';
+    } else { rrD.textContent = cp.respRate; }
     let pe, pz; if (cp.respRate === 0) { pe = "Absent"; pz = "無脈搏"; } else if (cp.pulsePresent) { pe = "Present / CRT ≤ 2s"; pz = "有脈搏 / CRT ≤ 2秒"; } else { pe = cp.abnormalPulse ? `${cp.abnormalPulse.en} / CRT > 2s` : "Absent / CRT > 2s"; pz = cp.abnormalPulse ? `${cp.abnormalPulse.zh} / CRT > 2秒` : "橈動脈摸不到 / CRT > 2秒"; }
     document.getElementById('pulse-status').innerHTML = `<span class="bilingual-en ${stc} font-bold">${pe}</span><span class="bilingual-zh block">${pz}</span>`;
     let me, mz; if (cp.respRate === 0) { me = "Unconscious"; mz = "無意識"; } else if (cp.canObey) { me = "Can Obey"; mz = "可遵從指令"; } else { me = "Cannot Obey"; mz = "無法遵從指令"; }
