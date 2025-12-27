@@ -1,5 +1,5 @@
 // 更新版本號，強制瀏覽器重新安裝 Service Worker
-const CACHE_NAME = 'triage-simulator-v1.1.1'; // 版本號更新
+const CACHE_NAME = 'triage-simulator-v2.1.2'; // 版本號更新
 
 // 1. 本地核心資源 (請確保這裡的路徑與您實際的資料夾結構完全一致)
 const LOCAL_ASSETS = [
