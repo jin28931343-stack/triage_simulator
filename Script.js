@@ -125,7 +125,7 @@ const tg = { RED: { en: "Immediately", zh: "危急", class: "red-bg", color: 're
 const buttonTextConfig = {
     "btn-bleed-tourniquet": { full: { en: "Apply Tourniquet", zh: "使用止血帶 → 繼續評估" }, clean: { en: "Apply Tourniquet", zh: "使用止血帶" } }, "btn-bleed-none": { full: { en: "No Tourniquet", zh: "不使用止血帶 → 繼續評估" }, clean: { en: "No Tourniquet", zh: "不使用止血帶" } }, "btn-amb-can": { full: { en: "Minor", zh: "輕傷" }, clean: { en: "Minor", zh: "輕傷" } }, "btn-amb-cannot": { full: { en: "Assess Further", zh: "繼續評估" }, clean: { en: "Assess Further", zh: "繼續評估" } }, "btn-resp-absent": { full: { en: "Open Airway", zh: "暢通呼吸道" }, clean: { en: "Open Airway", zh: "暢通呼吸道" } }, "btn-resp-fast": { full: { en: "Abnormal (>30 or <10)", zh: "過快(>30/min)或過慢(<10/min) → 最終確認" }, clean: { en: "Abnormal", zh: "異常" } }, "btn-resp-normal": { full: { en: "Normal (10-30/min)", zh: "正常 → 繼續 P" }, clean: { en: "Normal", zh: "正常" } }, "btn-perf-absent": { full: { en: "Absent Pulse / CRT > 2s", zh: "無脈搏或 CRT > 2秒 → 最終確認" }, clean: { en: "Absent / Slow", zh: "無脈搏/充填慢" } }, "btn-perf-present": { full: { en: "Present Pulse / CRT ≤ 2s", zh: "有脈搏且 CRT ≤ 2秒 → 繼續 M" }, clean: { en: "Present / Normal", zh: "有脈搏 / 充填正常" } }, "btn-ment-cannot": { full: { en: "Cannot Follow Commands", zh: "無法遵從指令 → 最終確認" }, clean: { en: "Cannot Follow", zh: "無法遵從指令" } }, "btn-ment-can": { full: { en: "Can Follow Commands", zh: "可遵從指令 → 最終確認" }, clean: { en: "Can Follow", zh: "可遵從指令" } },
     //--- 這裡是 JumpSTART 相關按鈕 ---
-    "btn-js-check-pulse": { full: { en: "Check Pulse", zh: "檢查脈搏" }, clean: { en: "Check Pulse", zh: "檢查脈搏" } }, "btn-js-mark-black-1": { full: { en: "Deceased", zh: "死亡" }, clean: { en: "Deceased", zh: "死亡" } }, "btn-js-rescue-breaths": { full: { en: "Give 5 Rescue Breaths", zh: "給予 5 次吹氣" }, clean: { en: "5 Breaths", zh: "給予吹氣" } }, "btn-js-mark-black-2": { full: { en: " Deceased ", zh: "死亡" }, clean: { en: "Deceased", zh: "死亡" } }
+    "btn-js-check-pulse": { full: { en: "Check Pulse", zh: "檢查脈搏" }, clean: { en: "Check Pulse", zh: "檢查脈搏" } }, "btn-js-mark-black-1": { full: { en: "Deceased", zh: "死亡" }, clean: { en: "Deceased", zh: "死亡" } }, "btn-js-rescue-breaths": { full: { en: "Give 5 Rescue Breaths", zh: "給予 5 次吹氣" }, clean: { en: "5 Breaths", zh: "給予吹氣" } }, "btn-js-mark-black-2": { full: { en: " Immediately ", zh: "危急" }, clean: { en: "Deceased", zh: "死亡" } }
 };
 
 const pcE = document.getElementById('patient-card'), mT = document.getElementById('main-title'), sc = document.getElementById('status-container'), sd = document.getElementById('status-display'), pnd = document.getElementById('patient-number'), trd = document.getElementById('triage-result'), rrD = document.getElementById('resp-rate'), rrZN = document.getElementById('resp-rate-zh-note'), wtsd = document.getElementById('walk-test-status'), aa = document.getElementById('airway-action'), ame = document.getElementById('airway-message-en'), amz = document.getElementById('airway-message-zh'), npb = document.getElementById('next-patient-btn'), fcd = document.getElementById('final-classification'), scoreSummaryEl = document.getElementById('score-summary'), btnBack = document.getElementById('btn-back-step'), triageCard = document.querySelector('.triage-card');
@@ -348,20 +348,49 @@ window.setDifficulty = function (level, clickedButton) {
 };
 
 function applyDifficultyStyles(level) {
-    const allC = ['bg-green-500', 'hover:bg-green-600', 'bg-red-500', 'hover:bg-red-600', 'bg-gray-400', 'hover:bg-gray-500', 'bg-yellow-500', 'hover:bg-yellow-600', 'yellow-red-split', 'red-black-split'];
-    const bCM = [{ id: 'btn-bleed-tourniquet', c: ['bg-gray-600', 'hover:bg-gray-700'] }, { id: 'btn-bleed-none', c: ['bg-gray-600', 'hover:bg-gray-700'] }, { id: 'btn-amb-can', c: ['bg-green-500', 'hover:bg-green-600'] }, { id: 'btn-amb-cannot', c: [] }, { id: 'btn-resp-absent', c: ['red-black-split'] }, { id: 'btn-resp-fast', c: ['bg-red-500', 'hover:bg-red-600'] }, { id: 'btn-resp-normal', c: ['yellow-red-split'] }, { id: 'btn-perf-absent', c: ['bg-red-500', 'hover:bg-red-600'] }, { id: 'btn-perf-present', c: ['yellow-red-split'] }, { id: 'btn-ment-cannot', c: ['bg-red-500', 'hover:bg-red-600'] }, { id: 'btn-ment-can', c: ['bg-yellow-500', 'hover:bg-yellow-600'] }, { id: 'btn-js-check-pulse', c: ['bg-green-500', 'hover:bg-green-600'] }, { id: 'btn-js-mark-black-1', c: ['bg-gray-900', 'hover:bg-black', 'text-white'] }, { id: 'btn-js-rescue-breaths', c: ['bg-green-500', 'hover:bg-green-600'] }, { id: 'btn-js-mark-black-2', c: ['bg-gray-900', 'hover:bg-black', 'text-white'] }];
+    const allC = ['bg-green-500', 'hover:bg-green-600', 'hover:bg-green-700', 'bg-red-500', 'hover:bg-red-600', 'bg-gray-400', 'hover:bg-gray-500', 'bg-yellow-500', 'hover:bg-yellow-600', 'yellow-red-split', 'red-black-split', 'bg-indigo-600', 'hover:bg-indigo-700'];
+    const bCM = [{ id: 'btn-bleed-tourniquet', c: ['bg-gray-600', 'hover:bg-gray-700'] }, { id: 'btn-bleed-none', c: ['bg-gray-600', 'hover:bg-gray-700'] }, { id: 'btn-amb-can', c: ['bg-green-500', 'hover:bg-green-600'] }, { id: 'btn-amb-cannot', c: [] }, { id: 'btn-resp-absent', c: ['red-black-split'] }, { id: 'btn-resp-fast', c: ['bg-red-500', 'hover:bg-red-600'] }, { id: 'btn-resp-normal', c: ['yellow-red-split'] }, { id: 'btn-perf-absent', c: ['bg-red-500', 'hover:bg-red-600'] }, { id: 'btn-perf-present', c: ['yellow-red-split'] }, { id: 'btn-ment-cannot', c: ['bg-red-500', 'hover:bg-red-600'] }, { id: 'btn-ment-can', c: ['bg-yellow-500', 'hover:bg-yellow-600'] }, { id: 'btn-js-check-pulse', c: ['bg-green-500', 'hover:bg-green-600'] }, { id: 'btn-js-mark-black-1', c: ['bg-gray-900', 'hover:bg-black', 'text-white'] }, { id: 'btn-js-rescue-breaths', c: ['bg-white', 'hover:bg-gray-100'] }, { id: 'btn-js-mark-black-2', c: ['bg-red-500', 'hover:bg-red-600', 'text-white'] }];
     const uM = (level === 'master' || level === 'arcade'), uP = (level === 'pro');
     Object.values(st).forEach(s => {
         if (!s) return;
         s.querySelectorAll('.action-button:not(.rpm-button)').forEach(btn => {
             const bId = btn.id; btn.classList.remove(...allC, 'pro-mode-button');
-            const isEx = (btn.classList.contains('final-triage-button') || bId === 'btn-amb-can' || bId === 'btn-js-mark-black-1');
-            if (!isEx) { if (uP || uM) btn.classList.add('pro-mode-button'); else { const ce = bCM.find(e => e.id === bId); if (ce) btn.classList.add(...ce.c); } } else { if (bId === 'btn-amb-can') btn.classList.add('bg-green-500', 'hover:bg-green-600'); }
+            //   btn-js-mark-black-2 加入排除清單 (isEx)，防止它在專業/大師模式變灰
+            const isEx = (btn.classList.contains('final-triage-button') || bId === 'btn-amb-can' || bId === 'btn-js-mark-black-1' || bId === 'btn-js-mark-black-2' || bId === 'btn-js-rescue-breaths' || bId === 'btn-js-check-pulse');
+            if (!isEx) {
+                if (uP || uM) btn.classList.add('pro-mode-button');
+                else { const ce = bCM.find(e => e.id === bId); if (ce) btn.classList.add(...ce.c); }
+            }
+            else {
+                if (bId === 'btn-amb-can') btn.classList.add('bg-green-500', 'hover:bg-green-600');
+                if (bId === 'btn-js-mark-black-1') btn.classList.add('bg-black', 'hover:bg-gray-900', 'text-white');
+                if (bId === 'btn-js-mark-black-2') btn.classList.add('bg-red-500', 'hover:bg-red-600', 'text-white');
+
+                // ：檢查脈搏與給予吹氣按鈕 (設定為白底、深黑字)
+                // 必須移除 text-white，否則檢查脈搏按鈕會因 HTML 預設樣式而變成白底白字
+                if (bId === 'btn-js-rescue-breaths' || bId === 'btn-js-check-pulse') {
+                    btn.classList.remove('text-white');
+                    btn.classList.add('bg-white', 'hover:bg-gray-100', 'text-gray-900', 'border-2', 'border-gray-300');
+                }
+            }
+
+
             if (bId && buttonTextConfig[bId]) {
                 const c = buttonTextConfig[bId], td = uM ? c.clean : c.full;
+                //綠色按鈕
                 if (bId === 'btn-amb-can') {
                     if (!btn.classList.contains('flex')) btn.classList.add('flex', 'flex-row', 'items-center', 'justify-center', 'gap-3');
                     btn.innerHTML = `<div class="text-center"><span class="bilingual-en">${td.en}</span><span class="bilingual-zh block">${td.zh}</span></div><img src="PIC/green.png" alt="Green Status" class="h-12 w-auto object-contain rounded">`;
+                }
+                // [新增修改] 黑色按鈕 1 (JumpSTART Deceased 1) - 加入圖片
+                else if (bId === 'btn-js-mark-black-1') {
+                    if (!btn.classList.contains('flex')) btn.classList.add('flex', 'flex-row', 'items-center', 'justify-center', 'gap-3');
+                    btn.innerHTML = `<div class="text-center"><span class="bilingual-en">${td.en}</span><span class="bilingual-zh block">${td.zh}</span></div><img src="PIC/black1.png" alt="Black Status" class="h-12 w-auto object-contain">`;
+                }
+                // 紅色按鈕: 這裡修復圖片不顯示的問題：明確寫入 img 標籤
+                else if (bId === 'btn-js-mark-black-2') {
+                    if (!btn.classList.contains('flex')) btn.classList.add('flex', 'flex-row', 'items-center', 'justify-center', 'gap-3');
+                    btn.innerHTML = `<div class="text-center"><span class="bilingual-en">${td.en}</span><span class="bilingual-zh block">${td.zh}</span></div><img src="PIC/red1.png" alt="Red Status" class="h-12 w-auto object-contain">`;
                 } else { btn.innerHTML = `<span class="bilingual-en">${td.en}</span><span class="bilingual-zh block">${td.zh}</span>`; }
             }
         });
@@ -411,11 +440,11 @@ function gp() {
     //  支援指定傷患功能
     // 如果 window.debugCaseID 有設定數字 (0-53)，則強制使用該傷患，否則隨機產生
     // 可以在 Console 輸入 debugCaseID = 12 來測試特定案例
-    const s = (typeof window.debugCaseID === 'number') ? window.debugCaseID : Math.floor(Math.random() * 54);
+    const s = (typeof window.debugCaseID === 'number') ? window.debugCaseID : Math.floor(Math.random() * 57);
     pc++;
 
     // 原本的隨機邏輯備份：
-    //const s = Math.floor(Math.random() * 54);
+    //const s = Math.floor(Math.random() * 57);
 
     let g, a, cW = false, rr = 0, pp = true, cO = true, fc = null, bleeding = false, tqReq = false, isPed = false, jsPulse = false, jsRescue = false, airwayRes = false, selAb = null, injuryText = { en: "", zh: "" };
     let isObviousDeath = false;//預設為否
@@ -503,6 +532,61 @@ function gp() {
             injuryText = { en: "Patient found lying supine on the ground, unresponsive.", zh: "躺在地上無反應" };
             isObviousDeath = false;//設定為明顯死亡
             break;
+        // Case 54: 被重物壓住胸口
+        case 54: {
+            isPed = true;
+            a = Math.floor(Math.random() * 8) + 1;
+            cW = false;
+            rr = 0;
+            // 隨機邏輯: 30%暢通後自呼, 50%有脈搏, 50%吹氣有效
+            const aw = Math.random() < 0.3;
+            const hp = Math.random() < 0.5;
+            const bw = Math.random() < 0.5;
+            // 判定: 暢通有效? -> 紅; 否則查脈搏(無->黑; 有->吹氣(有效->紅; 無效->黑))
+            fc = aw ? tg.RED : (hp ? (bw ? tg.RED : tg.BLACK) : tg.BLACK);
+
+            injuryText = { en: "Child, chest crushed by heavy object", zh: "兒童，被重物壓住胸口" };
+            airwayRes = aw;
+            jsPulse = hp;
+            jsRescue = bw;
+            break;
+        }
+
+        // Case 55: 躺在地上無反應
+        case 55: {
+            isPed = true;
+            a = Math.floor(Math.random() * 8) + 1;
+            cW = false;
+            rr = 0;
+            const aw = Math.random() < 0.3;
+            const hp = Math.random() < 0.5;
+            const bw = Math.random() < 0.5;
+            fc = aw ? tg.RED : (hp ? (bw ? tg.RED : tg.BLACK) : tg.BLACK);
+
+            injuryText = { en: "Child, lying on ground unresponsive", zh: "兒童，躺在地上無反應" };
+            airwayRes = aw;
+            jsPulse = hp;
+            jsRescue = bw;
+            break;
+        }
+
+        // Case 56: 膚色發紺
+        case 56: {
+            isPed = true;
+            a = Math.floor(Math.random() * 8) + 1;
+            cW = false;
+            rr = 0;
+            const aw = Math.random() < 0.3;
+            const hp = Math.random() < 0.5;
+            const bw = Math.random() < 0.5;
+            fc = aw ? tg.RED : (hp ? (bw ? tg.RED : tg.BLACK) : tg.BLACK);
+
+            injuryText = { en: "Child, cyanosis", zh: "兒童，膚色發紺" };
+            airwayRes = aw;
+            jsPulse = hp;
+            jsRescue = bw;
+            break;
+        }
     }
 
     if (!selAb) selAb = [{ en: "Absent", zh: "橈動脈摸不到" }, { en: "Weak/Irregular", zh: "橈動脈微弱不規則" }][Math.floor(Math.random() * 2)];
@@ -632,15 +716,21 @@ window.checkRespiration = function (v, b) {
     if (v === 0) {
         cp.hasOpenedAirway = true; pushHistory('step-respiration'); aa.classList.remove('hidden'); aa.className = "mt-4 p-3 border-l-4";
         const uA = (difficulty !== 'beginner'), ab = cp.respRate > 0, as = (cp.respRate === 0 && cp.airwayResponse);
-        if (ab) { playErrorSound(); aa.classList.add('bg-red-100', 'text-red-700', 'border-red-500'); ame.innerHTML = '<span class="font-bold">PROCEDURAL ERROR</span>'; amz.innerHTML = '<span>程序錯誤：傷患已有呼吸。</span>'; st.finalChoice.classList.remove('hidden'); st.finalChoice.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-        else if (as) { if (uA) { aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500'); ame.innerHTML = 'Breathing detected.'; amz.innerHTML = '有呼吸。'; } else { aa.classList.add('bg-green-100', 'text-green-700', 'border-green-500'); ame.innerHTML = 'Breathing started.'; amz.innerHTML = '呼吸恢復。'; } st.finalChoice.classList.remove('hidden'); st.finalChoice.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-        else { if (uA) { aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500'); ame.innerHTML = 'Still no breathing.'; amz.innerHTML = '仍無呼吸。'; } else { aa.classList.add('bg-red-100', 'text-red-700', 'border-red-500'); ame.innerHTML = 'Still no breathing.'; amz.innerHTML = '仍無呼吸。'; } if (cp.isPediatric) { st.jumpStartPulse.classList.remove('hidden'); st.jumpStartPulse.scrollIntoView({ behavior: 'smooth', block: 'center' }); } else { st.finalChoice.classList.remove('hidden'); st.finalChoice.scrollIntoView({ behavior: 'smooth', block: 'center' }); } }
+        if (ab) { playErrorSound(); aa.classList.add('bg-red-100', 'text-red-700', 'border-red-500'); ame.innerHTML = '<span class="font-bold">PROCEDURAL ERROR</span>'; amz.innerHTML = '<span class="text-xl font-bold">程序錯誤：傷患已有呼吸。</span>'; st.finalChoice.classList.remove('hidden'); st.finalChoice.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+        else if (as) { if (uA) { aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500'); ame.innerHTML = 'Breathing detected.'; amz.innerHTML = '<span class="text-xl font-bold">有呼吸。</span>'; } else { aa.classList.add('bg-green-100', 'text-green-700', 'border-green-500'); ame.innerHTML = 'Breathing started.'; amz.innerHTML = '<span class="text-xl font-bold">呼吸恢復。</span>'; } st.finalChoice.classList.remove('hidden'); st.finalChoice.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+        else { if (uA) { aa.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-500'); ame.innerHTML = 'Still no breathing.'; amz.innerHTML = '<span class="text-xl font-bold"> 仍無呼吸。</span>'; } else { aa.classList.add('bg-red-100', 'text-red-700', 'border-red-500'); ame.innerHTML = 'Still no breathing.'; amz.innerHTML = '<span class="text-xl font-bold">仍無呼吸。</span>'; } if (cp.isPediatric) { st.jumpStartPulse.classList.remove('hidden'); st.jumpStartPulse.scrollIntoView({ behavior: 'smooth', block: 'center' }); } else { st.finalChoice.classList.remove('hidden'); st.finalChoice.scrollIntoView({ behavior: 'smooth', block: 'center' }); } }
     } else if (v > 30) { pushHistory('step-respiration'); st.finalChoice.classList.remove('hidden'); st.finalChoice.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
     else { pushHistory('step-respiration'); st.respiration.classList.add('hidden'); rc.classList.add('hidden'); pC.classList.remove('hidden'); st.perfusion.classList.remove('hidden'); st.perfusion.querySelectorAll('button').forEach(x => x.disabled = false); st.perfusion.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 }
 window.onCheckPulse = function (b) {
-    if (b) b.blur(); b.parentElement.querySelectorAll('button').forEach(x => x.disabled = true); pushHistory('step-jumpstart-check-pulse'); document.getElementById('js-pulse-result').classList.remove('hidden'); if (cp.jsHasPulse) {
-        document.getElementById('js-pulse-text').textContent = "Pulse Present (有脈搏)"; document.getElementById('js-pulse-text').className = "font-bold text-lg mb-3 text-center text-green-600"; document.getElementById('js-pulse-options').classList.remove('hidden'); st.finalChoice.classList.add('hidden');
+    if (b) b.blur(); b.parentElement.querySelectorAll('button').forEach(x => x.disabled = true); pushHistory('step-jumpstart-check-pulse'); document.getElementById('js-pulse-result').classList.remove('hidden');
+    if (cp.jsHasPulse) {
+        document.getElementById('js-pulse-text').textContent = "Pulse Present (有脈搏)";
+        document.getElementById('js-pulse-text').className = "font-bold text-lg mb-3 text-center text-green-600"; document.getElementById('js-pulse-options').classList.remove('hidden'); st.finalChoice.classList.add('hidden');
+        //明確定義 opts 變數，修復 undefined 錯誤
+        const opts = document.getElementById('js-pulse-options');
+        opts.classList.remove('hidden');
+        st.finalChoice.classList.add('hidden');
         // 畫面自動捲動到新出現的選項按鈕
         opts.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
