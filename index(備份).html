@@ -1408,20 +1408,7 @@
     </script>
 
     <script type="module">
-        // --- FIREBASE CONFIGURATION ---
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-
-        const MY_FIREBASE_CONFIG = {
-            apiKey: "AIzaSyCHO5wG6yC6QuvedLUZi9L7TA-l9S5u2yo",
-            authDomain: "triagr-251f7.firebaseapp.com",
-            projectId: "triagr-251f7",
-            storageBucket: "triagr-251f7.firebasestorage.app",
-            messagingSenderId: "1030941934552",
-            appId: "1:1030941934552:web:66e8abc7d5b98f33d228ad",
-            measurementId: "G-YWH1F49PVK"
-        };
+       
 
         let db, auth, user;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-triage-app';

@@ -11,20 +11,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// --- FIREBASE CONFIGURATION ---
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-const MY_FIREBASE_CONFIG = {
-    apiKey: "AIzaSyCHO5wG6yC6QuvedLUZi9L7TA-l9S5u2yo",
-    authDomain: "triagr-251f7.firebaseapp.com",
-    projectId: "triagr-251f7",
-    storageBucket: "triagr-251f7.firebasestorage.app",
-    messagingSenderId: "1030941934552",
-    appId: "1:1030941934552:web:66e8abc7d5b98f33d228ad",
-    measurementId: "G-YWH1F49PVK"
-};
 
 let db, auth, user;
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-triage-app';
@@ -56,7 +43,8 @@ async function initFirebase() {
     }
 }
 initFirebase();
-
+//  指定傷患變數：將此變數設為 0-53 的數字即可強制出現該傷患 (設為 null 則為隨機)
+window.debugCaseID = null; 
 // --- VARIABLES & AUDIO ---
 const TOTAL_PATIENTS_STANDARD = 15;
 let pc = 0, cp = {}, go = true, difficulty = null, scoreRecords = [], timerInterval = null, startTime = 0, stepHistory = [], currentTourniquetDecision = false, timeLimit = 120000;
@@ -160,7 +148,9 @@ function playGameStartSound() { if (isMuted || !audioCtx) return; const o = audi
 
 // --- DOM REFERENCES ---
 const tg = { RED: { en: "Immediately", zh: "危急", class: "red-bg", color: 'red' }, YELLOW: { en: "Delayed", zh: "次緊急", class: "yellow-bg", color: 'yellow' }, GREEN: { en: "Minor", zh: "輕傷", class: "green-bg", color: 'green' }, BLACK: { en: "Deceased - Deceased / Expectant", zh: "死亡", class: "black-bg", color: 'black' } };
-const buttonTextConfig = { "btn-bleed-tourniquet": { full: { en: "Apply Tourniquet", zh: "使用止血帶 → 繼續評估" }, clean: { en: "Apply Tourniquet", zh: "使用止血帶" } }, "btn-bleed-none": { full: { en: "No Tourniquet", zh: "不使用止血帶 → 繼續評估" }, clean: { en: "No Tourniquet", zh: "不使用止血帶" } }, "btn-amb-can": { full: { en: "Minor", zh: "輕傷" }, clean: { en: "Minor", zh: "輕傷" } }, "btn-amb-cannot": { full: { en: "Assess Further", zh: "繼續評估" }, clean: { en: "Assess Further", zh: "繼續評估" } }, "btn-resp-absent": { full: { en: "Open Airway", zh: "暢通呼吸道" }, clean: { en: "Open Airway", zh: "暢通呼吸道" } }, "btn-resp-fast": { full: { en: "Abnormal (>30 or <10)", zh: "過快(>30/min)或過慢(<10/min) → 最終確認" }, clean: { en: "Abnormal", zh: "異常" } }, "btn-resp-normal": { full: { en: "Normal (10-30/min)", zh: "正常 → 繼續 P" }, clean: { en: "Normal", zh: "正常" } }, "btn-perf-absent": { full: { en: "Absent Pulse / CRT > 2s", zh: "無脈搏或 CRT > 2秒 → 最終確認" }, clean: { en: "Absent / Slow", zh: "無脈搏/充填慢" } }, "btn-perf-present": { full: { en: "Present Pulse / CRT ≤ 2s", zh: "有脈搏且 CRT ≤ 2秒 → 繼續 M" }, clean: { en: "Present / Normal", zh: "有脈搏 / 充填正常" } }, "btn-ment-cannot": { full: { en: "Cannot Follow Commands", zh: "無法遵從指令 → 最終確認" }, clean: { en: "Cannot Follow", zh: "無法遵從指令" } }, "btn-ment-can": { full: { en: "Can Follow Commands", zh: "可遵從指令 → 最終確認" }, clean: { en: "Can Follow", zh: "可遵從指令" } }, "btn-js-check-pulse": { full: { en: "Check Pulse", zh: "檢查脈搏" }, clean: { en: "Check Pulse", zh: "檢查脈搏" } }, "btn-js-mark-black-1": { full: { en: "Deceased", zh: "判定死亡" }, clean: { en: "No Breathing", zh: "無呼吸" } }, "btn-js-rescue-breaths": { full: { en: "Give 5 Rescue Breaths", zh: "給予 5 次吹氣" }, clean: { en: "5 Breaths", zh: "給予吹氣" } }, "btn-js-mark-black-2": { full: { en: "Mark Deceased (Black)", zh: "判定黑色" }, clean: { en: "Black", zh: "黑色" } } };
+const buttonTextConfig = { "btn-bleed-tourniquet": { full: { en: "Apply Tourniquet", zh: "使用止血帶 → 繼續評估" }, clean: { en: "Apply Tourniquet", zh: "使用止血帶" } }, "btn-bleed-none": { full: { en: "No Tourniquet", zh: "不使用止血帶 → 繼續評估" }, clean: { en: "No Tourniquet", zh: "不使用止血帶" } }, "btn-amb-can": { full: { en: "Minor", zh: "輕傷" }, clean: { en: "Minor", zh: "輕傷" } }, "btn-amb-cannot": { full: { en: "Assess Further", zh: "繼續評估" }, clean: { en: "Assess Further", zh: "繼續評估" } }, "btn-resp-absent": { full: { en: "Open Airway", zh: "暢通呼吸道" }, clean: { en: "Open Airway", zh: "暢通呼吸道" } }, "btn-resp-fast": { full: { en: "Abnormal (>30 or <10)", zh: "過快(>30/min)或過慢(<10/min) → 最終確認" }, clean: { en: "Abnormal", zh: "異常" } }, "btn-resp-normal": { full: { en: "Normal (10-30/min)", zh: "正常 → 繼續 P" }, clean: { en: "Normal", zh: "正常" } }, "btn-perf-absent": { full: { en: "Absent Pulse / CRT > 2s", zh: "無脈搏或 CRT > 2秒 → 最終確認" }, clean: { en: "Absent / Slow", zh: "無脈搏/充填慢" } }, "btn-perf-present": { full: { en: "Present Pulse / CRT ≤ 2s", zh: "有脈搏且 CRT ≤ 2秒 → 繼續 M" }, clean: { en: "Present / Normal", zh: "有脈搏 / 充填正常" } }, "btn-ment-cannot": { full: { en: "Cannot Follow Commands", zh: "無法遵從指令 → 最終確認" }, clean: { en: "Cannot Follow", zh: "無法遵從指令" } }, "btn-ment-can": { full: { en: "Can Follow Commands", zh: "可遵從指令 → 最終確認" }, clean: { en: "Can Follow", zh: "可遵從指令" } }, 
+//--- 這裡是 JumpSTART 相關按鈕 ---
+"btn-js-check-pulse": { full: { en: "Check Pulse", zh: "檢查脈搏" }, clean: { en: "Check Pulse", zh: "檢查脈搏" } }, "btn-js-mark-black-1": { full: { en: "Deceased", zh: "死亡" }, clean: { en: "Deceased", zh: "死亡" } }, "btn-js-rescue-breaths": { full: { en: "Give 5 Rescue Breaths", zh: "給予 5 次吹氣" }, clean: { en: "5 Breaths", zh: "給予吹氣" } }, "btn-js-mark-black-2": { full: { en: "Mark Deceased ", zh: "死亡" }, clean: { en: "Deceased", zh: "死亡" } } };
 
 const pcE = document.getElementById('patient-card'), mT = document.getElementById('main-title'), sc = document.getElementById('status-container'), sd = document.getElementById('status-display'), pnd = document.getElementById('patient-number'), trd = document.getElementById('triage-result'), rrD = document.getElementById('resp-rate'), rrZN = document.getElementById('resp-rate-zh-note'), wtsd = document.getElementById('walk-test-status'), aa = document.getElementById('airway-action'), ame = document.getElementById('airway-message-en'), amz = document.getElementById('airway-message-zh'), npb = document.getElementById('next-patient-btn'), fcd = document.getElementById('final-classification'), scoreSummaryEl = document.getElementById('score-summary'), btnBack = document.getElementById('btn-back-step'), triageCard = document.querySelector('.triage-card');
 const rc = document.getElementById('resp-container'), pC = document.getElementById('pulse-container'), mC = document.getElementById('mental-container'), timerDisplay = document.getElementById('triage-timer'), difficultyInfo = document.getElementById('difficulty-info'), newIncidentBtn = document.getElementById('new-incident-btn');
@@ -383,7 +373,7 @@ window.setDifficulty = function (level, clickedButton) {
 
 function applyDifficultyStyles(level) {
     const allC = ['bg-green-500', 'hover:bg-green-600', 'bg-red-500', 'hover:bg-red-600', 'bg-gray-400', 'hover:bg-gray-500', 'bg-yellow-500', 'hover:bg-yellow-600', 'yellow-red-split', 'red-black-split'];
-    const bCM = [{ id: 'btn-bleed-tourniquet', c: ['bg-gray-600', 'hover:bg-gray-700'] }, { id: 'btn-bleed-none', c: ['bg-gray-600', 'hover:bg-gray-700'] }, { id: 'btn-amb-can', c: ['bg-green-500', 'hover:bg-green-600'] }, { id: 'btn-amb-cannot', c: [] }, { id: 'btn-resp-absent', c: ['red-black-split'] }, { id: 'btn-resp-fast', c: ['bg-red-500', 'hover:bg-red-600'] }, { id: 'btn-resp-normal', c: ['yellow-red-split'] }, { id: 'btn-perf-absent', c: ['bg-red-500', 'hover:bg-red-600'] }, { id: 'btn-perf-present', c: ['yellow-red-split'] }, { id: 'btn-ment-cannot', c: ['bg-red-500', 'hover:bg-red-600'] }, { id: 'btn-ment-can', c: ['bg-yellow-500', 'hover:bg-yellow-600'] }, { id: 'btn-js-check-pulse', c: ['bg-green-500', 'hover:bg-green-600'] }, { id: 'btn-js-mark-black-1', c: ['bg-gray-900', 'hover:bg-black','text-white'] }, { id: 'btn-js-rescue-breaths', c: ['bg-green-500', 'hover:bg-green-600'] }, { id: 'btn-js-mark-black-2', c: ['bg-gray-600', 'hover:bg-gray-700'] }];
+    const bCM = [{ id: 'btn-bleed-tourniquet', c: ['bg-gray-600', 'hover:bg-gray-700'] }, { id: 'btn-bleed-none', c: ['bg-gray-600', 'hover:bg-gray-700'] }, { id: 'btn-amb-can', c: ['bg-green-500', 'hover:bg-green-600'] }, { id: 'btn-amb-cannot', c: [] }, { id: 'btn-resp-absent', c: ['red-black-split'] }, { id: 'btn-resp-fast', c: ['bg-red-500', 'hover:bg-red-600'] }, { id: 'btn-resp-normal', c: ['yellow-red-split'] }, { id: 'btn-perf-absent', c: ['bg-red-500', 'hover:bg-red-600'] }, { id: 'btn-perf-present', c: ['yellow-red-split'] }, { id: 'btn-ment-cannot', c: ['bg-red-500', 'hover:bg-red-600'] }, { id: 'btn-ment-can', c: ['bg-yellow-500', 'hover:bg-yellow-600'] }, { id: 'btn-js-check-pulse', c: ['bg-green-500', 'hover:bg-green-600'] }, { id: 'btn-js-mark-black-1', c: ['bg-gray-900', 'hover:bg-black', 'text-white'] }, { id: 'btn-js-rescue-breaths', c: ['bg-green-500', 'hover:bg-green-600'] }, { id: 'btn-js-mark-black-2', c: ['bg-black', 'hover:bg-gray-900'] }];
     const uM = (level === 'master' || level === 'arcade'), uP = (level === 'pro');
     Object.values(st).forEach(s => {
         if (!s) return;
@@ -440,10 +430,16 @@ function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerI
 function pushHistory(id) { stepHistory.push(id); if (stepHistory.length > 0) btnBack.classList.remove('hidden'); }
 
 function gp() {
+
+
+    //  支援指定傷患功能
+    // 如果 window.debugCaseID 有設定數字 (0-53)，則強制使用該傷患，否則隨機產生
+    // 可以在 Console 輸入 debugCaseID = 12 來測試特定案例
+    const s = (typeof window.debugCaseID === 'number') ? window.debugCaseID : Math.floor(Math.random() * 54);
     pc++;
-    // 修改範圍：原本 37 改為 53 (0-52)
-    // Range increased to 53 to include new cases (Green*5, Yellow*5, Red*3, Black*3)
-    const s = Math.floor(Math.random() * 54);
+   
+    // 原本的隨機邏輯備份：
+    //const s = Math.floor(Math.random() * 54);
 
     let g, a, cW = false, rr = 0, pp = true, cO = true, fc = null, bleeding = false, tqReq = false, isPed = false, jsPulse = false, jsRescue = false, airwayRes = false, selAb = null, injuryText = { en: "", zh: "" };
     let isObviousDeath = false;//預設為否
@@ -521,16 +517,16 @@ function gp() {
 
         // 新增 3 名黑色 (Black) - 暢通呼吸道後仍無呼吸
         case 50: cW = false; rr = 0; airwayRes = false; pp = false; cO = false; fc = tg.BLACK; injuryText = { en: "Massive head crush injury", zh: "頭部嚴重壓砸傷" }; break;
-        case 51: cW = false; rr = 0; airwayRes = false; pp = false; cO = false; 
-        fc = tg.BLACK; injuryText = { en: "Cyanosis", zh: "膚色發紺" };
-        isObviousDeath = true;//設定為明顯死亡
-        break;
+        case 51: cW = false; rr = 0; airwayRes = false; pp = false; cO = false;
+            fc = tg.BLACK; injuryText = { en: "Cyanosis", zh: "膚色發紺" };
+            isObviousDeath = false;//設定為明顯死亡
+            break;
         case 52: cW = false; rr = 0; airwayRes = false; pp = false; cO = false; fc = tg.BLACK; injuryText = { en: "Cardiac arrest, traumatic", zh: "創傷性心搏停止" }; break;
         case 53: cW = false; rr = 0; airwayRes = false; pp = false; cO = false;
-        fc = tg.BLACK;
-        injuryText = { en: "Patient found lying supine on the ground, unresponsive.", zh: "躺在地上無反應" };
-        isObviousDeath = true;//設定為明顯死亡
-        break;
+            fc = tg.BLACK;
+            injuryText = { en: "Patient found lying supine on the ground, unresponsive.", zh: "躺在地上無反應" };
+            isObviousDeath = false;//設定為明顯死亡
+            break;
     }
 
     if (!selAb) selAb = [{ en: "Absent", zh: "橈動脈摸不到" }, { en: "Weak/Irregular", zh: "橈動脈微弱不規則" }][Math.floor(Math.random() * 2)];
@@ -685,7 +681,7 @@ window.finalizeTriage = function (k, b, fail) {
     let isCorrect = false; const chosenCat = tg[k];
     if (fail) { isCorrect = false; playErrorSound(); } else { st.finalChoice.classList.add('hidden'); let ok = chosenCat === cp.correctTriage; if (cp.respRate === 0 && !cp.hasOpenedAirway && !cp.isObviousDeath) { ok = false; fail = { en: "PROCEDURAL ERROR: Airway not opened.", zh: "程序錯誤：未執行暢通呼吸道。" }; } if (ok) playCorrectSound(); else playErrorSound(); isCorrect = ok; }
     if (difficulty === 'arcade') { const pts = isCorrect ? 100 : -200; arcadeScore += pts; document.getElementById('hud-score').textContent = arcadeScore; document.getElementById('arcade-game-hud').classList.remove('score-pop'); void document.getElementById('arcade-game-hud').offsetWidth; document.getElementById('arcade-game-hud').classList.add('score-pop'); }
-    scoreRecords.push({ triageTimeMs: performance.now() - startTime, correctCategory: cp.correctTriage, chosenCategory: chosenCat, isCorrect: isCorrect, bleedingPresent: cp.massiveBleeding, tourniquetApplied: currentTourniquetDecision, tourniquetRequired: cp.tourniquetRequired, respRate: cp.respRate, airwayOpened: cp.hasOpenedAirway,isObviousDeath: cp.isObviousDeath });
+    scoreRecords.push({ triageTimeMs: performance.now() - startTime, correctCategory: cp.correctTriage, chosenCategory: chosenCat, isCorrect: isCorrect, bleedingPresent: cp.massiveBleeding, tourniquetApplied: currentTourniquetDecision, tourniquetRequired: cp.tourniquetRequired, respRate: cp.respRate, airwayOpened: cp.hasOpenedAirway, isObviousDeath: cp.isObviousDeath });
     stR(chosenCat, isCorrect, performance.now() - startTime, fail);
 }
 
@@ -703,79 +699,258 @@ function stR(c, ok, t, fail) {
 }
 
 window.eI = function () {
-    stopTimer(); playVictorySound(); go = true; document.getElementById('arcade-game-hud').style.display = 'none';
-    renderScoreSummary(); if (difficulty === 'arcade') { saveLeaderboard(playerName, arcadeScore); showLeaderboard(); } else { document.getElementById('leaderboard-container').classList.add('hidden'); }
-    sc.classList.remove('hidden'); sd.innerHTML = `<span class="bilingual-en">Incident Over.</span><span class="bilingual-zh block mt-1">事件結束。共完成 ${scoreRecords.length} 人。</span>`;
-    document.getElementById('new-incident-btn').disabled = true; document.getElementById('music-style-btn').classList.add('hidden');
-}
+    stopTimer();
+    playVictorySound();
+    go = true;
+    document.getElementById('arcade-game-hud').style.display = 'none';
 
-async function saveLeaderboard(name, score) {
-    if (db && user) { try { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard'), { name: name, score: score, date: new Date().toLocaleDateString(), timestamp: Date.now() }); console.log("Score saved."); } catch (e) { console.error("Error saving:", e); } }
-    let lb = JSON.parse(localStorage.getItem('triage_arcade_lb') || '[]'); lb.push({ name: name, score: score, date: new Date().toLocaleDateString() }); lb.sort((a, b) => b.score - a.score); localStorage.setItem('triage_arcade_lb', JSON.stringify(lb.slice(0, 100)));
-    // 2. 檢查網路並嘗試上傳雲端 (Firestore)
-    if (navigator.onLine && db && user) {
-        try {
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard'), {
-                name: name,
-                score: score,
-                date: new Date().toLocaleDateString(),
-                timestamp: Date.now()
-            });
-            console.log("Score uploaded to cloud.");
-        } catch (e) {
-            console.error("Cloud upload failed, saved locally only:", e);
+    //  隱藏檢傷卡片 (原本的檢傷畫面)，避免重疊顯示
+    if (typeof pcE !== 'undefined' && pcE) {
+        pcE.classList.add('hidden');
+    } else {
+        const card = document.getElementById('patient-card');
+        if (card) card.classList.add('hidden');
+    }
+
+    // 關鍵修正：呼叫 renderScoreSummary 來計算並顯示數據
+    renderScoreSummary();
+
+    if (difficulty === 'arcade') {
+        // 修正：原本呼叫 saveLeaderboard，改為呼叫您定義的 saveScore
+        if (typeof window.saveScore === 'function') {
+            window.saveScore(playerName, arcadeScore);
+        }
+        // 修正：原本呼叫 showLeaderboard，改為呼叫您定義的 loadLeaderboard
+        if (typeof window.loadLeaderboard === 'function') {
+            window.loadLeaderboard();
         }
     } else {
-        console.log("Offline: Score saved locally.");
+        const lbContainer = document.getElementById('leaderboard-container');
+        if (lbContainer) lbContainer.classList.add('hidden');
     }
+
+    // 顯示狀態容器
+    sc.classList.remove('hidden');
+    sd.innerHTML = `<span class="bilingual-en">Incident Over.</span><span class="bilingual-zh block mt-1">事件結束。共完成 ${scoreRecords.length} 人。</span>`;
+
+    // 禁用按鈕與隱藏音樂切換
+    const newIncidentBtn = document.getElementById('new-incident-btn');
+    if (newIncidentBtn) newIncidentBtn.disabled = true;
+
+    const musicBtn = document.getElementById('music-style-btn');
+    if (musicBtn) musicBtn.classList.add('hidden');
 }
 
-async function showLeaderboard(limitVal = 100) {
-    const listEl = document.getElementById('leaderboard-list'); const container = document.getElementById('leaderboard-container'); const titleEl = document.getElementById('leaderboard-title');
-    container.classList.remove('hidden'); listEl.innerHTML = '<li class="text-center text-gray-500"><i class="fa-solid fa-spinner fa-spin"></i> 正在讀取排行榜...</li>';
-    let lbData = []; let isOnline = false;
-    if (navigator.onLine && db && user) { try { const snapshot = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard')); snapshot.forEach(doc => lbData.push(doc.data())); isOnline = true; } catch (e) { console.error("Error fetching:", e); } }
-    if (isOnline) { titleEl.innerHTML = '<i class="fa-solid fa-globe text-blue-600"></i> <span class="bilingual-zh text-blue-800">世界排行榜 (Online)</span>'; } else { lbData = JSON.parse(localStorage.getItem('triage_arcade_lb') || '[]'); titleEl.innerHTML = '<i class="fa-solid fa-folder-open text-gray-600"></i> <span class="bilingual-zh text-gray-800">本機排行榜 (Local)</span>'; }
-    lbData.sort((a, b) => b.score - a.score); lbData = lbData.slice(0, limitVal);
-    if (lbData.length === 0) { listEl.innerHTML = '<li class="text-center text-gray-500">尚無紀錄。</li>'; } else {
-        listEl.innerHTML = lbData.map((entry, i) => {
-            let rc = "bg-white border-gray-200 text-gray-600", ic = "";
-            if (i === 0) { rc = "bg-yellow-100 border-yellow-400 text-yellow-800 shadow-sm"; ic = '<i class="fa-solid fa-crown text-yellow-600"></i> '; } else if (i === 1) { rc = "bg-gray-100 border-gray-300 text-gray-700"; ic = '<i class="fa-solid fa-medal text-gray-500"></i> '; } else if (i === 2) { rc = "bg-orange-50 border-orange-300 text-orange-800"; ic = '<i class="fa-solid fa-medal text-orange-600"></i> '; }
-            return `<li class="flex justify-between items-center p-2 rounded-md border ${rc}"><div class="flex items-center gap-3"><span class="font-bold w-6 text-center text-lg">${i + 1}.</span><span class="font-bold text-base">${ic}${entry.name}</span></div><div class="text-right"><div class="font-mono font-extrabold text-lg">${entry.score} <span class="text-xs font-normal opacity-75">pts</span></div><div class="text-[10px] opacity-60">${entry.date || ''}</div></div></li>`;
-        }).join('');
-    }
-}
-window.showLeaderboard = showLeaderboard;
+
 
 function renderScoreSummary() {
-    let tm = 0, cc = 0, bt = 0, tqc = 0, tqm = 0, tqw = 0, at = 0, ac = 0, am = 0, aw = 0, arcadeTotal = 0; const cs = { RED: { t: 0, c: 0 }, YELLOW: { t: 0, c: 0 }, GREEN: { t: 0, c: 0 }, BLACK: { t: 0, c: 0 } };
-    //預先計算有效紀錄數量(排除明顯死亡)
-    const validRecords = scoreRecords.filter(r => !r.isObviousDeath);
+    const summaryEl = document.getElementById('score-summary');
+    if (!summaryEl) return;
 
-    scoreRecords.forEach(r => {
-        if (!r.isObviousDeath) return;  
-        tm += r.triageTimeMs; if (r.isCorrect) { cc++; if (difficulty === 'arcade') arcadeTotal += 100; } else { if (difficulty === 'arcade') arcadeTotal -= 200; }
-        const k = r.correctCategory.color.toUpperCase(); if (cs[k]) { cs[k].t++; if (r.isCorrect) cs[k].c++; }
-        if (r.bleedingPresent) { bt++; if (r.tourniquetRequired) { if (r.tourniquetApplied) { tqc++; if (difficulty === 'arcade') arcadeTotal += 100; } else { tqm++; if (difficulty === 'arcade') arcadeTotal -= 200; } } else { if (r.tourniquetApplied) tqw++; else tqc++; } } else { if (r.tourniquetApplied) tqw++; }
-        if (r.respRate === 0) { at++; if (r.airwayOpened) { ac++; if (difficulty === 'arcade') arcadeTotal += 100; } else { am++; if (difficulty === 'arcade') arcadeTotal -= 200; } } else { if (r.airwayOpened) aw++; }
-    });
-    if (difficulty === 'arcade') { arcadeScore = arcadeTotal; document.getElementById('arcade-final-score').textContent = arcadeScore; document.getElementById('arcade-score-container').classList.remove('hidden'); document.getElementById('arcade-final-score').classList.remove('score-pop'); void document.getElementById('arcade-final-score').offsetWidth; document.getElementById('arcade-final-score').classList.add('score-pop'); } else { document.getElementById('arcade-score-container').classList.add('hidden'); }
-    const tp = validRecords.length, avg = tp > 0 ? tm / tp : 0, acc = tp > 0 ? (cc / tp) * 100 : 0;
-    document.getElementById('summary-total-time').textContent = formatTime(tm); document.getElementById('summary-avg-time').textContent = formatTime(avg); document.getElementById('summary-total-patients').textContent = tp; document.getElementById('summary-overall-accuracy').textContent = `${acc.toFixed(1)}%`;
-    document.getElementById('summary-bleeding-total').textContent = bt; document.getElementById('summary-tq-correct').textContent = tqc; document.getElementById('summary-tq-missed').textContent = tqm; document.getElementById('summary-tq-wrong').textContent = tqw;
-    document.getElementById('summary-airway-total').textContent = at; document.getElementById('summary-airway-correct').textContent = ac; document.getElementById('summary-airway-missed').textContent = am; document.getElementById('summary-airway-wrong').textContent = aw;
-    const tb = document.getElementById('summary-table-body'); tb.innerHTML = '';
-    ['RED', 'YELLOW', 'GREEN', 'BLACK'].forEach(k => { const c = tg[k], s = cs[k], a = s.t === 0 ? 100 : (s.c / s.t) * 100; tb.innerHTML += `<tr class="hover:bg-gray-50"><td class="px-6 py-4 whitespace-nowrap"><div class="flex items-center"><span class="inline-block w-4 h-4 rounded-full ${c.class} mr-3"></span><div class="text-sm font-medium text-gray-900"><span class="bilingual-en">${c.en.split(' - ')[0]}</span><span class="bilingual-zh block text-xs text-gray-500">${c.zh.split('(')[0]}</span></div></div></td><td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-gray-900">${s.t}</td><td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-gray-900">${s.c}</td><td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium ${a >= 70 ? 'text-green-600' : 'text-red-600'}">${a.toFixed(1)}%</td></tr>`; });
-    pcE.classList.add('hidden'); scoreSummaryEl.classList.remove('hidden'); mT.classList.remove('hidden');
+    // 關鍵修正：移除 hidden 讓結算畫面顯示出來
+    summaryEl.classList.remove('hidden');
+
+    // 計算基本數據
+    const total = scoreRecords.length;
+    const correct = scoreRecords.filter(r => r.isCorrect).length;
+    const accuracy = total === 0 ? 0 : Math.round((correct / total) * 100);
+
+    const totalTime = scoreRecords.reduce((acc, r) => acc + r.triageTimeMs, 0);
+    const avgTime = total === 0 ? 0 : totalTime / total;
+
+    // 更新 UI 文字
+    const elTotal = document.getElementById('summary-total-patients');
+    if (elTotal) elTotal.textContent = total;
+
+    const elAcc = document.getElementById('summary-overall-accuracy');
+    if (elAcc) elAcc.textContent = `${accuracy}%`;
+
+    const elTime = document.getElementById('summary-total-time');
+    if (elTime) elTime.textContent = formatTime(totalTime);
+
+    const elAvg = document.getElementById('summary-avg-time');
+    if (elAvg) elAvg.textContent = formatTime(avgTime);
+
+    // 顯示街機模式分數
+    if (difficulty === 'arcade') {
+        const arcadeContainer = document.getElementById('arcade-score-container');
+        if (arcadeContainer) arcadeContainer.classList.remove('hidden');
+        const elScore = document.getElementById('arcade-final-score');
+        if (elScore) elScore.textContent = arcadeScore;
+    }
+
+    // 統計詳細數據：止血帶 (Bleeding Control)
+    const bleedingCases = scoreRecords.filter(r => r.bleedingPresent).length;
+    const tqCorrect = scoreRecords.filter(r => r.bleedingPresent && r.tourniquetApplied).length;
+    const tqMissed = scoreRecords.filter(r => r.bleedingPresent && !r.tourniquetApplied).length;
+    const tqWrong = scoreRecords.filter(r => !r.bleedingPresent && r.tourniquetApplied).length;
+
+    updateText('summary-bleeding-total', bleedingCases);
+    updateText('summary-tq-correct', tqCorrect);
+    updateText('summary-tq-missed', tqMissed);
+    updateText('summary-tq-wrong', tqWrong);
+
+    // 統計詳細數據：呼吸道 (Airway)
+    // 定義：原本無呼吸(respRate==0) 且非明顯死亡(isObviousDeath!=true) 的才算需要處置的氣道問題
+    const airwayCases = scoreRecords.filter(r => r.respRate === 0 && !r.isObviousDeath).length;
+    const airwayCorrect = scoreRecords.filter(r => r.respRate === 0 && !r.isObviousDeath && r.airwayOpened).length;
+    const airwayMissed = scoreRecords.filter(r => r.respRate === 0 && !r.isObviousDeath && !r.airwayOpened).length;
+    // 簡單定義誤用：有呼吸卻執行暢通呼吸道
+    const airwayWrong = scoreRecords.filter(r => r.respRate > 0 && r.airwayOpened).length;
+
+    updateText('summary-airway-total', airwayCases);
+    updateText('summary-airway-correct', airwayCorrect);
+    updateText('summary-airway-missed', airwayMissed);
+    updateText('summary-airway-wrong', airwayWrong);
+
+    // 生成分類統計表格
+    const tbody = document.getElementById('summary-table-body');
+    if (tbody) {
+        tbody.innerHTML = '';
+        // 確保 tg 物件存在 (通常在 Script.js上方已定義)
+        if (typeof tg !== 'undefined') {
+            const categories = [tg.RED, tg.YELLOW, tg.GREEN, tg.BLACK];
+            categories.forEach(cat => {
+                const catName = cat.en.split(' - ')[0]; // 取簡短名稱
+                const catTotal = scoreRecords.filter(r => r.correctCategory === cat).length;
+                const catCorrect = scoreRecords.filter(r => r.correctCategory === cat && r.isCorrect).length;
+                const catAcc = catTotal === 0 ? 0 : Math.round((catCorrect / catTotal) * 100);
+
+                // 設定顏色樣式
+                let colorClass = 'text-gray-900';
+                if (cat.color === 'red') colorClass = 'text-red-600';
+                else if (cat.color === 'yellow') colorClass = 'text-yellow-600';
+                else if (cat.color === 'green') colorClass = 'text-green-600';
+
+                const row = `
+                    <tr>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm font-bold ${colorClass}">
+                            ${catName}
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-center text-gray-500">${catTotal}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-center text-gray-500">${catCorrect}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-center text-gray-500">${catAcc}%</td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+    }
 }
 
+// 輔助函式：安全更新文字
+function updateText(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+}
+
+window.saveScore = async function (name, score, accuracy) {
+    console.log("排行榜功能已停用 (Firebase removed)");
+    return;
+};
+
+window.loadLeaderboard = async function () {
+    console.log("排行榜功能已停用 (Firebase removed)");
+    const list = document.getElementById('leaderboard-list');
+    if (list) list.innerHTML = '<li class="text-center text-gray-500">排行榜功能已關閉</li>';
+};
+/*  重新開始遊戲功能
+* 負責重置所有變數與 UI 狀態，返回主選單
+*/
 window.resetGame = function () {
-    window.scrollTo(0, 0); stopTimer(); pc = 0; scoreRecords = []; difficulty = null; timerDisplay.textContent = '00:00'; arcadeScore = 0; patientsCompletedInArcade = 0; timeLimit = 120000;
-    document.getElementById('arcade-score-container').classList.add('hidden'); document.getElementById('leaderboard-container').classList.add('hidden'); document.getElementById('arcade-game-hud').style.display = 'none'; selectedMode = null;
+    stopTimer();
+    pc = 0;
+    scoreRecords = [];
+    difficulty = null;
+    arcadeScore = 0;
+    patientsCompletedInArcade = 0;
+
+    window.scrollTo(0, 0);
+
+    // 隱藏結算與遊戲畫面
+    const summaryEl = document.getElementById('score-summary');
+    if (summaryEl) summaryEl.classList.add('hidden');
+
+    // 確保檢傷卡片隱藏
+    const pcE = document.getElementById('patient-card');
+    if (pcE) pcE.classList.add('hidden');
+
+    const sc = document.getElementById('status-container');
+    if (sc) sc.classList.add('hidden');
+
+    // 顯示主選單與標題
+    const mT = document.getElementById('main-title');
+    if (mT) mT.classList.remove('hidden');
+
+    const diffSel = document.getElementById('difficulty-selection');
+    if (diffSel) diffSel.classList.remove('hidden');
+
+    // 重置其他 UI 狀態
+    const arcadeHud = document.getElementById('arcade-game-hud');
+    if (arcadeHud) arcadeHud.style.display = 'none';
+
+    const nameContainer = document.getElementById('arcade-name-container');
+    if (nameContainer) nameContainer.classList.add('hidden');
+
+    const newIncidentBtn = document.getElementById('new-incident-btn');
+    if (newIncidentBtn) newIncidentBtn.disabled = true;
+
+    // 重置卡片翻轉效果
     document.querySelectorAll('.flip-card').forEach(c => c.classList.remove('flipped'));
-    mT.classList.remove('hidden'); document.getElementById('difficulty-selection').classList.remove('hidden'); scoreSummaryEl.classList.add('hidden'); pcE.classList.add('hidden'); sc.classList.add('hidden'); newIncidentBtn.disabled = true;
-    document.getElementById('arcade-name-container').classList.add('hidden'); document.getElementById('player-name').value = ''; triageCard.classList.remove('time-up-alarm'); document.getElementById('music-style-btn').classList.add('hidden'); if (!isMuted) playBGM();
-}
+
+    // 播放背景音樂 (如果沒靜音)
+    if (typeof isMuted !== 'undefined' && !isMuted && typeof playBGM === 'function') {
+        playBGM();
+    }
+};
+// --- 初始化設定 ---
+window.onload = function () {
+    window.scrollTo(0, 0);
+    stopTimer();
+    pc = 0;
+    scoreRecords = [];
+    difficulty = null;
+    timerDisplay.textContent = '00:00';
+    arcadeScore = 0;
+    patientsCompletedInArcade = 0;
+    timeLimit = 120000;
+
+    // 隱藏排行榜與相關介面
+    const arcadeContainer = document.getElementById('arcade-score-container');
+    if (arcadeContainer) arcadeContainer.classList.add('hidden');
+
+    const leaderboardContainer = document.getElementById('leaderboard-container');
+    if (leaderboardContainer) leaderboardContainer.classList.add('hidden');
+
+    const arcadeHud = document.getElementById('arcade-game-hud');
+    if (arcadeHud) arcadeHud.style.display = 'none';
+
+    selectedMode = null;
+
+    document.querySelectorAll('.flip-card').forEach(c => c.classList.remove('flipped'));
+
+    if (mT) mT.classList.remove('hidden');
+    const diffSel = document.getElementById('difficulty-selection');
+    if (diffSel) diffSel.classList.remove('hidden');
+
+    if (scoreSummaryEl) scoreSummaryEl.classList.add('hidden');
+    if (pcE) pcE.classList.add('hidden');
+    if (sc) sc.classList.add('hidden');
+    if (newIncidentBtn) newIncidentBtn.disabled = true;
+
+    const nameContainer = document.getElementById('arcade-name-container');
+    if (nameContainer) nameContainer.classList.add('hidden');
+
+    const playerName = document.getElementById('player-name');
+    if (playerName) playerName.value = '';
+
+    if (triageCard) triageCard.classList.remove('time-up-alarm');
+
+    const musicBtn = document.getElementById('music-style-btn');
+    if (musicBtn) musicBtn.classList.add('hidden');
+
+    if (!isMuted) playBGM();
+};
 window.toggleQRCode = () => { const c = document.getElementById('qrcode-display'), d = document.getElementById('qrcode'); if (c.classList.contains('hidden')) { c.classList.remove('hidden'); d.innerHTML = ""; new QRCode(d, { text: window.location.href, width: 128, height: 128 }); } else { c.classList.add('hidden'); } };
 
 window.toggleChangeLog = () => { const c = document.getElementById('changelog-content'); c.classList.toggle('hidden'); };
