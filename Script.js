@@ -16,33 +16,7 @@ if ('serviceWorker' in navigator) {
 let db, auth, user;
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-triage-app';
 
-async function initFirebase() {
-    try {
-        let config = null;
-        if (typeof __firebase_config !== 'undefined') {
-            config = JSON.parse(__firebase_config);
-        } else if (MY_FIREBASE_CONFIG) {
-            config = MY_FIREBASE_CONFIG;
-        }
 
-        if (!config) return;
-
-        const app = initializeApp(config);
-        auth = getAuth(app);
-        db = getFirestore(app);
-
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-            await signInWithCustomToken(auth, __initial_auth_token);
-        } else {
-            await signInAnonymously(auth);
-        }
-
-        user = auth.currentUser;
-    } catch (e) {
-        console.error("Firebase initialization failed:", e);
-    }
-}
-initFirebase();
 //  指定傷患變數：將此變數設為 0-53 的數字即可強制出現該傷患 (設為 null 則為隨機)
 window.debugCaseID = null; 
 // --- VARIABLES & AUDIO ---

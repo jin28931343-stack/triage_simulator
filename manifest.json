@@ -8,16 +8,14 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "red1.png",
+      "src": "PIC/red1.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "red1.png",
+      "src": "PIC/red1.png",
       "sizes": "512x512",
       "type": "image/png"
     }
   ]
-
 }
-
