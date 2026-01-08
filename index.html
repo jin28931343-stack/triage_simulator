@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>網站搬家通知 | Triage Simulator</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .fade-in {
+            animation: fadeIn 1s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+
+    <script>
+        // 設定新網址
+        const targetUrl = "https://triagr-251f7.web.app/";
+        let seconds = 10;
+
+        // 【關鍵功能】清除舊站的所有快取與 Service Worker
+        async function cleanupOldSiteData() {
+            console.log("開始清理舊站資料...");
+
+            // 1. 註銷所有 Service Workers
+            if ('serviceWorker' in navigator) {
+                try {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                        console.log('Service Worker 已註銷');
+                    }
+                } catch (e) {
+                    console.error('SW 清除失敗:', e);
+                }
+            }
+
+            // 2. 清空 Cache Storage (快取資料)
+            if ('caches' in window) {
+                try {
+                    const keys = await caches.keys();
+                    await Promise.all(keys.map(key => caches.delete(key)));
+                    console.log('快取已清空');
+                } catch (e) {
+                    console.error('Cache 清除失敗:', e);
+                }
+            }
+        }
+
+        function startCountdown() {
+            const timerElement = document.getElementById('timer');
+            
+            const interval = setInterval(() => {
+                seconds--;
+                if(timerElement) timerElement.textContent = seconds;
+
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    window.location.replace(targetUrl); // 使用 replace 避免使用者按上一頁又回來
+                }
+            }, 1000);
+        }
+
+        // 網頁載入後同時執行「清除工作」與「倒數計時」
+        window.onload = function() {
+            cleanupOldSiteData(); // 在背景執行清除
+            startCountdown();     // 開始倒數
+        };
+    </script>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center fade-in border-4 border-indigo-100">
+        
+        <div class="mb-6 flex justify-center">
+            <img src="PIC/Triage_dolls.jpg" 
+                 onerror="this.style.display='none'"
+                 alt="Triage Simulator Logo" 
+                 class="w-32 h-32 object-cover rounded-xl shadow-md border-2 border-gray-100">
+        </div>
+
+        <h1 class="text-2xl font-bold text-gray-800 mb-4">
+            我們搬家囉！
+        </h1>
+
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 text-left">
+            <p class="text-gray-700 leading-relaxed">
+                因為要建構後端資料庫以提供更完整的功能，本檢傷分類模擬器已遷移至 Firebase 新網域。
+            </p>
+        </div>
+
+        <p class="text-gray-600 mb-2">請點擊下方連結前往新站：</p>
+        
+        <a href="https://triagr-251f7.web.app/" 
+           class="inline-block break-all text-indigo-600 font-bold text-lg hover:text-indigo-800 hover:underline mb-6 transition-colors">
+            https://triagr-251f7.web.app/
+        </a>
+
+        <div class="text-sm text-gray-500 font-mono bg-gray-100 py-2 px-4 rounded-full inline-block">
+            <span id="timer" class="text-red-500 font-bold text-base mr-1">10</span> 秒後自動跳轉...
+        </div>
+
+        <div class="mt-8 pt-4 border-t border-gray-100">
+            <a href="https://triagr-251f7.web.app/" class="w-full block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 shadow-md hover:shadow-lg">
+                立即前往新網站
+            </a>
+        </div>
+
+        <p class="mt-4 text-xs text-gray-400">Triage Simulator   作者:莊進宏 V3.0.1</p>
+    </div>
+
+</body>
+</html>
