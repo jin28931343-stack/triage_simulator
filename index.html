@@ -22,6 +22,29 @@
     </style>
 
     <script>
+async function cleanupAndRedirect() {
+            console.log("正在清理舊站快取並準備跳轉...");
+
+            // 1. 移除 Service Worker (關鍵步驟)
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                for (let registration of registrations) {
+                    await registration.unregister();
+                    console.log('Service Worker 已註銷');
+                }
+            }
+
+            // 2. 清除 Cache Storage (快取資料)
+            if ('caches' in window) {
+                const keys = await caches.keys();
+                await Promise.all(keys.map(key => caches.delete(key)));
+                console.log('快取已清空');
+            }
+
+            // 3. 執行跳轉
+            window.location.replace(NEW_URL);
+        }
+        
         // 設定倒數秒數
         let seconds = 10;
         const targetUrl = "https://triagr-251f7.web.app/";
@@ -86,3 +109,4 @@
 
 
 </body>
+
